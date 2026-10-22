@@ -1,0 +1,17 @@
+{
+  "users": [
+    {
+      "id": "u_dangquangdung_01",
+      "email": "demo@dongbank.vn",
+      "password_hash": "$2b$10$P7xjEJBGO8S4yRrnoYUGruQPa26bXC2pH3iI8sUA6fhqPpUHf7.xy",
+      "full_name": "Đặng Quang Dũng",
+      "account_number": "8888 6868 9999",
+      "balance": 0,
+      "phone": "0908889999",
+      "role": "user",
+      "created_at": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "transactions": [],
+  "goalJars": []
+}

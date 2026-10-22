@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     password_hash VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     account_number VARCHAR(30) UNIQUE NOT NULL,
-    balance NUMERIC(15, 2) DEFAULT 47250000.00,
+    balance NUMERIC(15, 2) DEFAULT 0.00,
     phone VARCHAR(20),
     role VARCHAR(20) DEFAULT 'user',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,

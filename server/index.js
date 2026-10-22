@@ -10,8 +10,13 @@ const app = express();
 const PORT = process.env.PORT || 8888;
 const JWT_SECRET = process.env.JWT_SECRET || 'dong_bank_jwt_secret_super_secure_key_2026';
 
-// Middlewares
-app.use(cors());
+// Middlewares - Cấp quyền kết nối API & Database cho các trang web phù hợp
+app.use(cors({
+  origin: (origin, callback) => callback(null, true),
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -313,6 +318,29 @@ app.post('/api/system/seed-demo', authMiddleware, async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Lỗi nạp dữ liệu mẫu' });
+  }
+});
+
+// POST /api/system/db-reset (Reset về mặc định không dữ liệu, bắt đầu từ con số 0)
+app.post('/api/system/db-reset', async (req, res) => {
+  try {
+    let userId = null;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET);
+        userId = decoded.id;
+      } catch (_) {}
+    }
+    const result = await db.resetDatabase(userId);
+    res.json({
+      success: true,
+      message: result.message,
+      result
+    });
+  } catch (err) {
+    console.error('Reset DB error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi reset cơ sở dữ liệu: ' + err.message });
   }
 });
 

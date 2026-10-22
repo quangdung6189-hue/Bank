@@ -26,109 +26,87 @@ const defaultHashedPassword = bcrypt.hashSync("password123", 10);
 const defaultDbState = {
   users: [
     {
-      id: "u_minhanh_01",
+      id: "u_dangquangdung_01",
       email: "demo@dongbank.vn",
       password_hash: defaultHashedPassword,
-      full_name: "Minh Anh",
+      full_name: "Đặng Quang Dũng",
       account_number: "8888 6868 9999",
-      balance: 47250000,
+      balance: 0,
       phone: "0908889999",
       role: "user",
       created_at: new Date("2026-01-01").toISOString()
     }
   ],
-  transactions: [
-    {
-      id: "TX_101",
-      user_id: "u_minhanh_01",
-      name: "Lương tháng 10 (Công ty Công nghệ Tech)",
-      amount: 18500000,
-      type: "income",
-      category: "Lương",
-      date: "2026-10-22",
-      note: "Nhận lương kỳ 2 chuyển khoản Techcombank",
-      reference_code: "FT261022001",
-      created_at: new Date("2026-10-22T08:02:00Z").toISOString()
-    },
-    {
-      id: "TX_102",
-      user_id: "u_minhanh_01",
-      name: "Highlands Coffee - Cà phê sáng & đối tác",
-      amount: 65000,
-      type: "expense",
-      category: "Ăn uống",
-      date: "2026-10-22",
-      note: "Thanh toán quẹt thẻ tại quầy",
-      reference_code: "FT261022002",
-      created_at: new Date("2026-10-22T09:15:00Z").toISOString()
-    },
-    {
-      id: "TX_103",
-      user_id: "u_minhanh_01",
-      name: "Grab Car di chuyển gặp khách hàng",
-      amount: 85000,
-      type: "expense",
-      category: "Di chuyển",
-      date: "2026-10-22",
-      note: "Đặt xe từ Cầu Giấy về Hoàn Kiếm",
-      reference_code: "FT261022003",
-      created_at: new Date("2026-10-22T10:47:00Z").toISOString()
-    },
-    {
-      id: "TX_104",
-      user_id: "u_minhanh_01",
-      name: "Bách Hóa Xanh - Thực phẩm gia đình",
-      amount: 342000,
-      type: "expense",
-      category: "Mua sắm",
-      date: "2026-10-21",
-      note: "Mua rau củ, trái cây và gia vị",
-      reference_code: "FT261021004",
-      created_at: new Date("2026-10-21T11:15:00Z").toISOString()
-    },
-    {
-      id: "TX_105",
-      user_id: "u_minhanh_01",
-      name: "EVN Tiền điện tháng 10",
-      amount: 750000,
-      type: "expense",
-      category: "Hóa đơn",
-      date: "2026-10-20",
-      note: "Thanh toán tự động hóa đơn sinh hoạt",
-      reference_code: "FT261020005",
-      created_at: new Date("2026-10-20T14:30:00Z").toISOString()
-    },
-    {
-      id: "TX_106",
-      user_id: "u_minhanh_01",
-      name: "Thưởng dự án quý 3",
-      amount: 8000000,
-      type: "income",
-      category: "Thu nhập",
-      date: "2026-10-18",
-      note: "Thưởng KPI xuất sắc quý",
-      reference_code: "FT261018006",
-      created_at: new Date("2026-10-18T16:00:00Z").toISOString()
-    },
-    {
-      id: "TX_107",
-      user_id: "u_minhanh_01",
-      name: "Shopee Mall - Đồ gia dụng",
-      amount: 890000,
-      type: "expense",
-      category: "Mua sắm",
-      date: "2026-10-17",
-      note: "Mua sắm thiết bị bàn làm việc",
-      reference_code: "FT261017007",
-      created_at: new Date("2026-10-17T19:20:00Z").toISOString()
-    }
-  ],
-  goalJars: [
-    { id: "G1", user_id: "u_minhanh_01", name: "MacBook Pro M4", current: 28800000, target: 45000000, icon: "💻", color: "#00D18F" },
-    { id: "G2", user_id: "u_minhanh_01", name: "Du lịch Tokyo mùa thu", current: 15000000, target: 30000000, icon: "✈️", color: "#9B8CFF" },
-    { id: "G3", user_id: "u_minhanh_01", name: "Quỹ dự phòng khẩn cấp 6 tháng", current: 85000000, target: 100000000, icon: "🛡️", color: "#E8C57C" }
-  ]
+  transactions: [],
+  goalJars: []
 };
+
+// 7 Sample Demo Transactions for manual on-demand seeding
+const sampleDemoTransactions = [
+  {
+    name: "Lương tháng 10 (Công ty Công nghệ Tech)",
+    amount: 18500000,
+    type: "income",
+    category: "Lương",
+    date: "2026-10-22",
+    note: "Nhận lương kỳ 2 chuyển khoản Techcombank",
+    reference_code: "FT261022001"
+  },
+  {
+    name: "Highlands Coffee - Cà phê sáng & đối tác",
+    amount: 65000,
+    type: "expense",
+    category: "Ăn uống",
+    date: "2026-10-22",
+    note: "Thanh toán quẹt thẻ tại quầy",
+    reference_code: "FT261022002"
+  },
+  {
+    name: "Grab Car di chuyển gặp khách hàng",
+    amount: 85000,
+    type: "expense",
+    category: "Di chuyển",
+    date: "2026-10-22",
+    note: "Đặt xe từ Cầu Giấy về Hoàn Kiếm",
+    reference_code: "FT261022003"
+  },
+  {
+    name: "Bách Hóa Xanh - Thực phẩm gia đình",
+    amount: 342000,
+    type: "expense",
+    category: "Mua sắm",
+    date: "2026-10-21",
+    note: "Mua rau củ, trái cây và gia vị",
+    reference_code: "FT261021004"
+  },
+  {
+    name: "EVN Tiền điện tháng 10",
+    amount: 750000,
+    type: "expense",
+    category: "Hóa đơn",
+    date: "2026-10-20",
+    note: "Thanh toán tự động hóa đơn sinh hoạt",
+    reference_code: "FT261020005"
+  },
+  {
+    name: "Thưởng dự án quý 3",
+    amount: 8000000,
+    type: "income",
+    category: "Thu nhập",
+    date: "2026-10-18",
+    note: "Thưởng KPI xuất sắc quý",
+    reference_code: "FT261018006"
+  },
+  {
+    name: "Shopee Mall - Đồ gia dụng",
+    amount: 890000,
+    type: "expense",
+    category: "Mua sắm",
+    date: "2026-10-17",
+    note: "Mua sắm thiết bị bàn làm việc",
+    reference_code: "FT261017007"
+  }
+];
 
 // JSON Store File Operations
 function readLocalDb() {
@@ -243,38 +221,24 @@ async function testConnection(connectionString) {
   }
 }
 
-// Auto-seed demo records if DB is fresh
+// Initialize user upon connection with balance 0
 async function seedPostgresIfEmpty(client) {
   const countRes = await client.query('SELECT count(*) as count FROM users');
   const userCount = parseInt(countRes.rows[0].count, 10);
   if (userCount === 0) {
-    console.log("🌱 Database trống, tiến hành nạp tài khoản demo & dữ liệu giao dịch mẫu...");
-    // Insert demo user
+    console.log("🌱 Khởi tạo tài khoản Đặng Quang Dũng bắt đầu từ con số 0...");
     const u = defaultDbState.users[0];
     await client.query(
       `INSERT INTO users (id, email, password_hash, full_name, account_number, balance, phone, role)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (id) DO NOTHING`,
-      [u.id, u.email, u.password_hash, u.full_name, u.account_number, u.balance, u.phone, u.role]
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (id) DO UPDATE SET full_name = $4, balance = 0`,
+      [u.id, u.email, u.password_hash, u.full_name, u.account_number, 0, u.phone, u.role]
     );
-
-    // Insert transactions
-    for (const tx of defaultDbState.transactions) {
-      await client.query(
-        `INSERT INTO transactions (id, user_id, name, amount, type, category, date, note, reference_code)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT (id) DO NOTHING`,
-        [tx.id, tx.user_id, tx.name, tx.amount, tx.type, tx.category, tx.date, tx.note, tx.reference_code]
-      );
-    }
-
-    // Insert goal jars
-    for (const jar of defaultDbState.goalJars) {
-      await client.query(
-        `INSERT INTO goal_jars (id, user_id, name, target_amount, current_amount, icon, color)
-         VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (id) DO NOTHING`,
-        [jar.id, jar.user_id, jar.name, jar.target, jar.current, jar.icon, jar.color]
-      );
-    }
-    console.log("✅ Đã nạp thành công 1 người dùng và 7 giao dịch mẫu vào cơ sở dữ liệu!");
+    console.log("✅ Đã khởi tạo người dùng Đặng Quang Dũng thành công (Số dư: 0₫, 0 giao dịch)!");
+  } else {
+    // Sync existing users to Đặng Quang Dũng
+    await client.query(
+      `UPDATE users SET full_name = 'Đặng Quang Dũng' WHERE email = 'demo@dongbank.vn' OR id = 'u_minhanh_01' OR id = 'u_dangquangdung_01'`
+    );
   }
 }
 
@@ -435,9 +399,55 @@ async function getDbStatus() {
   };
 }
 
+// Reset database to default empty state (Balance 0, 0 transactions)
+async function resetDatabase(userId = null) {
+  if (pgPool) {
+    if (userId) {
+      await pgPool.query('DELETE FROM transactions WHERE user_id = $1', [userId]);
+      await pgPool.query('UPDATE users SET balance = 0, full_name = $2 WHERE id = $1', [userId, "Đặng Quang Dũng"]);
+      await pgPool.query('DELETE FROM goal_jars WHERE user_id = $1', [userId]);
+    } else {
+      await pgPool.query('DELETE FROM transactions');
+      await pgPool.query('UPDATE users SET balance = 0, full_name = $1', ["Đặng Quang Dũng"]);
+      await pgPool.query('DELETE FROM goal_jars');
+    }
+    return {
+      success: true,
+      message: 'Đã reset cơ sở dữ liệu PostgreSQL về mặc định không dữ liệu, bắt đầu từ con số 0!',
+      balance: 0,
+      count: 0
+    };
+  }
+
+  const db = readLocalDb();
+  if (userId) {
+    db.transactions = (db.transactions || []).filter(t => t.user_id !== userId);
+    const u = (db.users || []).find(x => x.id === userId);
+    if (u) {
+      u.balance = 0;
+      u.full_name = "Đặng Quang Dũng";
+    }
+    db.goalJars = (db.goalJars || []).filter(j => j.user_id !== userId);
+  } else {
+    db.transactions = [];
+    (db.users || []).forEach(u => {
+      u.balance = 0;
+      u.full_name = "Đặng Quang Dũng";
+    });
+    db.goalJars = [];
+  }
+  writeLocalDb(db);
+  return {
+    success: true,
+    message: 'Đã reset cơ sở dữ liệu Local về mặc định không dữ liệu, bắt đầu từ con số 0!',
+    balance: 0,
+    count: 0
+  };
+}
+
 // Re-seed demo transactions for testing
 async function seedSampleData(userId) {
-  const seedTxs = defaultDbState.transactions.map(t => ({
+  const seedTxs = sampleDemoTransactions.map(t => ({
     ...t,
     id: "TX_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
     user_id: userId,
@@ -798,5 +808,6 @@ module.exports = {
   getCategoryBreakdown,
   getCashflowTrend,
   getRule503020,
-  getGoalJars
+  getGoalJars,
+  resetDatabase
 };
