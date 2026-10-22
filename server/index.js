@@ -1,0 +1,267 @@
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const path = require('path');
+const db = require('./db');
+
+const app = express();
+const PORT = process.env.PORT || 8888;
+const JWT_SECRET = process.env.JWT_SECRET || 'dong_bank_jwt_secret_super_secure_key_2026';
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Serve Static Frontend files (index.html, app.html)
+app.use(express.static(path.join(__dirname, '..')));
+
+// Authentication Middleware
+function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'Vui lòng đăng nhập để tiếp tục' });
+  }
+
+  const token = authHeader.split(' ')[1];
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ success: false, message: 'Phiên đăng nhập đã hết hạn hoặc không hợp lệ' });
+  }
+}
+
+// ==================== AUTHENTICATION ROUTES ====================
+
+// POST /api/auth/register
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { email, password, fullName, phone } = req.body;
+    if (!email || !password || !fullName) {
+      return res.status(400).json({ success: false, message: 'Vui lòng điền đầy đủ họ tên, email và mật khẩu' });
+    }
+
+    const existing = await db.findUserByEmail(email);
+    if (existing) {
+      return res.status(400).json({ success: false, message: 'Email này đã được đăng ký tài khoản tại Đồng Bank' });
+    }
+
+    const user = await db.createUser({ email, password, fullName, phone });
+    const token = jwt.sign({ id: user.id, email: user.email, name: user.full_name }, JWT_SECRET, { expiresIn: '7d' });
+
+    res.status(201).json({
+      success: true,
+      message: 'Đăng ký tài khoản Đồng Bank thành công!',
+      token,
+      user
+    });
+  } catch (err) {
+    console.error('Register error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi máy chủ khi đăng ký' });
+  }
+});
+
+// POST /api/auth/login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập email và mật khẩu' });
+    }
+
+    const user = await db.findUserByEmail(email);
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Email hoặc mật khẩu không chính xác' });
+    }
+
+    const match = await bcrypt.compare(password, user.password_hash);
+    if (!match) {
+      return res.status(401).json({ success: false, message: 'Email hoặc mật khẩu không chính xác' });
+    }
+
+    const token = jwt.sign({ id: user.id, email: user.email, name: user.full_name }, JWT_SECRET, { expiresIn: '7d' });
+    const { password_hash, ...safeUser } = user;
+
+    res.json({
+      success: true,
+      message: 'Đăng nhập thành công!',
+      token,
+      user: safeUser
+    });
+  } catch (err) {
+    console.error('Login error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi máy chủ khi đăng nhập' });
+  }
+});
+
+// GET /api/auth/me
+app.get('/api/auth/me', authMiddleware, async (req, res) => {
+  try {
+    const user = await db.findUserById(req.user.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+    }
+    res.json({ success: true, user });
+  } catch (err) {
+    console.error('Me error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi xác thực người dùng' });
+  }
+});
+
+// ==================== SPRINT 1: TRANSACTIONS ROUTES ====================
+
+// GET /api/transactions (Lấy lịch sử giao dịch + Bộ lọc)
+app.get('/api/transactions', authMiddleware, async (req, res) => {
+  try {
+    const { startDate, endDate, type, category, search, limit } = req.query;
+    const transactions = await db.getTransactions(req.user.id, {
+      startDate,
+      endDate,
+      type,
+      category,
+      search,
+      limit: limit ? parseInt(limit, 10) : 100
+    });
+    res.json({ success: true, count: transactions.length, transactions });
+  } catch (err) {
+    console.error('Get transactions error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi tải lịch sử giao dịch' });
+  }
+});
+
+// POST /api/transactions (Nhập liệu thủ công thu / chi mới)
+app.post('/api/transactions', authMiddleware, async (req, res) => {
+  try {
+    const { name, amount, type, category, date, note } = req.body;
+    if (!name || !amount || !category) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vui lòng nhập tên giao dịch, số tiền và danh mục'
+      });
+    }
+
+    const tx = await db.addTransaction(req.user.id, {
+      name,
+      amount: parseFloat(amount),
+      type: type || 'expense',
+      category,
+      date,
+      note
+    });
+
+    const user = await db.findUserById(req.user.id);
+
+    res.status(201).json({
+      success: true,
+      message: 'Ghi nhận giao dịch thành công!',
+      transaction: tx,
+      newBalance: user ? user.balance : undefined
+    });
+  } catch (err) {
+    console.error('Create transaction error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi ghi nhận giao dịch' });
+  }
+});
+
+// DELETE /api/transactions/:id
+app.delete('/api/transactions/:id', authMiddleware, async (req, res) => {
+  try {
+    const ok = await db.deleteTransaction(req.user.id, req.params.id);
+    if (!ok) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy giao dịch hoặc đã bị xóa' });
+    }
+    const user = await db.findUserById(req.user.id);
+    res.json({ success: true, message: 'Đã xóa giao dịch!', newBalance: user ? user.balance : undefined });
+  } catch (err) {
+    console.error('Delete transaction error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi khi xóa giao dịch' });
+  }
+});
+
+// ==================== SPRINT 2: BÁO CÁO & PHÂN TÍCH ====================
+
+// GET /api/analytics/summary (Thẻ tổng thu nhập, tổng chi tiêu, số dư, số giao dịch)
+app.get('/api/analytics/summary', authMiddleware, async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const summary = await db.getSummary(req.user.id, { startDate, endDate });
+    res.json({ success: true, summary });
+  } catch (err) {
+    console.error('Summary error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi tính toán tổng quan báo cáo' });
+  }
+});
+
+// GET /api/analytics/categories (Biểu đồ tròn Pie/Donut Chart theo danh mục)
+app.get('/api/analytics/categories', authMiddleware, async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+    const breakdown = await db.getCategoryBreakdown(req.user.id, { startDate, endDate });
+    res.json({ success: true, ...breakdown });
+  } catch (err) {
+    console.error('Category breakdown error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi phân tích tỷ lệ danh mục' });
+  }
+});
+
+// GET /api/analytics/cashflow (Biểu đồ cột Bar Chart biến động thu - chi)
+app.get('/api/analytics/cashflow', authMiddleware, async (req, res) => {
+  try {
+    const cashflow = await db.getCashflowTrend(req.user.id);
+    res.json({ success: true, trend: cashflow });
+  } catch (err) {
+    console.error('Cashflow error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi tải biểu đồ dòng tiền' });
+  }
+});
+
+// GET /api/budget/rule-50-30-20 (Quy tắc tài chính thông minh 50/30/20)
+app.get('/api/budget/rule-50-30-20', authMiddleware, async (req, res) => {
+  try {
+    const ruleData = await db.getRule503020(req.user.id);
+    res.json({ success: true, rule: ruleData });
+  } catch (err) {
+    console.error('50/30/20 rule error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi tính toán quy tắc ngân sách 50/30/20' });
+  }
+});
+
+// GET /api/jars (Danh sách hũ mục tiêu)
+app.get('/api/jars', authMiddleware, async (req, res) => {
+  try {
+    const jars = await db.getGoalJars(req.user.id);
+    res.json({ success: true, jars });
+  } catch (err) {
+    console.error('Get jars error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi tải danh sách hũ tài chính' });
+  }
+});
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ONLINE',
+    service: 'Đồng Bank API Backend',
+    database: process.env.DATABASE_URL ? 'PostgreSQL Connected' : 'Local Persistent JSON Store',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Start Server
+async function start() {
+  await db.initPg();
+  app.listen(PORT, () => {
+    console.log(`================================================================`);
+    console.log(`🚀 Đồng Bank Server đang chạy trên cổng ${PORT}`);
+    console.log(`🔗 Web Landing Page: http://localhost:${PORT}/index.html`);
+    console.log(`🔗 Web Internet Banking: http://localhost:${PORT}/app.html`);
+    console.log(`📡 API Health Check: http://localhost:${PORT}/api/health`);
+    console.log(`================================================================`);
+  });
+}
+
+start();
