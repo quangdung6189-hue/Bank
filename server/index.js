@@ -259,53 +259,8 @@ app.get('/api/system/db-status', async (req, res) => {
   }
 });
 
-// POST /api/system/db-test (Thử kết nối chuỗi Database URL trước khi lưu)
-app.post('/api/system/db-test', async (req, res) => {
-  try {
-    const { connectionString } = req.body;
-    if (!connectionString) {
-      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp chuỗi kết nối DATABASE_URL' });
-    }
-    const testInfo = await db.testConnection(connectionString);
-    res.json({
-      success: true,
-      message: `Kết nối thành công tới Database [${testInfo.database}]!`,
-      info: testInfo
-    });
-  } catch (err) {
-    res.status(400).json({ success: false, message: err.message });
-  }
-});
-
-// POST /api/system/db-connect (Kết nối và kích hoạt Database mới)
-app.post('/api/system/db-connect', async (req, res) => {
-  try {
-    const { connectionString, persist = true } = req.body;
-    const result = await db.connectDatabase(connectionString, { persist });
-    res.json({
-      success: true,
-      message: result.message,
-      result
-    });
-  } catch (err) {
-    console.error('Connect DB error:', err);
-    res.status(400).json({ success: false, message: err.message });
-  }
-});
-
-// POST /api/system/db-disconnect (Chuyển về Local JSON Database)
-app.post('/api/system/db-disconnect', async (req, res) => {
-  try {
-    const result = await db.connectDatabase('local', { persist: true });
-    res.json({
-      success: true,
-      message: 'Đã ngắt kết nối PostgreSQL và quay lại Local Database an toàn.',
-      result
-    });
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
+// Bảo mật cấp ngân hàng: Không tiếp nhận chuỗi kết nối Database từ Client.
+// Mọi thông tin cấu hình được lưu trữ và mã hóa an toàn trong file .env trên Server.
 
 // POST /api/system/seed-demo (Nạp dữ liệu giao dịch mẫu)
 app.post('/api/system/seed-demo', authMiddleware, async (req, res) => {

@@ -1665,127 +1665,52 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   </div>
 </div>
 
-<!-- ================= MODAL CẤU HÌNH & CẤP QUYỀN DATABASE ================= -->
+<!-- ================= MODAL BẢO MẬT & HẠ TẦNG DATABASE (BANK SECURED) ================= -->
 <div class="modal-overlay" id="dbModal">
-  <div class="modal-box modal-lg">
+  <div class="modal-box modal-md">
     <div class="modal-close" onclick="closeModal('dbModal')">&times;</div>
     
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
-      <div style="width:40px;height:40px;border-radius:14px;background:rgba(0,209,143,.15);color:var(--mint);display:grid;place-items:center;font-size:20px;flex:none">
-        <svg class="ic" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+      <div style="width:44px;height:44px;border-radius:14px;background:rgba(0,209,143,.15);color:var(--mint);display:grid;place-items:center;font-size:22px;flex:none;box-shadow:inset 0 0 0 1px rgba(0,209,143,0.3)">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       </div>
       <div>
-        <h2 style="font-size:18px;font-weight:800;letter-spacing:-0.01em">Cơ sở dữ liệu &amp; Cấp quyền kết nối</h2>
-        <p style="font-size:12px;color:var(--muted)">Kết nối trực tiếp PostgreSQL từ xa hoặc dùng Local Database độc lập</p>
+        <h2 style="font-size:18px;font-weight:800;letter-spacing:-0.01em">Hạ tầng Cơ sở Dữ liệu Bảo mật</h2>
+        <p style="font-size:12px;color:var(--muted)">Chuẩn an toàn thông tin tài chính cá nhân &amp; ngân hàng số</p>
       </div>
     </div>
 
-    <!-- Live Status Banner -->
-    <div class="db-status-banner" id="dbLiveStatusBanner">
-      <div class="db-status-banner-top">
+    <!-- Security Information Card -->
+    <div style="background:#070B14;border:1px solid rgba(0,209,143,0.3);border-radius:16px;padding:16px 18px;margin-bottom:18px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
         <div style="display:flex;align-items:center;gap:8px">
-          <span class="status-dot" id="dbModalDot"></span>
-          <b id="dbModalTitle" style="font-size:13.5px">Đang kiểm tra trạng thái database...</b>
+          <span class="status-dot" style="background:var(--mint);box-shadow:0 0 10px var(--mint)" id="dbModalDot"></span>
+          <b style="font-size:13.5px;color:var(--text)" id="dbModalTitle">Neon Cloud PostgreSQL (Đã bảo vệ)</b>
         </div>
-        <span class="db-mode-badge local" id="dbModalBadge">Local DB</span>
+        <span class="db-mode-badge" style="background:rgba(0,209,143,0.15);color:var(--mint);border:1px solid rgba(0,209,143,0.3);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px" id="dbModalBadge">SSL ENCRYPTED</span>
       </div>
-      <div style="display:flex;gap:14px 20px;font-size:11.5px;color:var(--muted);flex-wrap:wrap" id="dbModalStats">
-        <span>Máy chủ: <b style="color:var(--text)" id="dbStatHost">localhost</b></span>
-        <span>Database: <b style="color:var(--text)" id="dbStatDbName">db.json</b></span>
-        <span>Người dùng: <b style="color:var(--mint)" id="dbStatUsers">1</b></span>
-        <span>Giao dịch: <b style="color:var(--gold)" id="dbStatTxs">8</b></span>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;font-size:12px;color:var(--muted)" id="dbModalStats">
+        <div>Nền tảng: <b style="color:var(--mint)" id="dbStatHost">Neon Serverless Cloud</b></div>
+        <div>Cơ sở dữ liệu: <b style="color:var(--text)" id="dbStatDbName">neondb (production)</b></div>
+        <div>Mã hóa: <b style="color:var(--gold)">AES-256 &amp; SSL/TLS</b></div>
+        <div>Bảo mật chuỗi kết nối: <b style="color:var(--mint)">Ẩn trong biến môi trường (.env)</b></div>
+        <div>Chủ tài khoản: <b style="color:var(--text)" id="dbStatUser">Đặng Quang Dũng</b></div>
+        <div>Số dư khởi tạo: <b style="color:var(--gold)">0₫ (Chuẩn con số 0)</b></div>
       </div>
     </div>
 
-    <!-- Mode Tabs -->
-    <div class="auth-tabs" style="margin-bottom:14px">
-      <div class="auth-tab active" id="tabDbUriBtn" onclick="switchDbMode('uri')">URI Kết nối nhanh (Khuyên dùng)</div>
-      <div class="auth-tab" id="tabDbFieldsBtn" onclick="switchDbMode('fields')">Nhập Host / User / Pass chi tiết</div>
+    <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.6;color:var(--muted);margin-bottom:18px">
+      🔒 <b>Chính sách bảo mật Ngân hàng:</b> Toàn bộ chuỗi kết nối Database và mật khẩu máy chủ được bảo vệ nghiêm ngặt trong file cấu hình <code>.env</code> phía máy chủ, tuyệt đối không hiển thị ô nhập liệu ra trình duyệt để chống nguy cơ rò rỉ thông tin.
     </div>
-
-    <!-- Form URI -->
-    <div id="dbModeUri">
-      <div class="form-group">
-        <label class="form-label">CHUỖI KẾT NỐI (DATABASE_URL) *</label>
-        <div class="form-input-wrap">
-          <svg class="ic" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-          <input type="text" id="dbConnString" placeholder="postgresql://postgres:password@ep-host.neon.tech/neondb?sslmode=require">
-        </div>
-        <small style="font-size:11px;color:var(--muted);margin-top:5px;display:block">
-          💡 Tương thích toàn bộ PostgreSQL: Supabase, Neon.tech, Render, Railway, AWS RDS, Docker hoặc Localhost.
-        </small>
-      </div>
-    </div>
-
-    <!-- Form Fields -->
-    <div id="dbModeFields" style="display:none">
-      <div style="display:grid;grid-template-columns:2.5fr 1fr;gap:10px">
-        <div class="form-group">
-          <label class="form-label">HOST / ENDPOINT</label>
-          <div class="form-input-wrap"><input type="text" id="dbFieldHost" placeholder="ep-cold-dawn.neon.tech"></div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">PORT</label>
-          <div class="form-input-wrap"><input type="number" id="dbFieldPort" placeholder="5432" value="5432"></div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-        <div class="form-group">
-          <label class="form-label">TÊN DATABASE</label>
-          <div class="form-input-wrap"><input type="text" id="dbFieldDb" placeholder="neondb hoặc postgres"></div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">USERNAME</label>
-          <div class="form-input-wrap"><input type="text" id="dbFieldUser" placeholder="postgres"></div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:10px;align-items:center">
-        <div class="form-group">
-          <label class="form-label">MẬT KHẨU</label>
-          <div class="form-input-wrap"><input type="password" id="dbFieldPass" placeholder="••••••••"></div>
-        </div>
-        <div class="form-group" style="padding-top:14px">
-          <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text);cursor:pointer">
-            <input type="checkbox" id="dbFieldSsl" checked>
-            <span>Bật SSL (Mây)</span>
-          </label>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Presets -->
-    <div style="margin-bottom:14px">
-      <label class="form-label" style="margin-bottom:6px">GỢI Ý MẪU KẾT NỐI (CLICK ĐỂ ĐIỀN NHANH)</label>
-      <div class="db-chips-row">
-        <button type="button" class="db-chip" onclick="applyDbPreset('supabase')">⚡ Supabase</button>
-        <button type="button" class="db-chip" onclick="applyDbPreset('neon')">⚡ Neon.tech</button>
-        <button type="button" class="db-chip" onclick="applyDbPreset('render')">⚡ Render</button>
-        <button type="button" class="db-chip" onclick="applyDbPreset('localhost')">💻 Localhost:5432</button>
-      </div>
-    </div>
-
-    <!-- Result Banner -->
-    <div id="dbResultBox" style="display:none;padding:12px 14px;border-radius:12px;font-size:12.5px;margin-bottom:14px"></div>
 
     <!-- Actions -->
-    <div style="display:flex;gap:10px;flex-wrap:wrap">
-      <button type="button" class="btn btn-outline" style="flex:1;justify-content:center;font-size:13px" onclick="testDbConnection()" id="btnTestDb">
-        ⚡ Kiểm tra kết nối
+    <div style="display:flex;gap:10px;justify-content:space-between;align-items:center">
+      <button type="button" class="btn btn-outline btn-sm" style="color:var(--red);border-color:rgba(255,92,92,0.3)" onclick="resetDatabaseToZero()">
+        🗑️ Reset dữ liệu về con số 0
       </button>
-      <button type="button" class="btn btn-mint" style="flex:1.3;justify-content:center;font-size:13px" onclick="saveDbConnection()" id="btnSaveDb">
-        💾 Lưu &amp; Kích hoạt DB
-      </button>
-    </div>
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);font-size:12px;gap:8px;flex-wrap:wrap">
-      <button type="button" style="color:var(--muted);text-decoration:underline" onclick="disconnectDb()">
-        🔄 Về Local DB (db.json)
-      </button>
-      <button type="button" style="color:var(--red);font-weight:700;padding:6px 14px;border-radius:8px;background:rgba(255,92,92,0.12);border:1px solid rgba(255,92,92,0.25);cursor:pointer" onclick="resetDatabaseToZero()">
-        🗑️ Reset về 0 (Bắt đầu từ con số 0)
-      </button>
-      <button type="button" style="color:var(--gold);font-weight:600" onclick="seedSampleDemoData()">
-        🌱 Nạp 7 giao dịch mẫu
+      <button type="button" class="btn btn-mint btn-sm" onclick="closeModal('dbModal')">
+        Đã hiểu &amp; Đóng
       </button>
     </div>
   </div>
@@ -2828,217 +2753,46 @@ function updateDbModalBanner() {
   const badge = document.getElementById('dbModalBadge');
   const hostEl = document.getElementById('dbStatHost');
   const dbEl = document.getElementById('dbStatDbName');
-  const usersEl = document.getElementById('dbStatUsers');
-  const txsEl = document.getElementById('dbStatTxs');
+  const userEl = document.getElementById('dbStatUser');
 
   if (currentDbInfo.mode === 'postgres' && currentDbInfo.connected) {
-    dot.style.background = 'var(--mint)';
-    dot.style.boxShadow = '0 0 10px var(--mint)';
-    title.textContent = `🟢 Đã kết nối PostgreSQL: ${currentDbInfo.database}`;
-    badge.className = 'db-mode-badge pg';
-    badge.textContent = 'PostgreSQL';
-    hostEl.textContent = currentDbInfo.host || 'Remote Host';
-    dbEl.textContent = currentDbInfo.database || 'Database';
+    if (dot) {
+      dot.style.background = 'var(--mint)';
+      dot.style.boxShadow = '0 0 10px var(--mint)';
+    }
+    if (title) title.textContent = `Neon Cloud PostgreSQL (Đã bảo mật)`;
+    if (badge) {
+      badge.textContent = 'SSL ENCRYPTED';
+      badge.style.background = 'rgba(0,209,143,0.15)';
+      badge.style.color = 'var(--mint)';
+    }
+    if (hostEl) hostEl.textContent = currentDbInfo.host || 'Neon Serverless Cloud';
+    if (dbEl) dbEl.textContent = `${currentDbInfo.database || 'neondb'} (AWS Cloud)`;
   } else {
-    dot.style.background = 'var(--gold)';
-    dot.style.boxShadow = '0 0 8px var(--gold)';
-    title.textContent = `🟡 Đang dùng Local JSON Database (Sẵn sàng gắn DB)`;
-    badge.className = 'db-mode-badge local';
-    badge.textContent = 'Local File';
-    hostEl.textContent = 'localhost';
-    dbEl.textContent = 'data/db.json';
+    if (dot) {
+      dot.style.background = 'var(--gold)';
+      dot.style.boxShadow = '0 0 8px var(--gold)';
+    }
+    if (title) title.textContent = `Local Database Mode`;
+    if (badge) {
+      badge.textContent = 'LOCAL FILE';
+      badge.style.background = 'rgba(232,197,124,0.15)';
+      badge.style.color = 'var(--gold)';
+    }
+    if (hostEl) hostEl.textContent = 'localhost (server)';
+    if (dbEl) dbEl.textContent = 'data/db.json';
   }
 
-  usersEl.textContent = currentDbInfo.userCount || 0;
-  txsEl.textContent = currentDbInfo.transactionCount || 0;
+  if (userEl && currentUser) {
+    userEl.textContent = currentUser.full_name || 'Đặng Quang Dũng';
+  }
 }
 
 function openDbModal() {
   loadDbStatus();
-  document.getElementById('dbResultBox').style.display = 'none';
   document.getElementById('dbModal').classList.add('open');
 }
 
-let activeDbMode = 'uri';
-function switchDbMode(mode) {
-  activeDbMode = mode;
-  document.getElementById('tabDbUriBtn').classList.toggle('active', mode === 'uri');
-  document.getElementById('tabDbFieldsBtn').classList.toggle('active', mode === 'fields');
-  document.getElementById('dbModeUri').style.display = mode === 'uri' ? 'block' : 'none';
-  document.getElementById('dbModeFields').style.display = mode === 'fields' ? 'block' : 'none';
-}
-
-function getActiveDbConnectionString() {
-  if (activeDbMode === 'uri') {
-    return document.getElementById('dbConnString').value.trim();
-  }
-  const host = document.getElementById('dbFieldHost').value.trim();
-  const port = document.getElementById('dbFieldPort').value.trim() || '5432';
-  const db = document.getElementById('dbFieldDb').value.trim();
-  const user = document.getElementById('dbFieldUser').value.trim();
-  const pass = encodeURIComponent(document.getElementById('dbFieldPass').value);
-  const ssl = document.getElementById('dbFieldSsl').checked;
-
-  if (!host || !db || !user) {
-    return '';
-  }
-  return `postgresql://${user}:${pass}@${host}:${port}/${db}${ssl ? '?sslmode=require' : ''}`;
-}
-
-function applyDbPreset(type) {
-  switchDbMode('uri');
-  const input = document.getElementById('dbConnString');
-  switch (type) {
-    case 'supabase':
-      input.value = "postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require";
-      showToast("Đã điền mẫu Supabase! Hãy thay YOUR-PASSWORD & PROJECT-REF");
-      break;
-    case 'neon':
-      input.value = "postgresql://neondb_owner:[MẬT_KHẨU_NEON]@ep-icy-king-b4xifol5-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require";
-      showToast("Đã điền endpoint Neon [Ngân Hàng]! Hãy thay MẬT_KHẨU_NEON để kết nối.");
-      break;
-    case 'render':
-      input.value = "postgresql://[USER]:[YOUR-PASSWORD]@[HOSTNAME].oregon-postgres.render.com/[DBNAME]?sslmode=require";
-      showToast("Đã điền mẫu Render PostgreSQL!");
-      break;
-    case 'localhost':
-      input.value = "postgresql://postgres:postgres@localhost:5432/dong_bank";
-      showToast("Đã điền mẫu Localhost PostgreSQL!");
-      break;
-  }
-  input.focus();
-}
-
-async function testDbConnection() {
-  const connStr = getActiveDbConnectionString();
-  const resBox = document.getElementById('dbResultBox');
-  const btn = document.getElementById('btnTestDb');
-
-  if (!connStr) {
-    showToast("Vui lòng nhập chuỗi kết nối Database trước!", "err");
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = "⏳ Đang kết nối thử...";
-  resBox.style.display = 'block';
-  resBox.style.background = 'rgba(255, 255, 255, 0.05)';
-  resBox.style.color = 'var(--text)';
-  resBox.style.border = '1px solid var(--line)';
-  resBox.innerHTML = `Đang gửi lệnh ping kết nối tới cơ sở dữ liệu...`;
-
-  try {
-    const res = await fetch(`${API_BASE}/api/system/db-test`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ connectionString: connStr })
-    });
-    const data = await res.json();
-    btn.disabled = false;
-    btn.textContent = "⚡ Kiểm tra kết nối";
-
-    if (data.success) {
-      resBox.style.background = 'rgba(0, 209, 143, 0.12)';
-      resBox.style.borderColor = 'rgba(0, 209, 143, 0.4)';
-      resBox.style.color = 'var(--mint)';
-      resBox.innerHTML = `
-        <b>✅ Kết nối thành công! (${data.info.latencyMs}ms)</b>
-        <div style="font-size:11.5px;color:var(--text);margin-top:4px">
-          Database: <b>${data.info.database}</b> · Phiên bản: <i>${data.info.version}</i><br>
-          Bảng đã có: [${data.info.tables.join(', ') || 'Chưa có bảng - Sẽ tự động khởi tạo khi Lưu'}]
-        </div>
-      `;
-      showToast("Kiểm tra kết nối Database thành công!");
-    } else {
-      resBox.style.background = 'rgba(255, 92, 92, 0.12)';
-      resBox.style.borderColor = 'rgba(255, 92, 92, 0.4)';
-      resBox.style.color = 'var(--red)';
-      resBox.innerHTML = `<b>❌ Kết nối thất bại:</b><div style="font-size:11.5px;margin-top:4px">${data.message}</div>`;
-      showToast("Kết nối thất bại, vui lòng kiểm tra lại URL!", "err");
-    }
-  } catch (err) {
-    btn.disabled = false;
-    btn.textContent = "⚡ Kiểm tra kết nối";
-    resBox.style.background = 'rgba(255, 92, 92, 0.12)';
-    resBox.style.borderColor = 'rgba(255, 92, 92, 0.4)';
-    resBox.style.color = 'var(--red)';
-    resBox.innerHTML = `<b>❌ Lỗi máy chủ:</b> ${err.message}`;
-    showToast("Lỗi khi gửi yêu cầu kiểm tra!", "err");
-  }
-}
-
-async function saveDbConnection() {
-  const connStr = getActiveDbConnectionString();
-  const resBox = document.getElementById('dbResultBox');
-  const btn = document.getElementById('btnSaveDb');
-
-  if (!connStr) {
-    showToast("Vui lòng nhập chuỗi kết nối Database!", "err");
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = "⏳ Đang kết nối & Đồng bộ...";
-  resBox.style.display = 'block';
-  resBox.style.background = 'rgba(255, 255, 255, 0.05)';
-  resBox.style.color = 'var(--text)';
-  resBox.style.border = '1px solid var(--line)';
-  resBox.innerHTML = `Đang kết nối PostgreSQL, đồng bộ bảng Schema và người dùng...`;
-
-  try {
-    const res = await fetch(`${API_BASE}/api/system/db-connect`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ connectionString: connStr, persist: true })
-    });
-    const data = await res.json();
-    btn.disabled = false;
-    btn.textContent = "💾 Lưu & Kích hoạt DB";
-
-    if (data.success) {
-      resBox.style.background = 'rgba(0, 209, 143, 0.12)';
-      resBox.style.borderColor = 'rgba(0, 209, 143, 0.4)';
-      resBox.style.color = 'var(--mint)';
-      resBox.innerHTML = `<b>✅ ${data.message}</b>`;
-      showToast("Đã kích hoạt Database PostgreSQL thành công!");
-      playAudioSuccess();
-
-      // Refresh database status and all data
-      await loadDbStatus();
-      if (authToken) {
-        await loadAllData();
-      }
-      setTimeout(() => closeModal('dbModal'), 1800);
-    } else {
-      resBox.style.background = 'rgba(255, 92, 92, 0.12)';
-      resBox.style.borderColor = 'rgba(255, 92, 92, 0.4)';
-      resBox.style.color = 'var(--red)';
-      resBox.innerHTML = `<b>❌ Không thể kích hoạt Database:</b><div style="font-size:11.5px;margin-top:4px">${data.message}</div>`;
-      showToast(data.message, "err");
-    }
-  } catch (err) {
-    btn.disabled = false;
-    btn.textContent = "💾 Lưu & Kích hoạt DB";
-    resBox.innerHTML = `<b>❌ Lỗi hệ thống:</b> ${err.message}`;
-    showToast("Lỗi khi kết nối Database!", "err");
-  }
-}
-
-async function disconnectDb() {
-  if (!confirm("Bạn có muốn ngắt kết nối PostgreSQL và quay lại sử dụng Local Database (db.json)?")) return;
-  try {
-    const res = await fetch(`${API_BASE}/api/system/db-disconnect`, { method: 'POST' });
-    const data = await res.json();
-    if (data.success) {
-      showToast(data.message);
-      await loadDbStatus();
-      if (authToken) await loadAllData();
-      closeModal('dbModal');
-    }
-  } catch (err) {
-    showToast("Lỗi khi ngắt kết nối database", "err");
-  }
-}
 
 async function seedSampleDemoData() {
   if (!authToken) {

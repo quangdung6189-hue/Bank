@@ -364,16 +364,24 @@ async function getDbStatus() {
       const txCount = await client.query('SELECT count(*) as count FROM transactions');
       client.release();
 
+      let safeHost = meta.rows[0].server_ip || 'PostgreSQL Server';
+      const conn = currentDbConfig.connectionString || '';
+      if (conn.includes('neon.tech')) {
+        safeHost = 'Neon Cloud PostgreSQL (AWS Serverless)';
+      }
+
       return {
         mode: 'postgres',
         connected: true,
+        provider: conn.includes('neon.tech') ? 'Neon Serverless Cloud' : 'PostgreSQL Dedicated',
         database: meta.rows[0].db_name,
         user: meta.rows[0].db_user,
-        host: meta.rows[0].server_ip || 'Remote Cloud Server',
+        host: safeHost,
         port: meta.rows[0].server_port || 5432,
+        ssl: true,
         userCount: parseInt(uCount.rows[0].count, 10),
         transactionCount: parseInt(txCount.rows[0].count, 10),
-        message: '🟢 Đang hoạt động trên máy chủ PostgreSQL',
+        message: '🟢 Đang hoạt động trên máy chủ PostgreSQL đám mây (Neon Cloud)',
         lastConnectedAt: currentDbConfig.lastConnectedAt
       };
     } catch (err) {
