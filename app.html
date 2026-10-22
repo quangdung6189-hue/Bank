@@ -1073,7 +1073,7 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
         </svg>
         <span style="font-weight:800;font-size:22px">Đồng Bank</span>
       </div>
-      <p style="font-size:13px;color:var(--muted)">Đăng nhập Internet Banking để kết nối cơ sở dữ liệu</p>
+      <p style="font-size:13px;color:var(--muted)">Hệ thống Ngân hàng Số &amp; Quản lý Tài chính Cá nhân</p>
     </div>
 
     <div class="auth-tabs">
@@ -1181,13 +1181,6 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
         <span>Quy tắc 50/30/20</span>
         <span class="nav-badge violet">Chuẩn</span>
       </div>
-
-      <span class="sb-group-title">Cơ sở dữ liệu</span>
-      <div class="nav-item" onclick="openDbModal()">
-        <svg class="ic" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
-        <span>Cấp quyền Database</span>
-        <span class="nav-badge gold" id="sbDbBadge">Local</span>
-      </div>
     </nav>
 
     <div class="sb-footer">
@@ -1202,6 +1195,9 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
         <a href="index.html" class="btn btn-outline btn-sm" style="flex:1;justify-content:center" title="Về trang chủ">Trang chủ</a>
         <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:rgba(255,92,92,.3)" onclick="handleLogout()" title="Đăng xuất">Thoát</button>
       </div>
+      <button type="button" onclick="resetDatabaseToZero()" style="width:100%;margin-top:8px;padding:4px 0;background:transparent;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-align:center;text-decoration:underline;opacity:0.7">
+        Làm mới số dư về 0₫
+      </button>
     </div>
   </aside>
 
@@ -1221,9 +1217,9 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
       </div>
 
       <div class="tb-right">
-        <div class="status-pill clickable" id="dbStatusBadge" onclick="openDbModal()" title="Nhấp để cấu hình và cấp quyền Database">
-          <span class="status-dot"></span>
-          <span id="dbStatusText">Database Online</span>
+        <div class="status-pill" style="cursor:default" title="Hệ thống ngân hàng mã hóa bảo mật SSL 256-bit">
+          <span class="status-dot" style="background:var(--mint);box-shadow:0 0 8px var(--mint)"></span>
+          <span>Bảo mật SSL 256-bit</span>
         </div>
         <button class="btn btn-mint btn-sm" onclick="openNewTxModal()">
           <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
@@ -1240,7 +1236,7 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
         <div class="sec-title">
           <div>
             <h1>Tổng quan dòng tiền, <span id="helloUserName">Đặng Quang Dũng</span></h1>
-            <p>Dữ liệu được đồng bộ trực tiếp từ cơ sở dữ liệu thời gian thực.</p>
+            <p>Dữ liệu tài chính được bảo mật và mã hóa thời gian thực.</p>
           </div>
           <button class="btn btn-mint btn-sm" onclick="openNewTxModal()">
             <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
@@ -1600,7 +1596,7 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   <div class="modal-box">
     <span class="modal-close" onclick="closeModal('newTxModal')">&times;</span>
     <h3 style="margin-bottom:6px">Nhập liệu Thu / Chi mới</h3>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:20px">Ghi chép giao dịch lưu trữ trực tiếp vào cơ sở dữ liệu</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:20px">Ghi chép giao dịch tài chính an toàn &amp; bảo mật</p>
 
     <form id="formAddTx" onsubmit="handleCreateTransaction(event)">
       <!-- Tab Chọn Loại (Thu / Chi) -->
@@ -1665,56 +1661,7 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   </div>
 </div>
 
-<!-- ================= MODAL BẢO MẬT & HẠ TẦNG DATABASE (BANK SECURED) ================= -->
-<div class="modal-overlay" id="dbModal">
-  <div class="modal-box modal-md">
-    <div class="modal-close" onclick="closeModal('dbModal')">&times;</div>
-    
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-      <div style="width:44px;height:44px;border-radius:14px;background:rgba(0,209,143,.15);color:var(--mint);display:grid;place-items:center;font-size:22px;flex:none;box-shadow:inset 0 0 0 1px rgba(0,209,143,0.3)">
-        <svg class="ic" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      </div>
-      <div>
-        <h2 style="font-size:18px;font-weight:800;letter-spacing:-0.01em">Hạ tầng Cơ sở Dữ liệu Bảo mật</h2>
-        <p style="font-size:12px;color:var(--muted)">Chuẩn an toàn thông tin tài chính cá nhân &amp; ngân hàng số</p>
-      </div>
-    </div>
 
-    <!-- Security Information Card -->
-    <div style="background:#070B14;border:1px solid rgba(0,209,143,0.3);border-radius:16px;padding:16px 18px;margin-bottom:18px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span class="status-dot" style="background:var(--mint);box-shadow:0 0 10px var(--mint)" id="dbModalDot"></span>
-          <b style="font-size:13.5px;color:var(--text)" id="dbModalTitle">Neon Cloud PostgreSQL (Đã bảo vệ)</b>
-        </div>
-        <span class="db-mode-badge" style="background:rgba(0,209,143,0.15);color:var(--mint);border:1px solid rgba(0,209,143,0.3);font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px" id="dbModalBadge">SSL ENCRYPTED</span>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;font-size:12px;color:var(--muted)" id="dbModalStats">
-        <div>Nền tảng: <b style="color:var(--mint)" id="dbStatHost">Neon Serverless Cloud</b></div>
-        <div>Cơ sở dữ liệu: <b style="color:var(--text)" id="dbStatDbName">neondb (production)</b></div>
-        <div>Mã hóa: <b style="color:var(--gold)">AES-256 &amp; SSL/TLS</b></div>
-        <div>Bảo mật chuỗi kết nối: <b style="color:var(--mint)">Ẩn trong biến môi trường (.env)</b></div>
-        <div>Chủ tài khoản: <b style="color:var(--text)" id="dbStatUser">Đặng Quang Dũng</b></div>
-        <div>Số dư khởi tạo: <b style="color:var(--gold)">0₫ (Chuẩn con số 0)</b></div>
-      </div>
-    </div>
-
-    <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:12px;line-height:1.6;color:var(--muted);margin-bottom:18px">
-      🔒 <b>Chính sách bảo mật Ngân hàng:</b> Toàn bộ chuỗi kết nối Database và mật khẩu máy chủ được bảo vệ nghiêm ngặt trong file cấu hình <code>.env</code> phía máy chủ, tuyệt đối không hiển thị ô nhập liệu ra trình duyệt để chống nguy cơ rò rỉ thông tin.
-    </div>
-
-    <!-- Actions -->
-    <div style="display:flex;gap:10px;justify-content:space-between;align-items:center">
-      <button type="button" class="btn btn-outline btn-sm" style="color:var(--red);border-color:rgba(255,92,92,0.3)" onclick="resetDatabaseToZero()">
-        🗑️ Reset dữ liệu về con số 0
-      </button>
-      <button type="button" class="btn btn-mint btn-sm" onclick="closeModal('dbModal')">
-        Đã hiểu &amp; Đóng
-      </button>
-    </div>
-  </div>
-</div>
 
 <!-- TOAST CONTAINER -->
 <div id="toastBox"></div>
@@ -2047,7 +1994,7 @@ async function handleCreateTransaction(e) {
     document.getElementById('txNote').value = '';
     document.getElementById('txAmountWords').textContent = "Bằng chữ: 0 đồng";
 
-    showToast("Đã ghi nhận giao dịch vào cơ sở dữ liệu!");
+    showToast("Đã ghi nhận giao dịch thành công!");
     playAudioSuccess();
 
     if (data.newBalance !== undefined && currentUser) {
@@ -2714,83 +2661,9 @@ async function loadDbStatus() {
     if (!data.success) return;
     currentDbInfo = data.status;
 
-    const badge = document.getElementById('dbStatusBadge');
-    const badgeText = document.getElementById('dbStatusText');
-    const sbBadge = document.getElementById('sbDbBadge');
-
-    if (currentDbInfo.mode === 'postgres' && currentDbInfo.connected) {
-      badge.className = 'status-pill clickable';
-      badge.style.borderColor = 'rgba(0, 209, 143, 0.4)';
-      badge.querySelector('.status-dot').style.background = 'var(--mint)';
-      badge.querySelector('.status-dot').style.boxShadow = '0 0 10px var(--mint)';
-      badgeText.textContent = `PG: ${currentDbInfo.database}`;
-      if (sbBadge) {
-        sbBadge.textContent = 'Postgres';
-        sbBadge.className = 'nav-badge mint';
-      }
-    } else {
-      badge.className = 'status-pill clickable';
-      badge.style.borderColor = 'rgba(232, 197, 124, 0.4)';
-      badge.querySelector('.status-dot').style.background = 'var(--gold)';
-      badge.querySelector('.status-dot').style.boxShadow = '0 0 8px var(--gold)';
-      badgeText.textContent = `Local DB`;
-      if (sbBadge) {
-        sbBadge.textContent = 'Local';
-        sbBadge.className = 'nav-badge gold';
-      }
-    }
-
-    updateDbModalBanner();
   } catch (err) {
     console.warn("loadDbStatus err:", err);
   }
-}
-
-function updateDbModalBanner() {
-  if (!currentDbInfo) return;
-  const dot = document.getElementById('dbModalDot');
-  const title = document.getElementById('dbModalTitle');
-  const badge = document.getElementById('dbModalBadge');
-  const hostEl = document.getElementById('dbStatHost');
-  const dbEl = document.getElementById('dbStatDbName');
-  const userEl = document.getElementById('dbStatUser');
-
-  if (currentDbInfo.mode === 'postgres' && currentDbInfo.connected) {
-    if (dot) {
-      dot.style.background = 'var(--mint)';
-      dot.style.boxShadow = '0 0 10px var(--mint)';
-    }
-    if (title) title.textContent = `Neon Cloud PostgreSQL (Đã bảo mật)`;
-    if (badge) {
-      badge.textContent = 'SSL ENCRYPTED';
-      badge.style.background = 'rgba(0,209,143,0.15)';
-      badge.style.color = 'var(--mint)';
-    }
-    if (hostEl) hostEl.textContent = currentDbInfo.host || 'Neon Serverless Cloud';
-    if (dbEl) dbEl.textContent = `${currentDbInfo.database || 'neondb'} (AWS Cloud)`;
-  } else {
-    if (dot) {
-      dot.style.background = 'var(--gold)';
-      dot.style.boxShadow = '0 0 8px var(--gold)';
-    }
-    if (title) title.textContent = `Local Database Mode`;
-    if (badge) {
-      badge.textContent = 'LOCAL FILE';
-      badge.style.background = 'rgba(232,197,124,0.15)';
-      badge.style.color = 'var(--gold)';
-    }
-    if (hostEl) hostEl.textContent = 'localhost (server)';
-    if (dbEl) dbEl.textContent = 'data/db.json';
-  }
-
-  if (userEl && currentUser) {
-    userEl.textContent = currentUser.full_name || 'Đặng Quang Dũng';
-  }
-}
-
-function openDbModal() {
-  loadDbStatus();
-  document.getElementById('dbModal').classList.add('open');
 }
 
 
@@ -2819,7 +2692,7 @@ async function seedSampleDemoData() {
 }
 
 async function resetDatabaseToZero() {
-  if (!confirm("Bạn có chắc chắn muốn reset toàn bộ cơ sở dữ liệu về mặc định (Xóa hết giao dịch, số dư về 0₫, thống kê bắt đầu từ con số 0)?")) return;
+  if (!confirm("Bạn có chắc chắn muốn làm mới toàn bộ dữ liệu tài chính (Xóa hết giao dịch, số dư về 0₫, bắt đầu từ con số 0)?")) return;
   try {
     const res = await fetch(`${API_BASE}/api/system/db-reset`, {
       method: 'POST',
@@ -2832,9 +2705,7 @@ async function resetDatabaseToZero() {
     if (data.success) {
       showToast(data.message || "Đã reset về mặc định không dữ liệu. Bắt đầu từ con số 0!");
       playAudioSuccess();
-      await loadDbStatus();
       if (authToken) await loadAllData();
-      closeModal('dbModal');
     } else {
       showToast(data.message || "Lỗi reset dữ liệu", "err");
     }
@@ -2890,7 +2761,10 @@ function copyStk() {
 }
 
 // Modal Helpers
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
 
 // Audio effects via Web Audio API
 let audioCtx = null;
