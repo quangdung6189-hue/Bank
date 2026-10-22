@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đồng — Tiền của bạn, dưới tầm mắt</title>
+<meta name="description" content="Ứng dụng quản lý chi tiêu & tài sản cá nhân: phản hồi dưới 0,5s, báo cáo 1,5s, offline-first, RAM dưới 100MB và trợ lý AI ra lệnh bằng giọng nói.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%230B9C6D'/%3E%3Cstop offset='1' stop-color='%2300D18F'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='48' height='48' rx='13' fill='url(%23g)'/%3E%3Crect x='4.5' y='4.5' width='39' height='39' rx='10.5' fill='none' stroke='%23E8C57C' stroke-width='1.6' opacity='.85'/%3E%3Cg fill='none' stroke='%23052019' stroke-width='4.2' stroke-linecap='round'%3E%3Cpath d='M18 14v20'/%3E%3Cpath d='M18 14h5a10 10 0 0 1 0 20h-5'/%3E%3Cpath d='M10 24h22'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ NỀN TẢNG — BẢNG MÀU NGÂN HÀNG CAO CẤP ============ */
+:root{
+  --bg:#04060C; --card:#0B111E; --line:rgba(255,255,255,.08);
+  --mint:#00D18F;            /* jade emerald — màu chủ thương hiệu */
+  --gold:#E8C57C;            /* champagne gold — điểm nhấn sang trọng */
+  --cyan:#3ED6C4;            /* teal dịu */
+  --violet:#9B8CFF;          /* violet pastel — dùng tiết chế */
+  --amber:#FFB454; --red:#FF5C5C; --blue:#8FB8FF; --pink:#F08FD0;
+  --text:#F2F5FA; --muted:#8A93A6;
+  --grad:linear-gradient(100deg,#00D18F 5%,#6FE3C1 45%,#E8C57C 100%);
+  --font-num:'Space Grotesk','Be Vietnam Pro',sans-serif; /* CHỈ cho chữ số */
+  --pw:330px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Be Vietnam Pro',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--mint);color:#04120C}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-thumb{background:#1B2336;border-radius:99px;border:2px solid var(--bg)}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:inherit}
+img,svg{display:block}
+.ic{width:1em;height:1em;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+#gl{position:fixed;inset:0;z-index:0;pointer-events:none}
+main{position:relative;z-index:1}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+section{padding:clamp(90px,12vh,150px) 0}
+.rule{height:1px;background:linear-gradient(90deg,transparent,rgba(232,197,124,.22),rgba(255,255,255,.14),transparent)}
+.w{display:inline-block;overflow:hidden;vertical-align:top;padding-bottom:.08em;margin-bottom:-.08em}
+.wi{display:inline-block;will-change:transform}
+.em-ch,.hl-line em,.sec-head h2 em,#cta h2 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cur{font-style:normal;font-family:'Be Vietnam Pro';font-weight:600}
+[v-cloak]{display:none}
+
+/* ============ NAV ============ */
+#nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .4s,border-color .4s,backdrop-filter .4s;border-bottom:1px solid transparent}
+#nav .n-in{max-width:1200px;margin:0 auto;padding:0 24px;height:72px;display:flex;align-items:center;gap:36px}
+#nav.scrolled{background:rgba(4,6,12,.66);backdrop-filter:blur(14px) saturate(1.3);border-color:var(--line)}
+.logo{display:flex;align-items:center;gap:11px;font-weight:800;font-size:20px;letter-spacing:-.02em}
+.lmark{width:32px;height:32px;flex:none;filter:drop-shadow(0 6px 18px rgba(0,209,143,.35)) drop-shadow(0 3px 10px rgba(232,197,124,.22));transition:transform .35s}
+.logo:hover .lmark{transform:rotate(-8deg) scale(1.07)}
+.n-links{display:flex;gap:28px;margin-left:auto}
+.n-links a{font-size:14px;color:var(--muted);transition:color .25s}
+.n-links a:hover{color:var(--text)}
+.n-cta{font-size:13.5px;font-weight:700;padding:10px 20px;border-radius:99px;background:linear-gradient(135deg,var(--mint),#0BA579);color:#04120C;transition:filter .25s,box-shadow .25s}
+.n-cta:hover{filter:brightness(1.1);box-shadow:0 8px 26px -10px rgba(0,209,143,.6)}
+#menuBtn{display:none;margin-left:auto;width:42px;height:42px;border:1px solid var(--line);border-radius:12px;position:relative}
+#menuBtn span{position:absolute;left:11px;right:11px;height:2px;background:var(--text);border-radius:2px;transition:.35s}
+#menuBtn span:nth-child(1){top:15px}#menuBtn span:nth-child(2){top:24px}
+body.m-open #menuBtn span:nth-child(1){top:19px;transform:rotate(45deg)}
+body.m-open #menuBtn span:nth-child(2){top:19px;transform:rotate(-45deg)}
+#mmenu{position:fixed;inset:0;z-index:45;background:rgba(4,6,12,.96);backdrop-filter:blur(18px);display:flex;flex-direction:column;justify-content:center;padding:0 32px;gap:8px;opacity:0;visibility:hidden;transition:.45s}
+body.m-open #mmenu{opacity:1;visibility:visible}
+#mmenu .mm-logo{display:flex;align-items:center;gap:12px;font-weight:800;font-size:24px;margin-bottom:26px}
+#mmenu a{font-size:clamp(30px,8vw,44px);font-weight:800;padding:10px 0;border-bottom:1px solid var(--line);transform:translateY(24px);opacity:0;transition:.5s}
+body.m-open #mmenu a{transform:none;opacity:1}
+#mmenu a:nth-child(3){transition-delay:.05s}#mmenu a:nth-child(4){transition-delay:.1s}
+#mmenu a:nth-child(5){transition-delay:.15s}#mmenu a:nth-child(6){transition-delay:.2s}
+
+/* ============ PRELOADER ============ */
+#preloader{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;clip-path:inset(0 0 0 0)}
+.pl-mid{display:flex;flex-direction:column;align-items:center;gap:24px}
+.pl-mark{width:112px;height:112px;filter:drop-shadow(0 18px 60px rgba(0,209,143,.4))}
+.pl-p{fill:none;stroke:#052019;stroke-width:4.2;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.pl-word-clip{overflow:hidden;padding:0 .1em}
+.pl-word{font-size:46px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.pl-sub{position:absolute;bottom:26vh;font-weight:600;font-size:11px;letter-spacing:.34em;color:var(--muted)}
+#plPct{position:absolute;right:6vw;bottom:5vh;font-family:var(--font-num);font-size:clamp(44px,8vw,88px);font-weight:700;color:rgba(242,245,250,.9)}
+.pl-bar{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(255,255,255,.06)}
+.pl-bar i{position:absolute;inset:0;background:var(--grad);transform:scaleX(0);transform-origin:left}
+
+/* ============ KICKER / HEAD ============ */
+.kicker{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:11.5px;letter-spacing:.24em;color:var(--muted);text-transform:uppercase}
+.kicker .dot{width:8px;height:8px;background:linear-gradient(135deg,var(--mint),var(--gold));border-radius:3px;flex:none}
+.sec-head{max-width:760px;margin-bottom:56px}
+.sec-head h2{font-size:clamp(32px,4.6vw,54px);font-weight:800;letter-spacing:-.025em;line-height:1.08;margin:18px 0 16px}
+.sec-head .sub{font-size:16.5px;line-height:1.7;color:var(--muted);max-width:560px}
+
+/* ============ NÚT ============ */
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 28px;border-radius:999px;font-weight:700;font-size:15px;transition:box-shadow .3s,filter .3s;will-change:transform}
+.btn-mint{background:linear-gradient(135deg,var(--mint),#0BA579);color:#04120C;box-shadow:0 10px 34px -12px rgba(0,209,143,.55)}
+.btn-mint:hover{filter:brightness(1.09)}
+.btn-ghost{border:1px solid var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:rgba(0,209,143,.5)}
+.magnetic{will-change:transform}
+
+/* ============ HERO ============ */
+#hero{position:relative;min-height:100vh;display:flex;align-items:center;padding:120px 0 60px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center;width:100%}
+.hero-h{font-size:clamp(44px,6.4vw,84px);font-weight:800;letter-spacing:-.035em;line-height:1.02;margin:22px 0 22px}
+.hl-line{display:block;overflow:hidden;padding-bottom:.1em;margin-bottom:-.1em}
+.hl-line .ch{display:inline-block;will-change:transform}
+.hero-sub{font-size:clamp(15.5px,1.4vw,18px);line-height:1.75;color:var(--muted);max-width:520px}
+.hero-cta{display:flex;gap:16px;margin-top:34px;flex-wrap:wrap}
+.hero-meta{display:flex;align-items:center;gap:14px;margin-top:40px;font-size:13.5px;color:var(--muted);flex-wrap:wrap}
+.h-avs{display:flex}
+.h-avs span{width:34px;height:34px;border-radius:50%;border:2px solid var(--bg);display:grid;place-items:center;font-family:var(--font-num);font-weight:700;font-size:12px;margin-left:-8px}
+.h-avs span:first-child{margin:0}
+.hero-sep{width:1px;height:16px;background:var(--line)}
+.scrolldown{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;color:var(--muted);font-size:11px;letter-spacing:.24em;font-weight:600}
+.scrolldown .sl{width:1px;height:44px;background:var(--line);position:relative;overflow:hidden}
+.scrolldown .sl::after{content:'';position:absolute;left:0;top:-30%;width:100%;height:30%;background:var(--grad);animation:sd 1.8s ease-in-out infinite}
+@keyframes sd{to{top:110%}}
+
+/* ---- ĐIỆN THOẠI ---- */
+.phone-wrap{position:relative;perspective:1200px;display:grid;place-items:center}
+.phone-glow{position:absolute;inset:-8% -14%;z-index:0;pointer-events:none;filter:blur(28px);
+  background:radial-gradient(circle at 62% 32%,rgba(0,209,143,.17),transparent 55%),
+             radial-gradient(circle at 28% 72%,rgba(155,140,255,.16),transparent 55%),
+             radial-gradient(circle at 50% 88%,rgba(232,197,124,.09),transparent 60%)}
+.p-float{position:relative;z-index:1}
+.phone{width:var(--pw);height:calc(var(--pw)*2.05);border-radius:46px;background:#0B101C;border:1px solid rgba(255,255,255,.13);padding:11px;position:relative;box-shadow:0 40px 90px -30px rgba(0,0,0,.85),inset 0 0 0 1px rgba(255,255,255,.04);will-change:transform}
+.phone::before{content:'';position:absolute;inset:0;border-radius:46px;padding:1px;background:linear-gradient(140deg,rgba(255,255,255,.2),transparent 40%,transparent 68%,rgba(0,209,143,.3),rgba(232,197,124,.2));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.p-btn{position:absolute;width:3px;border-radius:3px;background:linear-gradient(90deg,#2A3242,#121722)}
+.p-b1{left:-3px;top:96px;height:30px}.p-b2{left:-3px;top:142px;height:52px}
+.p-b3{left:-3px;top:204px;height:52px}.p-b4{right:-3px;top:152px;height:72px}
+.screen{width:100%;height:100%;border-radius:36px;background:#070B14;overflow:hidden;position:relative}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:88px;height:24px;border-radius:99px;background:#000;z-index:5}
+.island::after{content:'';position:absolute;right:8px;top:50%;transform:translateY(-50%);width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#3A4A6B,#0A0E18 70%);box-shadow:inset 0 0 2px rgba(0,0,0,.8),0 0 4px rgba(90,120,255,.3)}
+.glare{position:absolute;inset:0;border-radius:36px;background:linear-gradient(115deg,rgba(255,255,255,.065),rgba(255,255,255,0) 30%);pointer-events:none;z-index:6}
+.sheen{position:absolute;inset:0;z-index:7;border-radius:36px;pointer-events:none;opacity:0;background:linear-gradient(105deg,transparent 35%,rgba(255,255,255,.1) 45%,rgba(232,197,124,.18) 50%,rgba(255,255,255,.1) 55%,transparent 65%)}
+.phone-shadow{position:absolute;left:50%;bottom:-28px;transform:translateX(-50%);width:74%;height:34px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.6),transparent 70%);filter:blur(10px);z-index:-1}
+.sbar{display:flex;justify-content:space-between;align-items:center;padding:13px 20px 6px;font-family:var(--font-num);font-size:11.5px;font-weight:600;color:var(--text)}
+.sb-ic{display:flex;align-items:center;gap:5px}
+.sb-ic svg{height:11px;width:auto;display:block}
+.app{position:absolute;inset:0;display:none;flex-direction:column;padding:10px 15px 18px;gap:10px}
+.app.on{display:flex}
+.scr-h{padding-top:44px}
+
+/* ---- Màn hình tổng quan (hero) ---- */
+.greet{display:flex;justify-content:space-between;align-items:center}
+.greet b{font-size:14px}
+.greet small{display:block;font-size:10.5px;color:var(--muted);font-weight:500}
+.g-av{width:34px;height:34px;border-radius:50%;background:linear-gradient(140deg,var(--violet),var(--mint));display:grid;place-items:center;font-weight:800;font-size:13px;color:#04120C}
+.bal{background:linear-gradient(135deg,rgba(0,209,143,.13),rgba(232,197,124,.08) 55%,rgba(155,140,255,.12));border:1px solid rgba(0,209,143,.24);border-radius:20px;padding:16px}
+.bal small{font-size:10.5px;color:var(--muted);letter-spacing:.08em}
+.bal .bv{font-family:var(--font-num);font-size:27px;font-weight:700;letter-spacing:-.02em;margin:5px 0 9px;font-variant-numeric:tabular-nums}
+.bal .bv .cur{font-size:.6em;color:var(--muted);margin-left:3px}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:99px;font-size:10px;font-weight:600}
+.bal .chip{background:rgba(0,209,143,.14);color:var(--mint)}
+.qa{display:flex;justify-content:space-between}
+.qa button{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:9.5px;color:var(--muted);font-weight:600}
+.qa .qa-i{width:44px;height:44px;border-radius:15px;background:rgba(255,255,255,.045);border:1px solid var(--line);display:grid;place-items:center;color:var(--mint);font-size:17px;transition:.25s}
+.qa button:hover .qa-i{background:rgba(0,209,143,.12);border-color:rgba(0,209,143,.4)}
+.week{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:18px;padding:12px 14px}
+.week small{font-size:10px;color:var(--muted);display:flex;justify-content:space-between}
+.wbars{display:flex;align-items:flex-end;gap:7px;height:52px;margin-top:8px}
+.wbars i{flex:1;border-radius:4px 4px 2px 2px;background:rgba(255,255,255,.12)}
+.wbars i.hot{background:linear-gradient(180deg,var(--gold),var(--mint))}
+.a-lbl{font-size:11px;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-top:2px}
+.tx{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+.tx-ic{width:33px;height:33px;border-radius:11px;display:grid;place-items:center;flex:none;font-family:var(--font-num);font-weight:700;font-size:13px}
+.tx-n{font-size:12px;font-weight:600;line-height:1.25}
+.tx-c{font-size:9.5px;color:var(--muted)}
+.tx-am{margin-left:auto;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pos{color:var(--mint)}
+.bg-mint{background:rgba(0,209,143,.13);color:var(--mint)}
+.bg-violet{background:rgba(155,140,255,.15);color:#B4A8FF}
+.bg-amber{background:rgba(255,180,84,.13);color:var(--amber)}
+.bg-blue{background:rgba(143,184,255,.13);color:var(--blue)}
+.bg-red{background:rgba(255,92,92,.13);color:var(--red)}
+.bg-dim{background:rgba(255,255,255,.07);color:var(--muted)}
+.bg-gold{background:rgba(232,197,124,.13);color:var(--gold)}
+
+/* ---- Badge nổi quanh điện thoại ---- */
+.badge{position:absolute;display:flex;align-items:center;gap:9px;padding:10px 16px;border-radius:16px;background:rgba(11,17,30,.85);border:1px solid var(--line);backdrop-filter:blur(10px);font-size:12.5px;font-weight:600;box-shadow:0 20px 50px -20px rgba(0,0,0,.7);white-space:nowrap;z-index:3}
+.badge .ic{font-size:15px}
+.badge small{display:block;font-weight:500;font-size:10.5px;color:var(--muted)}
+.bdg-1{top:12%;left:-14%}.bdg-2{bottom:24%;right:-16%}.bdg-3{bottom:4%;left:-8%}
+
+/* ============ PAIN ============ */
+#pain .sec-head{margin-bottom:30px}
+.pain-vp{height:100vh;display:flex;align-items:center;overflow:hidden}
+.pain-track{display:flex;gap:22px;padding:0 6vw;width:max-content}
+.p-card{width:min(560px,76vw);flex:none;border:1px solid var(--line);border-radius:26px;background:rgba(11,17,30,.55);backdrop-filter:blur(8px);padding:44px 46px;height:min(56vh,470px);display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;transition:border-color .3s}
+.p-card:hover{border-color:rgba(0,209,143,.35)}
+.p-card::after{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(232,197,124,.55),transparent);opacity:0;transition:.3s}
+.p-card:hover::after{opacity:1}
+.p-tag{font-weight:600;font-size:11px;letter-spacing:.3em;color:var(--muted)}
+.p-num{position:absolute;top:18px;right:26px;font-family:var(--font-num);font-size:110px;font-weight:700;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.13)}
+.p-ic{width:52px;height:52px;border-radius:16px;border:1px solid var(--line);display:grid;place-items:center;font-size:22px;color:var(--mint)}
+.p-card h3{font-size:clamp(24px,2.4vw,32px);font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.p-card p{font-size:15.5px;line-height:1.7;color:var(--muted);max-width:400px}
+.p-bottom{display:flex;flex-direction:column;gap:22px}
+
+/* ============ FEATURES (5 màn hiệu năng + AI giọng nói) ============ */
+.f-pin{height:500vh;position:relative}
+.f-sticky{position:sticky;top:0;height:100vh;display:grid;grid-template-columns:minmax(0,520px) 1fr;gap:44px;align-items:center;padding:86px 6vw 30px}
+.f-sticky .sec-head{margin-bottom:26px}
+.f-sticky h2{font-size:clamp(26px,2.6vw,38px)}
+.f-list{position:relative;padding-left:24px}
+.f-prog{position:absolute;left:0;top:6px;bottom:6px;width:2px;background:rgba(255,255,255,.08);border-radius:2px}
+.f-prog i{position:absolute;inset:0;background:linear-gradient(180deg,var(--mint),var(--gold));transform:scaleY(0);transform-origin:top;border-radius:2px}
+.f-item{display:flex;gap:16px;align-items:flex-start;width:100%;text-align:left;padding:15px 10px;border-bottom:1px solid var(--line);transition:.3s;border-radius:0 14px 14px 0}
+.f-item.on{background:linear-gradient(90deg,color-mix(in srgb,var(--acc) 10%,transparent),transparent 70%)}
+.f-num{font-family:var(--font-num);font-size:12.5px;font-weight:600;color:var(--muted);padding-top:3px;transition:.3s}
+.f-body{flex:1}
+.f-name{display:block;font-size:17px;font-weight:700;transition:color .3s}
+.f-desc{display:block;font-size:13px;line-height:1.6;color:var(--muted);max-height:0;overflow:hidden;opacity:0;transition:max-height .45s,opacity .45s,margin .45s}
+.f-item.on .f-desc{max-height:96px;opacity:1;margin-top:5px}
+.f-item.on .f-name,.f-item.on .f-num,.f-item.on .f-ico{color:var(--acc)}
+.f-ico{font-size:19px;color:rgba(255,255,255,.22);padding-top:2px;transition:.3s}
+.f-right{display:grid;place-items:center;height:100%}
+
+/* ---- Chung cho màn app ---- */
+.a-head b{font-size:16px;display:block}
+.a-head small{font-size:10.5px;color:var(--muted)}
+.sum-row{display:flex;align-items:center;gap:8px;justify-content:center;font-size:10.5px;color:var(--muted);margin-top:auto;padding-top:6px;text-align:center}
+.sum-row .ic{color:var(--mint);font-size:13px;flex:none}
+.bar{height:5px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar-f{height:100%;border-radius:99px;transform-origin:left}
+.ch-stats{display:flex;gap:8px}
+.ch-stats span{flex:1;font-size:10px;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:11px;padding:8px 10px;line-height:1.45}
+.ch-stats b{display:block;font-family:var(--font-num);font-size:12.5px;color:var(--text)}
+
+/* ---- S1: Phản hồi tức thì ---- */
+.rt-card{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:18px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.rt-top{display:flex;align-items:center;gap:10px}
+.rt-save{margin-left:auto;background:rgba(0,209,143,.15);color:var(--mint);border:1px solid rgba(0,209,143,.4);border-radius:10px;padding:7px 14px;font-size:11.5px;font-weight:700}
+.rt-timer{display:flex;align-items:baseline;justify-content:center;gap:6px;font-family:var(--font-num)}
+.rt-timer b{font-size:40px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--gold);letter-spacing:-.02em}
+.rt-timer small{font-size:11px;color:var(--muted)}
+.rt-done{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:600;color:var(--mint);background:rgba(0,209,143,.09);border:1px dashed rgba(0,209,143,.4);border-radius:12px;padding:9px}
+.rt-mini{display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:600;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:13px;padding:8px 11px}
+.rt-mini .tx-ic{width:28px;height:28px;font-size:11px}
+.rt-mini b{margin-left:auto;font-family:var(--font-num);color:var(--gold);font-variant-numeric:tabular-nums}
+
+/* ---- S2: Báo cáo thần tốc ---- */
+.rp-flex{display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:18px;padding:14px}
+.rp-donut{position:relative;width:104px;flex:none}
+.rp-donut svg{width:104px;height:104px}
+.rp2{fill:none;stroke:var(--gold);stroke-width:9;stroke-linecap:round;stroke-dasharray:289;stroke-dashoffset:289;transform:rotate(-90deg);transform-origin:center}
+.rk{fill:none;stroke:rgba(255,255,255,.07);stroke-width:10}
+.rp-c{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+.rp-c b{font-family:var(--font-num);font-size:17px;font-variant-numeric:tabular-nums}
+.rp-c small{font-size:8.5px;color:var(--muted)}
+.rp-bars{flex:1;display:flex;flex-direction:column;gap:10px}
+.rp-bar small{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px}
+.rp-bar small b{color:var(--text);font-family:var(--font-num)}
+.rp-bar-f{height:100%;border-radius:99px;transform-origin:left}
+.rp-badge{display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:700;color:var(--gold);background:rgba(232,197,124,.08);border:1px dashed rgba(232,197,124,.45);border-radius:12px;padding:9px}
+
+/* ---- S3: Offline-first ---- */
+.of-state{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--amber);background:rgba(255,180,84,.08);border:1px solid rgba(255,180,84,.3);border-radius:12px;padding:9px 12px;transition:.4s}
+.of-state.on{color:var(--mint);background:rgba(0,209,143,.08);border-color:rgba(0,209,143,.35)}
+.of-state .ic{font-size:14px}
+.of-chip b{font-family:var(--font-num)}
+.of-sync{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.of-flow{display:flex;align-items:center;gap:8px}
+.of-node{width:36px;height:36px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);font-size:16px;flex:none}
+.of-node.cloud{color:var(--gold)}
+.of-dash{flex:1;height:2px;background-image:linear-gradient(90deg,var(--muted) 50%,transparent 50%);background-size:8px 2px;animation:dashm .9s linear infinite}
+@keyframes dashm{to{background-position:8px 0}}
+.of-bar{height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.of-bar-f{height:100%;background:linear-gradient(90deg,var(--mint),var(--gold));transform-origin:left;border-radius:99px}
+.of-lbl{font-size:10.5px;color:var(--muted)}
+.of-lbl b{font-family:var(--font-num);color:var(--text);font-variant-numeric:tabular-nums}
+.of-done{display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;font-weight:600;color:var(--mint)}
+
+/* ---- S4: Tài nguyên ---- */
+.res-bar{margin-bottom:13px}
+.res-lbl{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin-bottom:6px}
+.res-lbl b{font-family:var(--font-num);color:var(--text);font-variant-numeric:tabular-nums}
+.res-ok{padding:2px 8px;font-size:9px}
+.res-cards{display:flex;gap:8px}
+.res-cards span{flex:1;font-size:10px;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:11px;padding:8px 10px;line-height:1.45}
+.res-cards b{display:block;font-family:var(--font-num);font-size:12px;color:var(--text)}
+
+/* ---- S5: AI + MIC ---- */
+.ai-stage{display:flex;flex-direction:column;align-items:center;gap:10px;padding:4px 0 2px}
+.mic-btn{position:relative;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--mint),#0AA979);color:#04120C;display:grid;place-items:center;font-size:21px;box-shadow:0 10px 30px -10px rgba(0,209,143,.65);transition:transform .25s}
+.mic-btn:active{transform:scale(.92)}
+.mic-btn::before,.mic-btn::after{content:'';position:absolute;inset:0;border-radius:50%;border:1.5px solid rgba(0,209,143,.55);opacity:0;pointer-events:none}
+.ai-stage.listening .mic-btn::before{animation:ring 1.4s ease-out infinite}
+.ai-stage.listening .mic-btn::after{animation:ring 1.4s .55s ease-out infinite;border-color:rgba(232,197,124,.55)}
+@keyframes ring{0%{transform:scale(1);opacity:.85}100%{transform:scale(2.15);opacity:0}}
+.wave{display:none;gap:3.5px;align-items:center;height:24px}
+.ai-stage.listening .wave{display:flex}
+.wave i{width:3.5px;height:8px;border-radius:2px;background:linear-gradient(180deg,var(--gold),var(--mint));animation:wv .85s ease-in-out infinite}
+.wave i:nth-child(2){animation-delay:.1s}.wave i:nth-child(3){animation-delay:.2s}
+.wave i:nth-child(4){animation-delay:.3s}.wave i:nth-child(5){animation-delay:.2s}
+.wave i:nth-child(6){animation-delay:.1s}.wave i:nth-child(7){animation-delay:0s}
+@keyframes wv{0%,100%{height:5px}50%{height:22px}}
+.mic-hint{font-size:10.5px;color:var(--muted);transition:color .3s}
+.ai-stage.listening .mic-hint{color:var(--mint)}
+.msg{display:flex;gap:8px;align-items:flex-end}
+.msg .m-av{width:26px;height:26px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px}
+.m-av.ai{background:rgba(0,209,143,.15);color:var(--mint)}
+.m-av.me{background:rgba(155,140,255,.2);color:#B4A8FF}
+.bub{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:16px 16px 16px 5px;padding:10px 13px;font-size:11.5px;line-height:1.6;max-width:86%}
+.msg.me{flex-direction:row-reverse}
+.msg.me .bub{border-radius:16px 16px 5px 16px;background:rgba(155,140,255,.16);border-color:rgba(155,140,255,.35)}
+.typing{display:inline-flex;gap:4px;padding:4px 2px;vertical-align:middle}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:tp 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes tp{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+#aiTxt2{display:none}
+.ai-chip{margin-top:auto;display:flex;flex-direction:column;gap:9px}
+.ai-chip .chip-lg{display:flex;align-items:center;gap:8px;border:1px dashed rgba(0,209,143,.45);border-radius:13px;padding:10px 12px;font-size:11px;color:var(--mint);font-weight:600}
+.ai-btns{display:flex;gap:8px}
+.ai-btns button{flex:1;border-radius:11px;padding:9px;font-size:11.5px;font-weight:700}
+.ai-btns .yes{background:linear-gradient(135deg,var(--mint),#0BA579);color:#04120C}
+.ai-btns .no{border:1px solid var(--line);color:var(--muted)}
+
+/* ============ WIDGET VUE ============ */
+.calc-card{position:relative;border:1px solid var(--line);border-radius:30px;background:rgba(9,14,25,.78);backdrop-filter:blur(10px);padding:clamp(26px,4vw,52px);display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(28px,4vw,64px);align-items:center}
+.calc-card::before{content:'';position:absolute;inset:-1px;border-radius:31px;padding:1px;background:linear-gradient(135deg,rgba(0,209,143,.45),rgba(232,197,124,.28) 50%,rgba(155,140,255,.3));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.am-in span{font-weight:600;font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;display:block;margin-bottom:10px}
+.am-wrap{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:4px 18px 4px 22px;transition:border-color .3s}
+.am-wrap:focus-within{border-color:rgba(0,209,143,.55)}
+.am-wrap input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:var(--font-num);font-size:clamp(24px,2.6vw,34px);font-weight:700;min-width:0;padding:12px 0;font-variant-numeric:tabular-nums}
+.am-wrap em{font-style:normal;color:var(--muted);font-size:20px;font-weight:600}
+.presets{display:flex;gap:10px;margin:18px 0 30px;flex-wrap:wrap}
+.presets button{font-size:12.5px;font-weight:600;padding:9px 16px;border-radius:99px;border:1px solid var(--line);color:var(--muted);transition:.25s}
+.presets button:hover{border-color:rgba(0,209,143,.5);color:var(--text)}
+.s-row{padding:13px 0;border-bottom:1px solid var(--line)}
+.s-row:last-of-type{border-bottom:none}
+.s-name{display:flex;justify-content:space-between;font-size:13.5px;font-weight:600;margin-bottom:9px}
+.s-name b{font-family:var(--font-num);color:var(--muted);font-variant-numeric:tabular-nums}
+.s-row input[type=range]{width:100%;height:4px;-webkit-appearance:none;appearance:none;border-radius:99px;background:rgba(255,255,255,.1);outline:none}
+.s-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--text);border:4px solid var(--bg);box-shadow:0 0 0 1.5px currentColor;cursor:grab}
+.s-row input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--text);border:none;cursor:grab}
+.calc-tip{grid-column:1/-1;font-size:12.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:18px;display:flex;gap:9px;align-items:center}
+.calc-tip .ic{color:var(--gold);flex:none}
+.rings{display:flex;gap:clamp(14px,2vw,26px);justify-content:center;flex-wrap:wrap}
+.ring{position:relative;width:clamp(130px,11vw,168px)}
+.ring svg{width:100%;aspect-ratio:1}
+.ring .rp{fill:none;stroke-width:9;stroke-linecap:round;stroke-dasharray:276.5;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset .55s cubic-bezier(.6,0,.2,1)}
+.rc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:2px}
+.rc b{font-family:var(--font-num);font-size:clamp(18px,1.8vw,23px);font-variant-numeric:tabular-nums}
+.rc span{font-size:11px;color:var(--muted);font-weight:600}
+.rc strong{font-size:11px;font-weight:600;font-family:var(--font-num);font-variant-numeric:tabular-nums;margin-top:2px}
+
+/* ============ BẢO MẬT ============ */
+.sec-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(36px,5vw,80px);align-items:center}
+.lock-stage{display:grid;place-items:center;padding:30px 0}
+.lock-stage svg{width:min(260px,60vw);overflow:visible}
+.lk-s,.lk-b{fill:none;stroke:var(--text);stroke-width:3.4;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.lk-g{fill:none;stroke:var(--gold);stroke-width:3.4;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.lk-k{fill:var(--gold);opacity:0}
+.s-rows{border-top:1px solid var(--line)}
+.s-row2{display:flex;gap:20px;padding:24px 4px;border-bottom:1px solid var(--line);transition:background .3s}
+.s-row2:hover{background:rgba(255,255,255,.02)}
+.s-row2 .ic{font-size:22px;color:var(--mint);flex:none;margin-top:3px}
+.s-row2 h4{font-size:16.5px;font-weight:700;margin-bottom:5px}
+.s-row2 p{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+/* ============ CON SỐ ============ */
+#numbers{padding-top:clamp(70px,9vh,110px);padding-bottom:clamp(70px,9vh,110px)}
+.nums{display:flex;flex-wrap:wrap;gap:34px 60px;justify-content:space-between}
+.num-it{position:relative;padding-left:20px}
+.num-it::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;background:linear-gradient(180deg,var(--mint),var(--gold))}
+.nline{display:flex;align-items:baseline;gap:8px;white-space:nowrap;line-height:1.05}
+.nline .num{font-family:var(--font-num);font-weight:700;font-size:clamp(40px,5vw,64px);letter-spacing:-.03em;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#FFF 25%,#A8B4C8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sfx{font-style:normal;font-weight:700;font-size:clamp(17px,2vw,25px);color:var(--gold)}
+.num-it>span{font-size:13.5px;color:var(--muted);display:block;margin-top:10px;max-width:210px;line-height:1.5}
+
+/* ============ NGƯỜI DÙNG ============ */
+.mq{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);padding:6px 0}
+.mq-track{display:flex;gap:18px;width:max-content;animation:mq 46s linear infinite}
+.mq-track.rev{animation-direction:reverse;animation-duration:54s}
+.mq:hover .mq-track{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+.v-card{width:min(400px,82vw);flex:none;border:1px solid var(--line);border-radius:22px;background:rgba(11,17,30,.55);padding:26px 28px}
+.v-card p{font-size:14.5px;line-height:1.65;margin-bottom:18px}
+.v-who{display:flex;align-items:center;gap:12px}
+.v-av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-num);font-weight:700;font-size:14px;flex:none}
+.v-who b{font-size:13.5px;display:block}
+.v-who small{font-size:11.5px;color:var(--muted)}
+
+/* ============ KIẾN TRÚC ============ */
+.tier{display:grid;grid-template-columns:minmax(200px,300px) 1fr;gap:20px 40px;padding:30px 4px;border-top:1px solid var(--line);transition:background .3s;align-items:start}
+.tier:last-child{border-bottom:1px solid var(--line)}
+.tier:hover{background:rgba(255,255,255,.02)}
+.t-tag{font-weight:700;font-size:11px;letter-spacing:.28em;display:inline-block;margin-bottom:10px}
+.tier h3{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.tier .t-d{font-size:13px;color:var(--muted);margin-top:5px;line-height:1.55}
+.t-chips{display:flex;flex-wrap:wrap;gap:9px;padding-top:4px}
+.t-chips span{font-family:var(--font-num);font-size:12.5px;padding:8px 15px;border-radius:99px;border:1px solid var(--line);color:var(--muted);transition:.25s}
+.tier:hover .t-chips span{border-color:rgba(255,255,255,.18);color:var(--text)}
+
+/* ============ CTA + STORE ============ */
+#cta{position:relative}
+#cta::before{content:'';position:absolute;top:12%;left:50%;transform:translateX(-50%);width:min(680px,90vw);height:420px;background:radial-gradient(closest-side,rgba(0,209,143,.12),transparent 70%),radial-gradient(closest-side,rgba(232,197,124,.09),transparent 75%);filter:blur(40px);pointer-events:none}
+#cta .cta-in{max-width:820px;margin:0 auto;text-align:center;position:relative}
+#cta h2{font-size:clamp(34px,5.4vw,62px);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin:18px 0 20px}
+#cta .sub{color:var(--muted);font-size:16.5px;line-height:1.7;max-width:540px;margin:0 auto 40px}
+.wl{display:flex;gap:12px;max-width:520px;margin:0 auto}
+.wl input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:999px;padding:16px 24px;color:var(--text);font-size:15px;outline:none;transition:border-color .3s;min-width:0}
+.wl input:focus{border-color:rgba(0,209,143,.55)}
+.wl input::placeholder{color:var(--muted)}
+.stores{display:flex;gap:14px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.store-badge{display:flex;align-items:center;gap:13px;background:#0A0E18;border:1px solid rgba(255,255,255,.15);border-radius:16px;padding:13px 24px;transition:transform .3s,border-color .3s,box-shadow .3s;will-change:transform}
+.store-badge:hover{transform:translateY(-3px);border-color:rgba(232,197,124,.55);box-shadow:0 18px 44px -16px rgba(232,197,124,.35)}
+.store-badge .s-logo{width:27px;height:27px;flex:none}
+.store-badge .s-txt{text-align:left}
+.store-badge .s-txt small{display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+.store-badge .s-txt b{display:block;font-size:16.5px;font-weight:700;letter-spacing:-.01em}
+.cta-note{font-size:12px;color:var(--muted);margin-top:24px}
+#wlDone{display:none;max-width:460px;margin:0 auto;padding:26px;border:1px solid rgba(0,209,143,.4);border-radius:22px;background:rgba(0,209,143,.06)}
+#wlDone .ic{font-size:34px;color:var(--mint);margin:0 auto 12px}
+#wlDone b{display:block;font-size:17px;margin-bottom:6px}
+#wlDone span{font-size:13.5px;color:var(--muted);line-height:1.6}
+footer{border-top:1px solid var(--line);padding:60px 0 34px;position:relative;z-index:1;background:rgba(4,6,12,.7)}
+.f-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px;margin-bottom:50px}
+.f-grid p{font-size:13px;color:var(--muted);line-height:1.7;margin-top:14px;max-width:280px}
+.f-col b{font-weight:600;font-size:12px;letter-spacing:.18em;color:var(--muted);display:block;margin-bottom:16px}
+.f-col a{display:block;font-size:14px;color:var(--muted);padding:5px 0;transition:color .25s}
+.f-col a:hover{color:var(--mint)}
+.f-bot{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-top:26px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.f-bot a:hover{color:var(--text)}
+
+/* ============ TOAST ============ */
+#toasts{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:10px;align-items:center;width:min(92vw,480px)}
+.toast{display:flex;align-items:center;gap:11px;background:rgba(11,17,30,.94);border:1px solid var(--line);border-radius:16px;padding:14px 20px;font-size:13.5px;font-weight:500;backdrop-filter:blur(12px);box-shadow:0 24px 60px -20px rgba(0,0,0,.8);width:100%}
+.toast .ic{flex:none;font-size:18px}
+.toast.ok .ic{color:var(--mint)}
+.toast.err{border-color:rgba(255,92,92,.4)}
+.toast.err .ic{color:var(--red)}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:1100px){
+  .bdg-1{left:-4%}.bdg-2{right:-4%}.bdg-3{left:-2%}
+}
+@media (max-width:900px){
+  .n-links{display:none}
+  #menuBtn{display:block}
+  .hero-grid{grid-template-columns:1fr;gap:56px}
+  .phone-wrap{order:2}
+  .pain-vp{height:auto;padding:0 0 20px}
+  .pain-track{overflow-x:auto;width:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;padding-bottom:14px}
+  .pain-track::-webkit-scrollbar{height:4px}
+  .p-card{scroll-snap-align:center;height:auto;min-height:340px}
+  .f-pin{height:auto}
+  .f-sticky{position:static;height:auto;grid-template-columns:1fr;padding:70px 24px 20px;gap:30px}
+  .f-right{order:-1;height:auto;margin-bottom:10px}
+  .calc-card{grid-template-columns:1fr}
+  .sec-grid{grid-template-columns:1fr}
+  .tier{grid-template-columns:1fr}
+  .wl{flex-direction:column}
+  .f-grid{grid-template-columns:1fr 1fr}
+  :root{--pw:272px}
+  .bdg-1{left:-2%;top:6%}.bdg-2{right:-2%}.bdg-3{bottom:0;left:0}
+  .badge{font-size:11px;padding:8px 12px}
+}
+@media (prefers-reduced-motion:reduce){
+  .mq-track{animation-play-state:paused}
+  .scrolldown .sl::after,.typing i,.of-dash,.wave i{animation:none}
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="gBrand" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#0B9C6D"/><stop offset="1" stop-color="#00D18F"/>
+  </linearGradient>
+</defs></svg>
+
+<canvas id="gl"></canvas>
+
+<!-- ============ PRELOADER ============ -->
+<div id="preloader">
+  <div class="pl-mid">
+    <svg class="pl-mark" viewBox="0 0 48 48">
+      <rect x="2" y="2" width="44" height="44" rx="13" fill="url(#gBrand)"/>
+      <rect x="4.5" y="4.5" width="39" height="39" rx="10.5" fill="none" stroke="#E8C57C" stroke-width="1.6" opacity=".85"/>
+      <g fill="none" stroke="#052019" stroke-width="4.2" stroke-linecap="round">
+        <path class="pl-p" pathLength="1" d="M18 14v20"/>
+        <path class="pl-p" pathLength="1" d="M18 14h5a10 10 0 0 1 0 20h-5"/>
+        <path class="pl-p" pathLength="1" d="M10 24h22"/>
+      </g>
+    </svg>
+    <div class="pl-word-clip"><div class="pl-word">Đồng</div></div>
+  </div>
+  <span class="pl-sub">ĐANG MỞ CỬA</span>
+  <span id="plPct">000</span>
+  <div class="pl-bar"><i></i></div>
+</div>
+
+<!-- ============ NAV ============ -->
+<header id="nav">
+  <div class="n-in">
+    <a href="#hero" class="logo">
+      <svg class="lmark" viewBox="0 0 48 48"><rect x="2" y="2" width="44" height="44" rx="13" fill="url(#gBrand)"/><rect x="4.5" y="4.5" width="39" height="39" rx="10.5" fill="none" stroke="#E8C57C" stroke-width="1.6" opacity=".85"/><g fill="none" stroke="#052019" stroke-width="4.2" stroke-linecap="round"><path d="M18 14v20"/><path d="M18 14h5a10 10 0 0 1 0 20h-5"/><path d="M10 24h22"/></g></svg>
+      Đồng
+    </a>
+    <nav class="n-links">
+      <a href="#features">Tính năng</a>
+      <a href="#calc">Trải nghiệm</a>
+      <a href="#security">Bảo mật</a>
+      <a href="#arch">Kiến trúc</a>
+      <a href="app.html" style="color:var(--gold);font-weight:700">Internet Banking &rarr;</a>
+    </nav>
+    <a href="app.html" class="n-cta">Mở Web App</a>
+    <button id="menuBtn" aria-label="Menu"><span></span><span></span></button>
+  </div>
+</header>
+<div id="mmenu">
+  <div class="mm-logo"><svg class="lmark" viewBox="0 0 48 48" style="width:36px;height:36px"><rect x="2" y="2" width="44" height="44" rx="13" fill="url(#gBrand)"/><rect x="4.5" y="4.5" width="39" height="39" rx="10.5" fill="none" stroke="#E8C57C" stroke-width="1.6" opacity=".85"/><g fill="none" stroke="#052019" stroke-width="4.2" stroke-linecap="round"><path d="M18 14v20"/><path d="M18 14h5a10 10 0 0 1 0 20h-5"/><path d="M10 24h22"/></g></svg>Đồng</div>
+  <a href="app.html" style="color:var(--mint)">Vào Web App Ngân hàng &rarr;</a>
+  <a href="#features">Tính năng</a>
+  <a href="#calc">Trải nghiệm</a>
+  <a href="#security">Bảo mật</a>
+  <a href="#arch">Kiến trúc</a>
+  <a href="#cta">Danh sách chờ</a>
+</div>
+
+<main>
+<!-- ============ HERO ============ -->
+<section id="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-left">
+      <span class="kicker hero-kick"><i class="dot"></i>Ứng dụng tài chính cá nhân · Đang mở beta</span>
+      <h1 class="hero-h">
+        <span class="hl-line">Tiền của bạn,</span>
+        <span class="hl-line">dưới <em>tầm mắt</em>.</span>
+      </h1>
+      <p class="hero-sub">Đồng tự đọc sao kê, gắn nhãn từng khoản chi, cảnh báo trước khi bạn vượt hạn mức — và chia lương vào ba ví ngay khi tiền về. Bạn chỉ cần nhìn.</p>
+      <div class="hero-cta">
+        <a href="app.html" class="btn btn-mint magnetic">Trải nghiệm Web App
+          <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg></a>
+        <a href="#features" class="btn btn-ghost magnetic">Khám phá tính năng</a>
+      </div>
+      <div class="hero-meta">
+        <div class="h-avs">
+          <span class="bg-mint">M</span><span class="bg-violet">Q</span><span class="bg-gold">L</span>
+        </div>
+        <span>12.400 người đang thử nghiệm</span>
+        <i class="hero-sep"></i>
+        <span>Miễn phí trong beta</span>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="phone-wrap" id="heroWrap">
+        <div class="phone-glow"></div>
+        <div class="p-float" id="heroFloat">
+          <div class="phone" id="heroPhone">
+            <span class="p-btn p-b1"></span><span class="p-btn p-b2"></span><span class="p-btn p-b3"></span><span class="p-btn p-b4"></span>
+            <div class="screen">
+              <div class="island"></div>
+              <div class="app scr-h on">
+                <div class="sbar"><span class="sb-time">9:41</span><span class="sb-ic"></span></div>
+                <div class="greet">
+                  <div><b>Chào buổi sáng, Minh</b><small>Hôm nay là ngày trả tiền điện</small></div>
+                  <span class="g-av">M</span>
+                </div>
+                <div class="bal">
+                  <small>TỔNG SỐ DƯ</small>
+                  <div class="bv"><span id="heroBal">0</span><em class="cur">₫</em></div>
+                  <span class="chip"><svg class="ic" viewBox="0 0 24 24" style="font-size:10px"><path d="M4 16l5-5 3 3 7-8"/></svg>+8,2% so với tháng trước</span>
+                </div>
+                <div class="qa">
+                  <button onclick="window.location.href='app.html'"><span class="qa-i"><svg class="ic" viewBox="0 0 24 24"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg></span>Chuyển</button>
+                  <button onclick="window.location.href='app.html'"><span class="qa-i"><svg class="ic" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="18" cy="5" r="2"/><circle cx="12" cy="19" r="2"/><path d="M6 7v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6V7"/><path d="M12 14v3"/></svg></span>Chia tiền</button>
+                  <button onclick="window.location.href='app.html'"><span class="qa-i"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span>Hũ</button>
+                  <button onclick="window.location.href='app.html'"><span class="qa-i"><svg class="ic" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>Mở App</button>
+                </div>
+                <div class="week">
+                  <small><span>Chi tuần này</span><span>2.140.000₫</span></small>
+                  <div class="wbars"><i style="height:38%"></i><i style="height:56%"></i><i style="height:30%"></i><i style="height:72%"></i><i style="height:46%"></i><i class="hot" style="height:88%"></i><i style="height:22%"></i></div>
+                </div>
+                <span class="a-lbl">GẦN ĐÂY</span>
+                <div class="tx"><span class="tx-ic bg-mint">L</span><div><div class="tx-n">Lương tháng 6</div><div class="tx-c">Thu nhập · 08:02</div></div><span class="tx-am pos">+18.500.000₫</span></div>
+                <div class="tx"><span class="tx-ic bg-blue">G</span><div><div class="tx-n">Grab</div><div class="tx-c">Di chuyển · 09:47</div></div><span class="tx-am">-85.000₫</span></div>
+              </div>
+              <div class="glare"></div>
+            </div>
+          </div>
+          <div class="phone-shadow"></div>
+        </div>
+        <div class="badge bdg-1"><svg class="ic" viewBox="0 0 24 24" style="color:var(--mint)"><path d="M5 13l4 4L19 7"/></svg><div><b style="font-size:12.5px">Đã chia lương</b><small>50 / 30 / 20 · tự động</small></div></div>
+        <div class="badge bdg-2"><svg class="ic" viewBox="0 0 24 24" style="color:var(--amber)"><path d="M12 3 2.5 20h19z"/><path d="M12 9.5v4"/><path d="M12 16.5v.01"/></svg><div><b style="font-size:12.5px">Cảnh báo</b><small>Cà phê tháng này +30%</small></div></div>
+        <div class="badge bdg-3"><svg class="ic" viewBox="0 0 24 24" style="color:var(--gold)"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/></svg><div><b style="font-size:12.5px">Hũ MacBook</b><small>đã đầy 64%</small></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="scrolldown"><span>CUỘN</span><span class="sl"></span></div>
+</section>
+
+<div class="wrap"><div class="rule"></div></div>
+
+<!-- ============ VẤN ĐỀ ============ -->
+<section id="pain">
+  <div class="wrap sec-head">
+    <span class="kicker"><i class="dot"></i>Vấn đề</span>
+    <h2 class="rv">Tiền không mất tích — nó chỉ <em>biến mất khỏi tầm nhìn</em></h2>
+  </div>
+  <div class="pain-vp">
+    <div class="pain-track">
+      <article class="p-card">
+        <span class="p-num">01</span>
+        <div class="p-bottom"><span class="p-tag">VẤN ĐỀ 01</span><span class="p-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 8v4l2.5 2.5"/></svg></span></div>
+        <div class="p-bottom"><h3>Không biết tiền đi đâu</h3><p>Cuối tháng nhìn lại số dư, không nhớ nổi 4,2 triệu đã biến mất bằng cách nào. Sao kê có đủ, nhưng chẳng ai mở ra đọc.</p></div>
+      </article>
+      <article class="p-card">
+        <span class="p-num">02</span>
+        <div class="p-bottom"><span class="p-tag">VẤN ĐỀ 02</span><span class="p-ic"><svg class="ic" viewBox="0 0 24 24"><path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg></span></div>
+        <div class="p-bottom"><h3>Cảnh báo luôn đến muộn</h3><p>Hạn mức chi tiêu chỉ tồn tại sau khi đã vượt. Tin nhắn ngân hàng đến đúng lúc tiền đã rời khỏi ví một ngày.</p></div>
+      </article>
+      <article class="p-card">
+        <span class="p-num">03</span>
+        <div class="p-bottom"><span class="p-tag">VẤN ĐỀ 03</span><span class="p-ic"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg></span></div>
+        <div class="p-bottom"><h3>Tiết kiệm mãi không bắt đầu</h3><p>Mỗi tháng hứa để dành 3 triệu. Mỗi tháng số dư tiết kiệm vẫn tròn trĩnh ở mức cũ, còn mục tiêu thì lùi xa thêm một tháng.</p></div>
+      </article>
+      <article class="p-card">
+        <span class="p-num">04</span>
+        <div class="p-bottom"><span class="p-tag">VẤN ĐỀ 04</span><span class="p-ic"><svg class="ic" viewBox="0 0 24 24"><path d="M7 3h10v18l-2.5-1.6L12 21l-2.5-1.6L7 21V3z"/><path d="M9.5 8h5M9.5 12h5"/></svg></span></div>
+        <div class="p-bottom"><h3>Sao kê rối như tơ lòng</h3><p>217 dòng giao dịch, 0 manh mối. Đọc sao kê như đọc tiểu thuyết trinh thám — chỉ là không có ai lời giải ở cuối sách.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TÍNH NĂNG: 4 CHỈ SỐ HIỆU NĂNG + AI GIỌNG NÓI ============ -->
+<section id="features">
+  <div class="f-pin">
+    <div class="f-sticky">
+      <div class="f-left">
+        <span class="kicker"><i class="dot"></i>Tính năng</span>
+        <div class="sec-head">
+          <h2 class="rv">Năm cách <em>Đồng</em> chăm sóc tiền của bạn</h2>
+        </div>
+        <div class="f-list">
+          <div class="f-prog" id="fProg"><i></i></div>
+          <button class="f-item" style="--acc:#00D18F"><span class="f-num">01</span><span class="f-body"><span class="f-name">Phản hồi tức thì</span><span class="f-desc">Bấm lưu một khoản chi, màn hình xác nhận ngay trong 0,5 giây. Nhanh đến mức thành thói quen.</span></span><span class="f-ico"><svg class="ic" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span></button>
+          <button class="f-item" style="--acc:#E8C57C"><span class="f-num">02</span><span class="f-body"><span class="f-name">Báo cáo thần tốc</span><span class="f-desc">2.412 giao dịch, đủ biểu đồ và số liệu đổ lên màn hình trong 1,5 giây — không xoay xoay, không chờ.</span></span><span class="f-ico"><svg class="ic" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg></span></button>
+          <button class="f-item" style="--acc:#3ED6C4"><span class="f-num">03</span><span class="f-body"><span class="f-name">Offline-first</span><span class="f-desc">Ở nơi sóng yếu, ghi nhận chỉ mất 100ms ngay trên máy. Có mạng là Đồng tự đồng bộ ngầm trong 2 giây.</span></span><span class="f-ico"><svg class="ic" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></span></button>
+          <button class="f-item" style="--acc:#8FB8FF"><span class="f-num">04</span><span class="f-body"><span class="f-name">Nhẹ như không</span><span class="f-desc">RAM dưới 100MB, không chạy ngầm đốt pin. Cài cạnh app ngân hàng khác mà máy vẫn mát.</span></span><span class="f-ico"><svg class="ic" viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/></svg></span></button>
+          <button class="f-item" style="--acc:#F08FD0"><span class="f-num">05</span><span class="f-body"><span class="f-name">Trợ lý AI ra lệnh bằng giọng nói</span><span class="f-desc">Chạm mic và nói: "Đồng ơi, tháng này chi sao rồi?" — báo cáo, cảnh báo, chia tiền. Rảnh tay 100%.</span></span><span class="f-ico"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 19v3"/></svg></span></button>
+        </div>
+      </div>
+
+      <div class="f-right">
+        <div class="phone-wrap">
+          <div class="phone-glow"></div>
+          <div class="p-float" id="fFloat">
+            <div class="phone" id="fPhone">
+              <span class="p-btn p-b1"></span><span class="p-btn p-b2"></span><span class="p-btn p-b3"></span><span class="p-btn p-b4"></span>
+              <div class="screen">
+                <div class="island"></div>
+
+                <!-- S1: PHẢN HỒI TỨC THÌ -->
+                <div class="app scr0">
+                  <div class="sbar"><span class="sb-time">9:41</span><span class="sb-ic"></span></div>
+                  <div class="a-head"><b>Ghi nhận tức thì</b><small>Bấm "Lưu" — phản hồi dưới 0,5 giây</small></div>
+                  <div class="rt-card">
+                    <div class="rt-top">
+                      <span class="tx-ic bg-amber">C</span>
+                      <div><div class="tx-n">Cà phê sáng</div><div class="tx-c">65.000₫ · Ăn uống</div></div>
+                      <button class="rt-save" type="button">Lưu</button>
+                    </div>
+                    <div class="rt-timer"><b id="rtT">0,00</b><small>giây phản hồi</small></div>
+                    <div class="rt-done" id="rtDone"><svg class="ic" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Đã lưu vào sổ — 0,42s</div>
+                  </div>
+                  <div class="rt-mini"><span class="tx-ic bg-blue">G</span><span>Grab · 85.000₫</span><b>0,38s</b></div>
+                  <div class="rt-mini"><span class="tx-ic bg-mint">B</span><span>Bách Hóa Xanh · 342.000₫</span><b>0,44s</b></div>
+                  <div class="sum-row"><svg class="ic" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>Mục tiêu &lt; 0,5s — đạt 100% buổi thử nghiệm</div>
+                </div>
+
+                <!-- S2: BÁO CÁO THẦN TỐC -->
+                <div class="app scr1">
+                  <div class="sbar"><span class="sb-time">9:41</span><span class="sb-ic"></span></div>
+                  <div class="a-head"><b>Báo cáo thần tốc</b><small>2.412 giao dịch · tính toán &amp; vẽ biểu đồ</small></div>
+                  <div class="rp-flex">
+                    <div class="rp-donut">
+                      <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="46" class="rk"/><circle cx="60" cy="60" r="46" class="rp2" id="rpRing"/></svg>
+                      <div class="rp-c"><b><span id="rpT">0,00</span>s</b><small>thời gian tải</small></div>
+                    </div>
+                    <div class="rp-bars">
+                      <div class="rp-bar"><small><span>Ăn uống</span><b>42%</b></small><div class="bar"><div class="rp-bar-f" style="width:42%;background:var(--gold)"></div></div></div>
+                      <div class="rp-bar"><small><span>Di chuyển</span><b>23%</b></small><div class="bar"><div class="rp-bar-f" style="width:23%;background:var(--mint)"></div></div></div>
+                      <div class="rp-bar"><small><span>Giải trí</span><b>15%</b></small><div class="bar"><div class="rp-bar-f" style="width:15%;background:var(--violet)"></div></div></div>
+                    </div>
+                  </div>
+                  <div class="ch-stats"><span><b>2.412</b>giao dịch xử lý</span><span><b>0 giây</b>màn hình loading</span></div>
+                  <div class="rp-badge"><svg class="ic" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Xong trong 1,28s — trước chuẩn 1,5s</div>
+                </div>
+
+                <!-- S3: OFFLINE-FIRST -->
+                <div class="app scr2x">
+                  <div class="sbar"><span class="sb-time">9:41</span><span class="sb-ic"></span></div>
+                  <div class="a-head"><b>Sóng yếu vẫn ghi</b><small>Offline-first — mạng không chặn bạn lại</small></div>
+                  <div class="of-state" id="ofState"><svg class="ic" viewBox="0 0 24 24"><path d="M2 2l20 20"/><path d="M9 16.5a4.5 4.5 0 0 1 6 0"/><path d="M5.5 12.5a10 10 0 0 1 4-2.4"/><path d="M18.5 12.5a10 10 0 0 0-3.4-2.1"/><circle cx="12" cy="20" r="1"/></svg>Đang offline — sóng yếu</div>
+                  <div class="tx of-tx"><span class="tx-ic bg-mint">C</span><div><div class="tx-n">Bán hàng chợ</div><div class="tx-c">+250.000₫ · vừa ghi</div></div><span class="chip bg-mint of-chip">Lưu · <b id="ofMs">0</b>ms</span></div>
+                  <div class="of-sync">
+                    <div class="of-flow">
+                      <span class="of-node"><svg class="ic" viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2.5"/></svg></span>
+                      <span class="of-dash"></span>
+                      <span class="of-node cloud"><svg class="ic" viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg></span>
+                    </div>
+                    <div class="of-bar"><div class="of-bar-f" id="ofBar"></div></div>
+                    <div class="of-lbl">Đồng bộ ngầm: <b><span id="ofS">0,0</span>s</b> · mục tiêu &lt; 2s</div>
+                  </div>
+                  <div class="of-done" id="ofDone"><svg class="ic" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Bạn không phải đợi thêm bất kỳ giây nào</div>
+                </div>
+
+                <!-- S4: TÀI NGUYÊN -->
+                <div class="app scr3x">
+                  <div class="sbar"><span class="sb-time">9:41</span><span class="sb-ic"></span></div>
+                  <div class="a-head"><b>Nhẹ như không</b><small>Tài nguyên thiết bị khi chạy thường ngày</small></div>
+                  <div class="res-wrap">
+                    <div class="res-bar"><div class="res-lbl"><small>App tài chính trung bình</small><b><span id="resAn">0</span>MB</b></div><div class="bar"><div class="bar-f" id="resA" style="width:100%;background:rgba(255,255,255,.2)"></div></div></div>
+                    <div class="res-bar"><div class="res-lbl"><small>Đồng</small><span class="chip bg-mint res-ok">chuẩn &lt; 100MB ✓</span><b style="color:var(--mint)"><span id="resDn">0</span>MB</b></div><div class="bar"><div class="bar-f" id="resD" style="width:27%;background:linear-gradient(90deg,var(--mint),var(--gold))"></div></div></div>
+                  </div>
+                  <div class="res-cards">
+                    <span><b>0</b>background service khi không dùng</span>
+                    <span><b>1 ngày 14h</b>thời lượng pin ước tính</span>
+                    <span><b>29°C</b>nhiệt độ máy — không nóng</span>
+                  </div>
+                  <div class="sum-row"><svg class="ic" viewBox="0 0 24 24"><path d="M20.24 12.24a6 6 0 0 0-8.49-8.49L5 10.5V19h8.5z"/><path d="M16 8 2 22"/></svg>Nhẹ đến mức bạn quên nó đang chạy</div>
+                </div>
+
+                <!-- S5: TRỢ LÝ AI + MIC -->
+                <div class="app scr4x">
+                  <div class="sbar"><span class="sb-time">9:41</span><span class="sb-ic"></span></div>
+                  <div class="a-head"><b>Trợ lý ra lệnh bằng giọng nói</b><small>Quản lý tiện ích rảnh tay — không cần chạm</small></div>
+                  <div class="ai-stage" id="aiStage">
+                    <button class="mic-btn" id="micBtn" type="button" aria-label="Nói với Đồng">
+                      <svg class="ic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><path d="M12 19v3"/></svg>
+                    </button>
+                    <div class="wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <span class="mic-hint" id="micHint">Chạm mic — thử "báo cáo tháng này"</span>
+                  </div>
+                  <div class="msg me user"><span class="m-av me">M</span><div class="bub">"<span id="vUserTxt">Đồng ơi, tháng này mình chi sao rồi?</span>"</div></div>
+                  <div class="msg aib"><span class="m-av ai">Đ</span><div class="bub"><span class="typing" id="aiTyping"><i></i><i></i><i></i></span><span id="aiTxt2"></span></div></div>
+                  <div class="ai-chip">
+                    <div class="chip-lg"><svg class="ic" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>Đặt hạn mức Ăn uống tháng 7: 8.500.000₫</div>
+                    <div class="ai-btns"><button class="yes" type="button">Đồng ý</button><button class="no" type="button">Để sau</button></div>
+                  </div>
+                </div>
+
+                <div class="glare"></div>
+                <div class="sheen" id="scrSheen"></div>
+              </div>
+            </div>
+            <div class="phone-shadow"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WIDGET VUE 50/30/20 ============ -->
+<section id="calc-sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker"><i class="dot"></i>Trải nghiệm ngay</span>
+      <h2 class="rv">Đừng đọc về 50/30/20 — <em>hãy kéo thử</em></h2>
+      <p class="sub">Nhập mức thu nhập của bạn, điều chỉnh tỷ lệ bằng thanh trượt và xem dòng tiền tách thành ba ví ngay tại đây — chính là widget chạy bên trong app.</p>
+    </div>
+    <div class="calc-card" id="calc" v-cloak>
+      <div>
+        <label class="am-in"><span>Mức thu nhập của bạn</span>
+          <div class="am-wrap"><input inputmode="numeric" :value="amountStr" @input="onAmount" placeholder="0"><em>₫</em></div>
+        </label>
+        <div class="presets">
+          <button v-for="v in presets" :key="v.v" @click="setAmount(v.v)">{{ v.l }}</button>
+        </div>
+        <div class="s-row" v-for="(r,i) in rings" :key="i">
+          <span class="s-name"><span :style="{color:r.c}">{{ r.n }}</span><b>{{ p[i] }}%</b></span>
+          <input type="range" min="0" max="100" step="1" :value="p[i]" @input="slide(i,$event)" :style="{color:r.c,accentColor:r.c}">
+        </div>
+      </div>
+      <div class="rings">
+        <div class="ring" v-for="(r,i) in rings" :key="'r'+i">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="44" class="rk" style="stroke-width:9"/>
+            <circle cx="50" cy="50" r="44" class="rp" :stroke="r.c" :style="{strokeDashoffset: C*(1-p[i]/100)}"/>
+          </svg>
+          <div class="rc"><b :style="{color:r.c}">{{ dp[i] }}%</b><span>{{ r.n }}</span><strong>{{ fmt(d[i]) }}₫</strong></div>
+        </div>
+      </div>
+      <div class="calc-tip">
+        <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16v.01"/></svg>
+        50/30/20 chỉ là điểm khởi đầu — hãy kéo cho đúng nhịp sống của bạn, tổng tỷ lệ luôn tự cân về 100%.
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="rule"></div></div>
+
+<!-- ============ BẢO MẬT ============ -->
+<section id="security">
+  <div class="wrap sec-grid">
+    <div>
+      <span class="kicker"><i class="dot"></i>Bảo mật</span>
+      <div class="sec-head" style="margin-bottom:24px">
+        <h2 class="rv">Bảo mật không phải tính năng — <em>đó là nền móng</em></h2>
+        <p class="sub">Tiền là thứ nhạy cảm nhất bạn có. Chúng tôi xây tầng an toàn trước cả khi vẽ màn hình đầu tiên.</p>
+      </div>
+      <div class="lock-stage">
+        <svg viewBox="0 0 200 200">
+          <path class="lk-s" d="M65 96V68a35 35 0 0 1 70 0v28" pathLength="1"/>
+          <rect class="lk-b" x="50" y="96" width="100" height="80" rx="18" pathLength="1"/>
+          <circle class="lk-g" cx="100" cy="128" r="10" pathLength="1"/>
+          <rect class="lk-k" x="96" y="132" width="8" height="22" rx="4"/>
+        </svg>
+      </div>
+    </div>
+    <div class="s-rows">
+      <div class="s-row2"><svg class="ic" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="9.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg><div><h4>Mã hóa AES-256 đầu cuối</h4><p>Dữ liệu giao dịch được mã hóa trước khi rời khỏi điện thoại của bạn. Kể cả chúng tôi cũng không đọc được nội dung gốc.</p></div></div>
+      <div class="s-row2"><svg class="ic" viewBox="0 0 24 24"><path d="M12 3 5 5.8V11c0 4.6 3 7.7 7 9 4-1.3 7-4.4 7-9V5.8z"/><path d="m9.3 11.6 2 2 3.6-3.8"/></svg><div><h4>Sinh trắc học mọi thao tác quan trọng</h4><p>Face ID / vân tay cho phép chuyển tiền, mở hũ, xem báo cáo chi tiết. Không mật khẩu để lộ, không OTP để lừa đảo.</p></div></div>
+      <div class="s-row2"><svg class="ic" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="m9.5 14 1.8 1.8 3.2-3.4"/></svg><div><h4>Chuẩn ISO 27001 &amp; PCI-DSS</h4><p>Hệ thống được kiểm định bảo mật định kỳ bởi bên thứ ba độc lập, đúng chuẩn quốc tế cho ứng dụng tài chính.</p></div></div>
+      <div class="s-row2"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="7" rx="2"/><rect x="4" y="13" width="16" height="7" rx="2"/><path d="M8 7.5h.01M8 16.5h.01"/></svg><div><h4>Dữ liệu lưu tại Việt Nam</h4><p>Toàn bộ dữ liệu nằm trên máy chủ trong nước, tuân thủ Nghị định 13/2023 về bảo vệ dữ liệu cá nhân.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CON SỐ ============ -->
+<section id="numbers">
+  <div class="wrap">
+    <span class="kicker" style="margin-bottom:40px"><i class="dot"></i>Beta · Tháng 6</span>
+    <div class="nums">
+      <div class="num-it"><b class="nline"><span class="num" data-to="128412"></span><em class="sfx">+</em></b><span>người trong danh sách chờ</span></div>
+      <div class="num-it"><b class="nline"><span class="num" data-to="4.8" data-dec="1"></span><em class="sfx">/5</em></b><span>điểm trải nghiệm từ người dùng beta</span></div>
+      <div class="num-it"><b class="nline"><span class="num" data-to="1.2" data-dec="1"></span><em class="sfx">tỷ₫</em></b><span>được Đồng tự động phân chia mỗi ngày</span></div>
+      <div class="num-it"><b class="nline"><span class="num" data-to="99.98" data-dec="2"></span><em class="sfx">%</em></b><span>thời gian hoạt động trong 6 tháng beta</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ NGƯỜI DÙNG NÓI GÌ ============ -->
+<section id="voices" style="padding-top:0">
+  <div class="wrap sec-head">
+    <span class="kicker"><i class="dot"></i>Người dùng nói gì</span>
+    <h2 class="rv">Nhịp của những người <em>đã thấy rõ tiền mình</em></h2>
+  </div>
+  <div class="mq"><div class="mq-track" data-mq></div></div>
+  <div class="mq" style="margin-top:18px"><div class="mq-track rev" data-mq></div></div>
+</section>
+
+<!-- ============ KIẾN TRÚC 3 TẦNG ============ -->
+<section id="arch">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="kicker"><i class="dot"></i>Bên dưới bề mặt</span>
+      <h2 class="rv">Ba tầng vận hành <em>một trang web</em></h2>
+      <p class="sub">Trang này không chỉ có lớp vỏ đẹp. Đây là bản đồ kỹ thuật đầy đủ — từ thứ bạn nhìn thấy đến thứ giữ cho nó sống trên Internet.</p>
+    </div>
+    <div class="tier">
+      <div><span class="t-tag" style="color:var(--mint)">FRONTEND</span><h3>Giao diện hiển thị</h3><p class="t-d">HTML là khung xương, CSS là màu sắc và bố cục, JavaScript là hiệu ứng và tương tác — những gì người dùng chạm vào mỗi ngày.</p></div>
+      <div class="t-chips"><span>Next.js 14</span><span>React 18</span><span>GSAP + ScrollTrigger</span><span>Three.js</span><span>GLSL</span><span>Vue 3 widget</span><span>Web Speech API</span></div>
+    </div>
+    <div class="tier">
+      <div><span class="t-tag" style="color:var(--violet)">BACKEND</span><h3>Hệ thống xử lý ngầm</h3><p class="t-d">Server chạy logic nghiệp vụ, API là cầu nối truyền dữ liệu, database lưu trữ mọi thứ an toàn — người dùng không bao giờ thấy nhưng luôn cảm nhận được.</p></div>
+      <div class="t-chips"><span>Node.js</span><span>Route Handlers / API</span><span>PostgreSQL</span><span>Zod validation</span><span>Rate limiting</span><span>Resend email</span></div>
+    </div>
+    <div class="tier">
+      <div><span class="t-tag" style="color:var(--gold)">HẠ TẦNG</span><h3>Đưa web lên Internet</h3><p class="t-d">Domain là địa chỉ, DNS là người dẫn đường, hosting là mảnh đất, SSL là thứ chốt cây cổng https:// — điều kiện để cả thế giới truy cập được.</p></div>
+      <div class="t-chips"><span>Vercel hosting</span><span>Domain .vn</span><span>DNS Cloudflare</span><span>SSL Let's Encrypt</span><span>CI/CD GitHub</span><span>Sentry monitoring</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section id="cta">
+  <div class="wrap cta-in">
+    <span class="kicker" style="justify-content:center"><i class="dot"></i>Danh sách chờ</span>
+    <h2 class="rv">Để Đồng lo phần nhìn,<br>bạn lo phần <em>sống</em>.</h2>
+    <p class="sub">Ghi danh để nhận link tải sớm nhất trên App Store và Google Play. Người trong danh sách chờ được mở tính năng AI giọng nói trước 3 tháng.</p>
+    <form id="wlForm" class="wl" novalidate>
+      <input id="wlEmail" type="email" placeholder="email@cua-ban.vn" autocomplete="email">
+      <button id="wlBtn" class="btn btn-mint magnetic" type="submit">Nhận link tải</button>
+    </form>
+    <div id="wlDone">
+      <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.4 2.4 4.6-5"/></svg>
+      <b id="wlDoneT">Đã ghi danh thành công!</b>
+      <span>Link tải sẽ bay vào hộp thư của bạn ngay khi Đồng mở cửa hàng ứng dụng. Hẹn gặp sớm.</span>
+    </div>
+    <div class="stores">
+      <button type="button" class="store-badge" data-store>
+        <svg class="s-logo" viewBox="0 0 24 24" fill="#F2F5FA"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8.94-.19 1.84-.86 3.02-.82 1.43.11 2.5.65 3.2 1.66-2.94 1.79-2.47 5.66.49 6.74-.6 1.5-1.36 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span class="s-txt"><small>Tải trên</small><b>App Store</b></span>
+      </button>
+      <button type="button" class="store-badge" data-store>
+        <svg class="s-logo" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M3.3 2.6c-.3.4-.4.9-.4 1.5v15.8c0 .6.1 1.1.4 1.5l9.4-9.4L3.3 2.6z"/>
+          <path fill="#34A853" d="M12.7 12l3.6-3.3L4.8 2.3c-.6-.4-1.2-.2-1.5.3l9.4 9.4z"/>
+          <path fill="#FBBC04" d="M17.6 8.5l-1.3 1.2-2.1 2.3 2.1 2.3 1.3 1.2 3.7-2.1c1-.6 1-2.2 0-2.8l-3.7-2.1z"/>
+          <path fill="#EA4335" d="M12.7 12l-9.4 9.4c.3.4.9.6 1.5.3l11.5-6.4-3.6-3.3z"/>
+        </svg>
+        <span class="s-txt"><small>Giờ có trên</small><b>Google Play</b></span>
+      </button>
+    </div>
+    <p class="cta-note">Không spam — chỉ một email duy nhất khi lên cửa hàng. Bản demo này lưu ghi danh cục bộ trên máy bạn; bản production sẽ gọi POST /api/waitlist.</p>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <a href="#hero" class="logo">
+          <svg class="lmark" viewBox="0 0 48 48"><rect x="2" y="2" width="44" height="44" rx="13" fill="url(#gBrand)"/><rect x="4.5" y="4.5" width="39" height="39" rx="10.5" fill="none" stroke="#E8C57C" stroke-width="1.6" opacity=".85"/><g fill="none" stroke="#052019" stroke-width="4.2" stroke-linecap="round"><path d="M18 14v20"/><path d="M18 14h5a10 10 0 0 1 0 20h-5"/><path d="M10 24h22"/></g></svg>
+          Đồng
+        </a>
+        <p>Ứng dụng quản lý chi tiêu &amp; tài sản cá nhân, thiết kế cho người Việt bận rộn. Tiền của bạn — dưới tầm mắt.</p>
+      </div>
+      <div class="f-col"><b>SẢN PHẨM</b><a href="#features">Tính năng</a><a href="#security">Bảo mật</a><a href="#calc">Widget 50/30/20</a><a href="#cta">Danh sách chờ</a></div>
+      <div class="f-col"><b>CÔNG TY</b><a href="#" data-soon>Về chúng tôi</a><a href="#" data-soon>Blog</a><a href="#" data-soon>Tuyển dụng</a><a href="#" data-soon>Truyền thông</a></div>
+      <div class="f-col"><b>LIÊN HỆ</b><a href="#" data-soon>hello@dongapp.vn</a><a href="#" data-soon>Facebook</a><a href="#" data-soon>Zalo OA</a><a href="#" data-soon>GitHub</a></div>
+    </div>
+    <div class="f-bot">
+      <span>© 2025 Đồng · Điều khoản · Chính sách bảo mật</span>
+      <span>Dựng bằng WebGL · GSAP · Vue — tại Hà Nội</span>
+    </div>
+  </div>
+</footer>
+
+<div id="toasts"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+<script src="https://unpkg.com/vue@3.4.21/dist/vue.global.prod.js"></script>
+<script>
+/* ================================================================
+   ĐỒNG — landing page tương tác (bản hiệu năng + AI giọng nói)
+================================================================ */
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+const $  = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const fmtN = (n, d = 0) => Number(n).toLocaleString('vi-VN', { minimumFractionDigits: d, maximumFractionDigits: d });
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- Thanh trạng thái điện thoại ---------- */
+const SB_IC = `
+<svg viewBox="0 0 18 12" fill="currentColor"><rect x="0" y="7.5" width="3" height="4" rx="1"/><rect x="4.8" y="5.5" width="3" height="6" rx="1"/><rect x="9.6" y="3" width="3" height="8.5" rx="1"/><rect x="14.4" y="0.5" width="3" height="11" rx="1"/></svg>
+<svg viewBox="0 0 24 18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M2.5 6.5a14 14 0 0 1 19 0"/><path d="M6 10.4a9 9 0 0 1 12 0"/><path d="M9.4 14a4.2 4.2 0 0 1 5.2 0"/></svg>
+<svg viewBox="0 0 27 13"><rect x="0.6" y="0.6" width="22.8" height="11.8" rx="3.6" fill="none" stroke="currentColor" opacity=".45" stroke-width="1.2"/><rect x="2.6" y="2.6" width="15" height="7.8" rx="2" fill="#00D18F"/><path d="M25.3 4.3v4.4c1.2-.3 1.9-1.1 1.9-2.2s-.7-1.9-1.9-2.2z" fill="currentColor" opacity=".45"/></svg>`;
+ $$('.sb-ic').forEach(el => el.innerHTML = SB_IC);
+
+/* ---------- Tiện ích ---------- */
+function goSel(sel){ gsap.to(window, { scrollTo: { y: sel, offsetY: 66 }, duration: 1.1, ease: 'power3.inOut' }); }
+function countToEl(el, to, dur = 1.2, dec = 0, suf = '') {
+  const o = { v: 0 };
+  return gsap.to(o, { v: to, duration: dur, ease: 'power2.out', onUpdate: () => el.textContent = fmtN(o.v, dec) + suf });
+}
+function tw(el, txt) {
+  const o = { i: 0 };
+  return gsap.to(o, { i: txt.length, duration: txt.length * .016 + .3, ease: 'none', onUpdate: () => el.textContent = txt.slice(0, Math.round(o.i)) });
+}
+const IC_OK  = '<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.4 2.4 4.6-5"/></svg>';
+const IC_ERR = '<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/><path d="M12 16v.01"/></svg>';
+const IC_CHECK = '<svg class="ic" viewBox="0 0 24 24" style="font-size:14px"><path d="M5 13l4 4L19 7"/></svg>';
+const IC_OFF = '<svg class="ic" viewBox="0 0 24 24" style="font-size:14px"><path d="M2 2l20 20"/><path d="M9 16.5a4.5 4.5 0 0 1 6 0"/><path d="M5.5 12.5a10 10 0 0 1 4-2.4"/><path d="M18.5 12.5a10 10 0 0 0-3.4-2.1"/><circle cx="12" cy="20" r="1"/></svg>';
+function showToast(msg, type = 'ok') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = (type === 'ok' ? IC_OK : IC_ERR) + '<span>' + msg + '</span>';
+  $('#toasts').append(t);
+  gsap.fromTo(t, { y: 26, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: .5, ease: 'power3.out' });
+  setTimeout(() => gsap.to(t, { y: 14, autoAlpha: 0, duration: .4, onComplete: () => t.remove() }), 3800);
+}
+
+/* ================= NỀN WEBGL: AURORA (jade/gold huyền ảo, chậm rãi hơn) ================= */
+let glOK = true, renderer, aMat, pGroups = [], samples = [], SAMP = 560;
+const mX = { t: 0, c: 0 }, mY = { t: 0, c: 0 };
+let scrollP = 0;
+const glCanvas = $('#gl');
+try {
+  renderer = new THREE.WebGLRenderer({ canvas: glCanvas, antialias: false, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.autoClear = false;
+  const AURORA = `
+    precision mediump float;
+    uniform float uTime, uScroll;
+    uniform vec2 uRes, uMouse;
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
+    float noise(vec2 p){
+      vec2 i = floor(p), f = fract(p); f = f*f*(3.0-2.0*f);
+      return mix(mix(hash(i), hash(i+vec2(1.0,0.0)), f.x),
+                 mix(hash(i+vec2(0.0,1.0)), hash(i+vec2(1.0,1.0)), f.x), f.y);
+    }
+    float fbm(vec2 p){
+      float v = 0.0, a = 0.5;
+      for(int i = 0; i < 5; i++){ v += a * noise(p); p = p*2.03 + vec2(1.7, 9.2); a *= 0.5; }
+      return v;
+    }
+    void main(){
+      vec2 uv = (gl_FragCoord.xy - 0.5*uRes) / uRes.y;
+      float t = uTime * 0.045;                 /* chậm hơn — lụa mượt, huyền ảo */
+      vec2 q = vec2(fbm(uv*1.4 + t), fbm(uv*1.4 - t*0.7 + 3.1));
+      float n = fbm(uv*1.8 + q*1.2 + vec2(t*0.5, -uScroll*2.6));
+      float b1 = smoothstep(0.55, 0.0, abs(uv.y + n*0.9 - 0.12 + q.x*0.4));
+      float b2 = smoothstep(0.50, 0.0, abs(uv.y - n*1.1 + 0.42 - q.y*0.5));
+      float b3 = smoothstep(0.60, 0.0, abs(uv.y + n*0.7 + 0.85));
+      vec3 col = vec3(0.016, 0.023, 0.047);
+      col += vec3(0.000, 0.820, 0.560) * b1 * 0.20;   /* jade emerald */
+      col += vec3(0.420, 0.360, 1.000) * b2 * 0.15;   /* violet dịu */
+      col += vec3(0.910, 0.770, 0.490) * b3 * 0.07;   /* vàng champagne */
+      col += vec3(0.910, 0.770, 0.490) * b1 * b2 * 0.05;
+      vec2 d = uv - uMouse;
+      col += vec3(0.0, 0.6, 0.42) * exp(-dot(d,d) * 2.2) * 0.08;
+      col *= mix(0.68, 1.0, smoothstep(1.5, 0.25, length(uv)));
+      col += (hash(gl_FragCoord.xy + uTime) - 0.5) * 0.02;
+      gl_FragColor = vec4(col, 1.0);
+    }`;
+  const aScene = new THREE.Scene();
+  const aCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+  aMat = new THREE.ShaderMaterial({
+    uniforms: { uTime: { value: 0 }, uScroll: { value: 0 }, uRes: { value: new THREE.Vector2(innerWidth, innerHeight) }, uMouse: { value: new THREE.Vector2(0, 0) } },
+    vertexShader: 'void main(){ gl_Position = vec4(position.xy, 0.0, 1.0); }',
+    fragmentShader: AURORA, depthWrite: false, depthTest: false
+  });
+  aScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), aMat));
+
+  const curve = new THREE.CatmullRomCurve3([
+    [-7.5, -3.5, -2], [-4, 1.6, -1], [-1, -1.4, 0], [1.6, 2.2, 0],
+    [4.2, -0.6, -0.5], [6.8, 1.6, -1], [8.5, -2.4, -2]
+  ].map(a => new THREE.Vector3(...a)));
+  for (let i = 0; i < SAMP; i++) samples.push(curve.getPointAt(i / (SAMP - 1)));
+
+  const spriteTex = (() => {
+    const c = document.createElement('canvas'); c.width = c.height = 64;
+    const g = c.getContext('2d'), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    r.addColorStop(0, 'rgba(255,255,255,1)'); r.addColorStop(.35, 'rgba(255,255,255,.5)'); r.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = r; g.fillRect(0, 0, 64, 64);
+    return new THREE.CanvasTexture(c);
+  })();
+
+  const pScene = new THREE.Scene();
+  const pCam = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, .1, 60);
+  pCam.position.z = 7;
+  const pHolder = new THREE.Group(); pScene.add(pHolder);
+
+  function makePts(count, hex, size, opacity) {
+    const col = new THREE.Color(hex);
+    const pos = new Float32Array(count * 3), off = new Float32Array(count * 3);
+    const phase = new Float32Array(count), speed = new Float32Array(count);
+    const cols = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      off[i*3] = (Math.random() - .5) * .7; off[i*3+1] = (Math.random() - .5) * .7; off[i*3+2] = (Math.random() - .5) * .7;
+      phase[i] = Math.random(); speed[i] = (.55 + Math.random() * .8) * opacity * 40;
+      const m = .75 + Math.random() * .25;
+      cols[i*3] = col.r * m; cols[i*3+1] = col.g * m; cols[i*3+2] = col.b * m;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(cols, 3));
+    const mat = new THREE.PointsMaterial({ size, map: spriteTex, vertexColors: true, transparent: true, opacity: .8, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+    const pts = new THREE.Points(geo, mat);
+    pHolder.add(pts);
+    pGroups.push({ geo, pos, off, phase, speed, count });
+  }
+  makePts(380, 0x00D18F, .045, .018);   /* jade */
+  makePts(170, 0x9B8CFF, .07, .024);    /* violet */
+  makePts(42,  0xE8C57C, .12, .05);     /* vàng lấp lánh — "stardust" */
+  if (RM) pGroups.forEach(g => { /* đứng yên nếu giảm chuyển động */ });
+
+  function updatePts(time, boost) {
+    for (const g of pGroups) {
+      for (let i = 0; i < g.count; i++) {
+        let t = g.phase[i] + time * g.speed[i] * boost;
+        t -= Math.floor(t);
+        const f = t * (SAMP - 1), i0 = f | 0, k = f - i0, i1 = (i0 + 1) % SAMP;
+        const a = samples[i0], b = samples[i1], o = i * 3;
+        g.pos[o]   = a.x + (b.x - a.x) * k + g.off[o];
+        g.pos[o+1] = a.y + (b.y - a.y) * k + g.off[o+1];
+        g.pos[o+2] = a.z + (b.z - a.z) * k + g.off[o+2];
+      }
+      g.geo.attributes.position.needsUpdate = true;
+    }
+  }
+  if (RM) updatePts(0, 1);
+  window.__gl = { renderer, aScene, aCam, pScene, pCam, aMat, updatePts };
+} catch (e) { glOK = false; glCanvas.style.display = 'none'; }
+
+addEventListener('resize', () => {
+  if (!glOK) return;
+  renderer.setSize(innerWidth, innerHeight);
+  window.__gl.pCam.aspect = innerWidth / innerHeight;
+  window.__gl.pCam.updateProjectionMatrix();
+  aMat.uniforms.uRes.value.set(innerWidth, innerHeight);
+});
+addEventListener('scroll', () => {
+  scrollP = scrollY / Math.max(1, document.documentElement.scrollHeight - innerHeight);
+}, { passive: true });
+addEventListener('mousemove', e => {
+  mX.t = e.clientX / innerWidth * 2 - 1;
+  mY.t = e.clientY / innerHeight * 2 - 1;
+}, { passive: true });
+
+/* ---------- Vòng lặp render + tilt hero ---------- */
+const heroWrap = $('#heroWrap'), heroPhone = $('#heroPhone');
+let tX = 0, tY = 0, cX = 0, cY = 0;
+if (heroWrap && !RM) {
+  heroWrap.addEventListener('mousemove', e => {
+    const r = heroWrap.getBoundingClientRect();
+    tX = ((e.clientX - r.left) / r.width - .5) * 2;
+    tY = ((e.clientY - r.top) / r.height - .5) * 2;
+  });
+  heroWrap.addEventListener('mouseleave', () => { tX = 0; tY = 0; });
+}
+function tick(t) {
+  requestAnimationFrame(tick);
+  if (document.hidden) return;
+  const time = t * .001;
+  cX += (tX - cX) * .06; cY += (tY - cY) * .06;
+  heroPhone.style.transform = `rotateY(${cX * 7}deg) rotateX(${-cY * 6}deg)`;
+  if (!glOK || RM) return;
+  aMat.uniforms.uTime.value = time;
+  aMat.uniforms.uScroll.value = scrollP;
+  aMat.uniforms.uMouse.value.set(mX.c * .55, -mY.c * .4);
+  mX.c += (mX.t - mX.c) * .05; mY.c += (mY.t - mY.c) * .05;
+  window.__gl.updatePts(time, 1 + scrollP * 2.2);
+  pHolderRot(window.__gl.pScene, cX, cY, scrollP);
+  const { renderer: r, aScene, aCam, pScene, pCam } = window.__gl;
+  r.clear(); r.render(aScene, aCam); r.clearDepth(); r.render(pScene, pCam);
+}
+function pHolderRot(scene, x, y, s) {
+  const g = scene.children[0];
+  g.rotation.y += (x * .1 - g.rotation.y) * .04;
+  g.rotation.x += (-y * .07 - g.rotation.x) * .04;
+  g.rotation.z = s * .25;
+  g.scale.setScalar(innerWidth < 900 ? .62 : 1);
+}
+requestAnimationFrame(tick);
+
+/* ================= TÁCH CHỮ / TỪ ================= */
+function splitChars(line) {
+  const frag = document.createDocumentFragment();
+  [...line.childNodes].forEach(n => {
+    if (n.nodeType === 3) {
+      [...n.textContent].forEach(ch => {
+        const s = document.createElement('span');
+        s.className = 'ch'; s.innerHTML = ch === ' ' ? '&nbsp;' : ch;
+        frag.append(s);
+      });
+    } else if (n.tagName === 'BR') {
+      frag.append(document.createElement('br'));
+    } else {
+      const s = document.createElement('span');
+      s.className = 'ch em-ch'; s.textContent = n.textContent;
+      frag.append(s);
+    }
+  });
+  line.innerHTML = ''; line.append(frag);
+  return line.querySelectorAll('.ch');
+}
+const heroChars = $$('.hl-line').flatMap(l => [...splitChars(l)]);
+gsap.set(heroChars, { yPercent: 115 });
+
+ $$('.rv').forEach(h => {
+  const frag = document.createDocumentFragment();
+  const mk = html => { const w = document.createElement('span'); w.className = 'w'; w.innerHTML = '<span class="wi">' + html + '</span>'; return w; };
+  [...h.childNodes].forEach(n => {
+    if (n.nodeType === 3) {
+      n.textContent.split(/(\s+)/).forEach(p => {
+        if (!p) return;
+        if (/^\s+$/.test(p)) frag.append(' '); else frag.append(mk(p));
+      });
+    } else if (n.tagName === 'BR') {
+      frag.append(document.createElement('br'));
+    } else frag.append(mk(n.outerHTML));
+  });
+  h.innerHTML = ''; h.append(frag);
+  const wis = h.querySelectorAll('.wi');
+  gsap.set(wis, { yPercent: 115 });
+  ScrollTrigger.create({
+    trigger: h, start: 'top 85%', once: true,
+    onEnter: () => gsap.to(wis, { yPercent: 0, duration: .95, stagger: .05, ease: 'power4.out' })
+  });
+});
+
+/* ================= 5 MÀN ĐIỆN THOẠI + TIMELINE ================= */
+const screens = $$('#fPhone .app');
+const fItems = $$('.f-item');
+let curF = -1, prevScreen = null;
+const screenTls = [];
+
+/* chuyển cảnh huyền ảo: mờ dần + dải ánh sáng quét qua màn hình */
+function showScreen(i) {
+  const s = screens[i];
+  if (prevScreen && prevScreen !== s) {
+    const p = prevScreen;
+    gsap.to(p, { autoAlpha: 0, scale: .965, filter: 'blur(6px)', duration: .28, ease: 'power2.in',
+      onComplete: () => { p.classList.remove('on'); gsap.set(p, { clearProps: 'all' }); } });
+  }
+  prevScreen = s;
+  s.classList.add('on');
+  gsap.fromTo(s, { autoAlpha: 0, scale: 1.02, filter: 'blur(12px)' },
+    { autoAlpha: 1, scale: 1, filter: 'blur(0px)', duration: .62, ease: 'power2.out' });
+  gsap.fromTo('#scrSheen', { xPercent: -130, opacity: 1 }, { xPercent: 130, opacity: 0, duration: .95, ease: 'power2.inOut' });
+  screenTls[i] && screenTls[i].restart();
+}
+function setFeature(i, force) {
+  if (i === curF && !force) return;
+  curF = i;
+  fItems.forEach((it, k) => it.classList.toggle('on', k === i));
+  showScreen(i);
+}
+
+const aiStage = $('#aiStage'), micHint = $('#micHint'), aiTyping = $('#aiTyping'), aiTxt2 = $('#aiTxt2');
+
+function buildScreenTls() {
+  /* S0 — Phản hồi tức thì: bấm Lưu → đồng hồ chạy 0,00 → 0,42s */
+  const t0 = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  t0.from('.scr0 .a-head', { y: 12, autoAlpha: 0, duration: .45 }, .05)
+    .from('.scr0 .rt-card', { y: 16, autoAlpha: 0, duration: .5 }, .18)
+    .fromTo('.scr0 .rt-save', { scale: .6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .4, ease: 'back.out(2)' }, .4)
+    .to('.scr0 .rt-save', { scale: .88, duration: .1, yoyo: true, repeat: 1 }, .85)
+    .add(countToEl($('#rtT'), .42, .55, 2), 1.0)
+    .fromTo('#rtDone', { scale: .6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .45, ease: 'back.out(2)' }, 1.5)
+    .from('.scr0 .rt-mini', { y: 12, autoAlpha: 0, stagger: .12, duration: .4 }, 1.6)
+    .from('.scr0 .sum-row', { y: 8, autoAlpha: 0, duration: .4 }, 1.95);
+  screenTls[0] = t0;
+
+  /* S1 — Báo cáo thần tốc: donut vàng đầy + đếm 1,28s */
+  const t1 = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  t1.from('.scr1 .a-head', { y: 12, autoAlpha: 0, duration: .45 }, .05)
+    .from('.scr1 .rp-flex', { y: 14, autoAlpha: 0, duration: .5 }, .18)
+    .fromTo('#rpRing', { strokeDashoffset: 289 }, { strokeDashoffset: 289 * .02, duration: 1.35, ease: 'power2.inOut' }, .35)
+    .add(countToEl($('#rpT'), 1.28, 1.35, 2), .35)
+    .fromTo('.scr1 .rp-bar-f', { scaleX: 0 }, { scaleX: 1, duration: .9, stagger: .12, ease: 'power3.out' }, .55)
+    .from('.scr1 .ch-stats', { y: 8, autoAlpha: 0, duration: .4 }, .75)
+    .fromTo('.scr1 .rp-badge', { scale: .6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .45, ease: 'back.out(1.8)' }, 1.8);
+  screenTls[1] = t1;
+
+  /* S2 — Offline-first: lưu 87ms → thanh đồng bộ 1,8s → online */
+  const t2 = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  t2.call(() => { const s = $('#ofState'); s.classList.remove('on'); s.innerHTML = IC_OFF + 'Đang offline — sóng yếu'; }, null, .01)
+    .from('.scr2x .a-head', { y: 12, autoAlpha: 0, duration: .45 }, .05)
+    .from('.scr2x .of-state', { y: 10, autoAlpha: 0, duration: .4 }, .18)
+    .from('.scr2x .of-tx', { y: 14, autoAlpha: 0, duration: .45 }, .4)
+    .fromTo('.scr2x .of-chip', { scale: .5, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .4, ease: 'back.out(1.8)' }, .7)
+    .add(countToEl($('#ofMs'), 87, .55, 0), .7)
+    .from('.scr2x .of-sync', { y: 14, autoAlpha: 0, duration: .45 }, 1.05)
+    .fromTo('#ofBar', { scaleX: 0 }, { scaleX: 1, duration: 1.5, ease: 'power2.inOut' }, 1.3)
+    .add(countToEl($('#ofS'), 1.8, 1.5, 1), 1.3)
+    .call(() => { const s = $('#ofState'); s.classList.add('on'); s.innerHTML = IC_CHECK + 'Đã trực tuyến — mọi thứ đã lên cloud'; }, null, 2.85)
+    .fromTo('#ofDone', { scale: .6, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .45, ease: 'back.out(1.8)' }, 2.9);
+  screenTls[2] = t2;
+
+  /* S3 — Tài nguyên: RAM 320 vs 87MB + pin + nhiệt độ */
+  const t3 = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  t3.from('.scr3x .a-head', { y: 12, autoAlpha: 0, duration: .45 }, .05)
+    .from('.scr3x .res-bar', { y: 12, autoAlpha: 0, stagger: .14, duration: .45 }, .2)
+    .fromTo('#resA', { scaleX: 0 }, { scaleX: 1, duration: 1.05, ease: 'power3.out' }, .45)
+    .add(countToEl($('#resAn'), 320, 1.05, 0), .45)
+    .fromTo('#resD', { scaleX: 0 }, { scaleX: 1, duration: 1.05, ease: 'power3.out' }, .75)
+    .add(countToEl($('#resDn'), 87, 1.05, 0), .75)
+    .fromTo('.scr3x .res-ok', { scale: .5, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: .4, ease: 'back.out(2)' }, 1.75)
+    .from('.scr3x .res-cards span', { y: 12, autoAlpha: 0, stagger: .12, duration: .45 }, 1.0)
+    .from('.scr3x .sum-row', { y: 8, autoAlpha: 0, duration: .4 }, 1.5);
+  screenTls[3] = t3;
+
+  /* S4 — Trợ lý AI giọng nói: mic → sóng âm → bubble → gõ chữ */
+  const t4 = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  t4.call(() => { aiStage.classList.remove('listening'); micHint.textContent = 'Chạm mic — thử "báo cáo tháng này"'; aiTyping.style.display = 'inline-flex'; aiTxt2.style.display = 'none'; }, null, .01)
+    .from('.scr4x .a-head', { y: 12, autoAlpha: 0, duration: .45 }, .05)
+    .fromTo('#aiStage .mic-btn', { scale: 0 }, { scale: 1, duration: .5, ease: 'back.out(1.8)' }, .2)
+    .call(() => { aiStage.classList.add('listening'); micHint.textContent = 'Đang nghe…'; }, null, .75)
+    .from('.scr4x .msg.user', { y: 12, autoAlpha: 0, duration: .45 }, 1.2)
+    .from('.scr4x .msg.aib', { y: 12, autoAlpha: 0, duration: .45 }, 1.9)
+    .call(() => { aiStage.classList.remove('listening'); micHint.textContent = 'Chạm mic để hỏi lại'; aiTyping.style.display = 'none'; aiTxt2.style.display = 'inline'; }, null, 2.35)
+    .add(tw(aiTxt2, 'Bạn chi 9.450.000₫ cho ăn uống — vượt hạn mức 18%. Tháng sau mình đề xuất đặt 8.500.000₫ nhé?'), 2.35)
+    .from('.scr4x .ai-chip', { y: 14, autoAlpha: 0, duration: .5, ease: 'back.out(1.7)' }, '-=0.15');
+  screenTls[4] = t4;
+}
+buildScreenTls();
+screens[0].classList.add('on'); prevScreen = screens[0];
+
+/* ---- MIC THẬT: Web Speech API (Chrome/Edge, vi-VN) — có fallback demo ---- */
+function voiceTry() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return; // trình duyệt chưa hỗ trợ — kịch bản demo vẫn chạy
+  try {
+    const r = new SR();
+    r.lang = 'vi-VN'; r.interimResults = false; r.maxAlternatives = 1;
+    r.onresult = e => {
+      const txt = (e.results[0][0].transcript || '').trim();
+      if (!txt) return;
+      $('#vUserTxt').textContent = txt;
+      showToast('Đã nghe: "' + txt + '"');
+      const t = txt.toLowerCase();
+      if (/số dư|tổng tiền|bao nhiêu tiền/.test(t)) showToast('Tổng số dư: 47.250.000₫ — tăng 8,2% so với tháng trước.');
+      else if (/chia|lương|50|30|20/.test(t)) goSel('#calc');
+      else if (/báo cáo|chi tiêu|chi sao|tháng/.test(t)) goSel('#features');
+      else if (/tải|ghi danh|đăng ký|download/.test(t)) goSel('#cta');
+      else if (/bảo mật|an toàn/.test(t)) goSel('#security');
+      else showToast('Mình chưa hiểu lệnh này — thử "báo cáo chi tiêu" hoặc "chia lương" nhé.');
+    };
+    r.onerror = () => {};
+    r.start();
+  } catch (err) {}
+}
+ $('#micBtn').addEventListener('click', () => { screenTls[4] && screenTls[4].restart(); voiceTry(); });
+
+/* ---- bấm tab tính năng ---- */
+const fSTref = { st: null };
+fItems.forEach((it, k) => it.addEventListener('click', () => {
+  if (matchMedia('(min-width: 900px)').matches && fSTref.st) {
+    const st = fSTref.st;
+    gsap.to(window, { scrollTo: st.start + ((k + .12) / 5) * (st.end - st.start), duration: 1, ease: 'power2.inOut' });
+    setFeature(k, true);
+  } else {
+    setFeature(k, true);
+    $('#fPhone').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}));
+
+/* ================= PIN NGANG + SCROLL 5 TÍNH NĂNG ================= */
+const mm = gsap.matchMedia();
+mm.add('(min-width: 900px)', () => {
+  const track = $('.pain-track');
+  gsap.to(track, {
+    x: () => -(track.scrollWidth - innerWidth + 60), ease: 'none',
+    scrollTrigger: {
+      trigger: '.pain-vp', start: 'top top',
+      end: () => '+=' + (track.scrollWidth - innerWidth + 200),
+      scrub: 1, pin: true, anticipatePin: 1, invalidateOnRefresh: true
+    }
+  });
+  fSTref.st = ScrollTrigger.create({
+    trigger: '.f-pin', start: 'top top', end: 'bottom bottom',
+    onUpdate: s => {
+      $('#fProg i').style.transform = `scaleY(${s.progress})`;
+      setFeature(Math.min(4, Math.floor(s.progress * 5)));
+    }
+  });
+  return () => { fSTref.st = null; };
+});
+
+/* ================= COUNTER CON SỐ ================= */
+ $$('.num').forEach(el => {
+  ScrollTrigger.create({
+    trigger: el, start: 'top 88%', once: true,
+    onEnter: () => countToEl(el, parseFloat(el.dataset.to), 1.9, +(el.dataset.dec || 0), el.dataset.suf || '')
+  });
+});
+
+/* ================= Ổ KHÓA ================= */
+ScrollTrigger.create({
+  trigger: '.lock-stage', start: 'top 80%', once: true,
+  onEnter: () => {
+    const tl = gsap.timeline({ defaults: { ease: 'power2.inOut' } });
+    tl.to('.lk-s', { strokeDashoffset: 0, duration: 1 })
+      .to('.lk-b', { strokeDashoffset: 0, duration: 1 }, .3)
+      .to('.lk-g', { strokeDashoffset: 0, duration: .6 }, .9)
+      .to('.lk-k', { opacity: 1, duration: .3 }, 1.2);
+  }
+});
+
+/* ================= MARQUEE ================= */
+const VOICES = [
+  ['Minh Anh', 'Content creator', 'Lần đầu tiên tôi biết chính xác mình tiêu bao nhiêu cho cà phê mỗi tháng. Sốc — nhưng là loại sốc có lợi.', 'bg-mint', 'M'],
+  ['Quốc Bảo', 'Kỹ sư phần mềm', 'Bấm lưu một khoản chi là màn hình xác nhận ngay. Nhanh hơn cả ví tiền.', 'bg-violet', 'Q'],
+  ['Linh Chi', 'Freelance designer', 'Thu nhập thất thường là thế, mà widget 50/30/20 vẫn chia gọn gàng mỗi lần khách chuyển tiền.', 'bg-gold', 'L'],
+  ['Đức Huy', 'Chủ quán cà phê', 'Ở chợ sóng yếu vẫn ghi bán hàng được, ra ngay tầm wifi là nó tự đồng bộ. Không phải làm gì hết.', 'bg-blue', 'H'],
+  ['Thảo Vy', 'Sinh viên năm 3', 'Nói "Đồng ơi báo cáo tháng này" là có luôn câu trả lời. Lười bậc nhất mà được chăm nhất.', 'bg-violet', 'T'],
+  ['Nam Phong', 'Sales executive', 'Mở báo cáo 2.000 giao dịch chưa tới 1,5 giây. App ngân hàng khác của tôi còn xoay xoay mãi.', 'bg-mint', 'N'],
+  ['Hải Yến', 'Kế toán tự do', 'RAM chưa tới 100MB, pin không tụt. Nó nằm im trong máy như một cây bút túi.', 'bg-gold', 'H'],
+  ['Tuấn Kiệt', 'Streamer', 'Tắt stream, hỏi Đồng một câu bằng giọng nói, biết ngay tháng này mình giàu lên hay đi xuống.', 'bg-blue', 'T']
+];
+ $$('.mq-track').forEach((track, r) => {
+  const set = r === 0 ? VOICES.slice(0, 4) : VOICES.slice(4);
+  const html = set.map(([n, role, q, c, init]) =>
+    `<div class="v-card"><p>"${q}"</p><div class="v-who"><span class="v-av ${c}">${init}</span><div><b>${n}</b><small>${role}</small></div></div></div>`
+  ).join('');
+  track.innerHTML = html + html;
+});
+
+/* ================= NÚT MAGNETIC ================= */
+ $$('.magnetic').forEach(b => {
+  b.addEventListener('mousemove', e => {
+    const r = b.getBoundingClientRect();
+    gsap.to(b, { x: (e.clientX - r.left - r.width / 2) * .28, y: (e.clientY - r.top - r.height / 2) * .28, duration: .4, ease: 'power3.out' });
+  });
+  b.addEventListener('mouseleave', () => gsap.to(b, { x: 0, y: 0, duration: .7, ease: 'elastic.out(1,.45)' }));
+});
+
+/* ================= NAV / MENU ================= */
+const nav = $('#nav');
+addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 60), { passive: true });
+gsap.set(nav, { autoAlpha: 0, y: -16 });
+ $('#menuBtn').addEventListener('click', () => document.body.classList.toggle('m-open'));
+ $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+  const id = a.getAttribute('href');
+  if (id.length > 1 && $(id)) {
+    e.preventDefault();
+    document.body.classList.remove('m-open');
+    goSel(id);
+  } else if (id === '#') e.preventDefault();
+}));
+ $$('[data-soon]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); showToast('Trang này sẽ mở cùng ngày ra mắt — ghi danh để nhận thông báo nhé.', 'err'); }));
+ $$('[data-store]').forEach(b => b.addEventListener('click', () => showToast('Cửa hàng ứng dụng mở sau khi ra mắt — hãy ghi danh trước để nhận link sớm nhất.', 'err')));
+
+/* ================= FORM ================= */
+ $('#wlForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const email = $('#wlEmail').value.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+    showToast('Email chưa đúng định dạng — bạn kiểm tra lại giúp nhé.', 'err');
+    $('#wlEmail').focus(); return;
+  }
+  const btn = $('#wlBtn');
+  btn.disabled = true; btn.style.opacity = .6; btn.textContent = 'Đang gửi…';
+  setTimeout(() => {                       // [PRODUCTION] fetch('/api/waitlist', ...)
+    const c = (+localStorage.getItem('dong-wl') || 128411) + 1;
+    localStorage.setItem('dong-wl', c);
+    $('#wlForm').style.display = 'none';
+    $('#wlDone').style.display = 'block';
+    $('#wlDoneT').textContent = `Bạn là người thứ ${fmtN(c)} trong danh sách chờ!`;
+    gsap.from('#wlDone', { y: 20, autoAlpha: 0, duration: .6, ease: 'power3.out' });
+    showToast('Đã ghi danh! Link tải sẽ được gửi vào email của bạn.');
+  }, 900);
+});
+
+/* ================= WIDGET VUE 3: 50/30/20 ================= */
+Vue.createApp({
+  data: () => ({
+    amount: 18500000, amountStr: '18.500.000',
+    p: [50, 30, 20],
+    d: { 0: 0, 1: 0, 2: 0 },
+    dp: { 0: 50, 1: 30, 2: 20 },
+    rings: [
+      { n: 'Thiết yếu', c: '#00D18F' },
+      { n: 'Mong muốn', c: '#9B8CFF' },
+      { n: 'Tiết kiệm', c: '#E8C57C' }
+    ],
+    presets: [
+      { l: '10 triệu', v: 10000000 },
+      { l: '18,5 triệu', v: 18500000 },
+      { l: '30 triệu', v: 30000000 }
+    ]
+  }),
+  computed: {
+    C: () => 2 * Math.PI * 44,
+    money() { return this.p.map(v => Math.round(this.amount * v / 100)); }
+  },
+  watch: {
+    money(m) { gsap.to(this.d, { 0: m[0], 1: m[1], 2: m[2], duration: .8, ease: 'power2.out', overwrite: true }); },
+    p(nv)    { gsap.to(this.dp, { 0: nv[0], 1: nv[1], 2: nv[2], duration: .5, ease: 'power2.out', overwrite: true }); }
+  },
+  methods: {
+    fmt(n) { return fmtN(Math.round(n)); },
+    onAmount(e) {
+      const d = e.target.value.replace(/\D/g, '').slice(0, 13);
+      this.amount = Number(d || 0);
+      this.amountStr = d ? this.fmt(this.amount) : '';
+    },
+    setAmount(v) { this.amount = v; this.amountStr = this.fmt(v); },
+    slide(i, e) {
+      const v = Math.min(100, Math.max(0, Number(e.target.value)));
+      const rest = 100 - v;
+      const o = [0, 1, 2].filter(k => k !== i);
+      const a = Math.round(rest / 2);
+      this.p[i] = v; this.p[o[0]] = a; this.p[o[1]] = rest - a;
+    }
+  },
+  mounted() {
+    ScrollTrigger.create({
+      trigger: '#calc', start: 'top 75%', once: true,
+      onEnter: () => gsap.to(this.d, { 0: 9250000, 1: 5550000, 2: 3700000, duration: 1.2, ease: 'power3.out' })
+    });
+  }
+}).mount('#calc');
+
+/* ================= TRÔI NỔI ================= */
+if (!RM) {
+  gsap.to('.badge', { y: '+=10', duration: 2.4, ease: 'sine.inOut', yoyo: true, repeat: -1, stagger: .45 });
+  gsap.to('#heroFloat', { y: '+=14', duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+  gsap.to('#fFloat',    { y: '+=10', duration: 3.8, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+}
+
+/* ================= PRELOADER → INTRO ================= */
+function heroIntro() {
+  gsap.timeline({ defaults: { ease: 'power4.out' } })
+    .to('#nav', { y: 0, autoAlpha: 1, duration: .8 }, 0)
+    .from('.hero-kick', { y: 18, autoAlpha: 0, duration: .7 }, .05)
+    .to(heroChars, { yPercent: 0, duration: 1.1, stagger: .028 }, .1)
+    .from('.hero-sub', { y: 24, autoAlpha: 0, duration: .8 }, .55)
+    .from('.hero-cta > *', { y: 20, autoAlpha: 0, stagger: .1, duration: .7 }, .68)
+    .from('.hero-meta', { y: 16, autoAlpha: 0, duration: .6 }, .84)
+    .from('#heroFloat', { y: 70, autoAlpha: 0, duration: 1.2, ease: 'power3.out' }, .35)
+    .from('.badge', { scale: .5, autoAlpha: 0, stagger: .12, duration: .6, ease: 'back.out(1.8)' }, .9)
+    .from('.scrolldown', { autoAlpha: 0, duration: .6 }, 1.1)
+    .add(() => countToEl($('#heroBal'), 47250000, 1.7), .9);
+}
+let booted = false;
+function boot() {
+  if (booted) return; booted = true;
+  const pre = $('#preloader');
+  const o = { v: 0 };
+  gsap.timeline()
+    .from('.pl-mark', { scale: .55, autoAlpha: 0, rotation: -14, duration: .7, ease: 'back.out(1.5)' }, 0)
+    .to('.pl-p', { strokeDashoffset: 0, duration: .95, ease: 'power2.inOut', stagger: .14 }, .3)
+    .from('.pl-word', { yPercent: 130, duration: .7, ease: 'power3.out' }, .55)
+    .to('.pl-bar i', { scaleX: 1, duration: 1.35, ease: 'power2.inOut' }, .2)
+    .to(o, { v: 100, duration: 1.35, ease: 'power2.inOut', onUpdate: () => $('#plPct').textContent = String(Math.round(o.v)).padStart(3, '0') }, .2)
+    .to('.pl-mid', { y: -16, autoAlpha: 0, duration: .4, ease: 'power2.in' }, '+=.15')
+    .to('#plPct', { autoAlpha: 0, duration: .3 }, '<')
+    .to(pre, { clipPath: 'inset(0 0 100% 0)', duration: .85, ease: 'power4.inOut' }, '<.1')
+    .add(() => {
+      pre.style.display = 'none';
+      ScrollTrigger.refresh();
+      heroIntro();
+    });
+}
+document.fonts.ready.then(boot);
+setTimeout(boot, 1800);
+addEventListener('load', () => ScrollTrigger.refresh());
+</script>
+</body>
+</html>

@@ -241,12 +241,88 @@ app.get('/api/jars', authMiddleware, async (req, res) => {
   }
 });
 
+// ==================== DATABASE MANAGEMENT ROUTES ====================
+
+// GET /api/system/db-status (Trạng thái kết nối cơ sở dữ liệu hiện tại)
+app.get('/api/system/db-status', async (req, res) => {
+  try {
+    const status = await db.getDbStatus();
+    res.json({ success: true, status });
+  } catch (err) {
+    console.error('DB Status error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi kiểm tra trạng thái database', error: err.message });
+  }
+});
+
+// POST /api/system/db-test (Thử kết nối chuỗi Database URL trước khi lưu)
+app.post('/api/system/db-test', async (req, res) => {
+  try {
+    const { connectionString } = req.body;
+    if (!connectionString) {
+      return res.status(400).json({ success: false, message: 'Vui lòng cung cấp chuỗi kết nối DATABASE_URL' });
+    }
+    const testInfo = await db.testConnection(connectionString);
+    res.json({
+      success: true,
+      message: `Kết nối thành công tới Database [${testInfo.database}]!`,
+      info: testInfo
+    });
+  } catch (err) {
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// POST /api/system/db-connect (Kết nối và kích hoạt Database mới)
+app.post('/api/system/db-connect', async (req, res) => {
+  try {
+    const { connectionString, persist = true } = req.body;
+    const result = await db.connectDatabase(connectionString, { persist });
+    res.json({
+      success: true,
+      message: result.message,
+      result
+    });
+  } catch (err) {
+    console.error('Connect DB error:', err);
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// POST /api/system/db-disconnect (Chuyển về Local JSON Database)
+app.post('/api/system/db-disconnect', async (req, res) => {
+  try {
+    const result = await db.connectDatabase('local', { persist: true });
+    res.json({
+      success: true,
+      message: 'Đã ngắt kết nối PostgreSQL và quay lại Local Database an toàn.',
+      result
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// POST /api/system/seed-demo (Nạp dữ liệu giao dịch mẫu)
+app.post('/api/system/seed-demo', authMiddleware, async (req, res) => {
+  try {
+    const resSeed = await db.seedSampleData(req.user.id);
+    res.json({
+      success: true,
+      message: `Đã nạp ${resSeed.count} giao dịch mẫu cho tài khoản của bạn!`,
+      count: resSeed.count
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Lỗi nạp dữ liệu mẫu' });
+  }
+});
+
 // Health check
-app.get('/api/health', (req, res) => {
+app.get('/api/health', async (req, res) => {
+  const dbStatus = await db.getDbStatus();
   res.json({
     status: 'ONLINE',
     service: 'Đồng Bank API Backend',
-    database: process.env.DATABASE_URL ? 'PostgreSQL Connected' : 'Local Persistent JSON Store',
+    database: dbStatus,
     timestamp: new Date().toISOString()
   });
 });
@@ -265,3 +341,4 @@ async function start() {
 }
 
 start();
+

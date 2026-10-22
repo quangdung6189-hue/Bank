@@ -1,9 +1,14 @@
 const fs = require('fs');
 const path = require('path');
 const bcrypt = require('bcryptjs');
+const { Pool } = require('pg');
 
 let pgPool = null;
-const usePg = Boolean(process.env.DATABASE_URL && process.env.DATABASE_URL.trim());
+let currentDbConfig = {
+  mode: 'local',
+  connectionString: process.env.DATABASE_URL || '',
+  lastConnectedAt: null
+};
 
 // Initial default seed data
 const DATA_DIR = path.join(__dirname, '..', 'data');
@@ -146,30 +151,314 @@ function writeLocalDb(data) {
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
 }
 
-// PostgreSQL Initialization (if configured)
-async function initPg() {
-  if (!usePg) return false;
-  try {
-    const { Pool } = require('pg');
-    pgPool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: process.env.DATABASE_URL.includes("localhost") ? false : { rejectUnauthorized: false }
-    });
-    
-    // Test connection
-    const client = await pgPool.connect();
-    console.log("✅ Đã kết nối thành công tới PostgreSQL Database từ xa!");
-    
-    // Run schema
-    const schemaSql = fs.readFileSync(path.join(__dirname, '..', 'database', 'schema.sql'), 'utf8');
-    await client.query(schemaSql);
-    client.release();
-    return true;
-  } catch (err) {
-    console.warn("⚠️ Không thể kết nối PostgreSQL, tự động chuyển về Local Database:", err.message);
-    pgPool = null;
-    return false;
+// Helpers for data normalization
+function normalizeTx(t) {
+  if (!t) return null;
+  let d = t.date;
+  if (d instanceof Date) {
+    d = d.toISOString().slice(0, 10);
+  } else if (typeof d === 'string' && d.includes('T')) {
+    d = d.slice(0, 10);
   }
+  return {
+    ...t,
+    amount: Number(t.amount),
+    date: String(d)
+  };
+}
+
+function normalizeUser(u) {
+  if (!u) return null;
+  return {
+    ...u,
+    balance: Number(u.balance)
+  };
+}
+
+// Update .env file helper
+function updateEnvFile(key, value) {
+  const envPath = path.join(__dirname, '..', '.env');
+  try {
+    let content = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : '';
+    const regex = new RegExp(`^${key}=.*$`, 'm');
+    if (regex.test(content)) {
+      content = content.replace(regex, `${key}=${value}`);
+    } else {
+      content += `\n${key}=${value}`;
+    }
+    fs.writeFileSync(envPath, content.trim() + '\n', 'utf8');
+    process.env[key] = value;
+  } catch (err) {
+    console.warn("Không thể ghi vào file .env:", err.message);
+  }
+}
+
+// ==================== DYNAMIC DATABASE CONNECTION & MIGRATION ====================
+
+// Test connection without saving
+async function testConnection(connectionString) {
+  if (!connectionString || !connectionString.trim()) {
+    throw new Error("Chuỗi kết nối (DATABASE_URL) không được để trống!");
+  }
+
+  const isLocal = connectionString.includes('localhost') || connectionString.includes('127.0.0.1');
+  const tempPool = new Pool({
+    connectionString: connectionString.trim(),
+    ssl: isLocal ? false : { rejectUnauthorized: false },
+    connectionTimeoutMillis: 7000
+  });
+
+  const startMs = Date.now();
+  let client;
+  try {
+    client = await tempPool.connect();
+    const pingRes = await client.query('SELECT NOW() as now, current_database() as db_name, version() as version');
+    const latencyMs = Date.now() - startMs;
+
+    // Check table existence
+    const tableRes = await client.query(`
+      SELECT table_name 
+      FROM information_schema.tables 
+      WHERE table_schema = 'public' AND table_name IN ('users', 'transactions', 'goal_jars')
+    `);
+    const tables = tableRes.rows.map(r => r.table_name);
+
+    client.release();
+    await tempPool.end();
+
+    return {
+      success: true,
+      latencyMs,
+      database: pingRes.rows[0].db_name,
+      version: pingRes.rows[0].version.split(' on ')[0],
+      tables,
+      hasFullSchema: tables.includes('users') && tables.includes('transactions')
+    };
+  } catch (err) {
+    if (client) {
+      try { client.release(); } catch (_) {}
+    }
+    try { await tempPool.end(); } catch (_) {}
+    throw new Error(`Kết nối thất bại: ${err.message}`);
+  }
+}
+
+// Auto-seed demo records if DB is fresh
+async function seedPostgresIfEmpty(client) {
+  const countRes = await client.query('SELECT count(*) as count FROM users');
+  const userCount = parseInt(countRes.rows[0].count, 10);
+  if (userCount === 0) {
+    console.log("🌱 Database trống, tiến hành nạp tài khoản demo & dữ liệu giao dịch mẫu...");
+    // Insert demo user
+    const u = defaultDbState.users[0];
+    await client.query(
+      `INSERT INTO users (id, email, password_hash, full_name, account_number, balance, phone, role)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (id) DO NOTHING`,
+      [u.id, u.email, u.password_hash, u.full_name, u.account_number, u.balance, u.phone, u.role]
+    );
+
+    // Insert transactions
+    for (const tx of defaultDbState.transactions) {
+      await client.query(
+        `INSERT INTO transactions (id, user_id, name, amount, type, category, date, note, reference_code)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT (id) DO NOTHING`,
+        [tx.id, tx.user_id, tx.name, tx.amount, tx.type, tx.category, tx.date, tx.note, tx.reference_code]
+      );
+    }
+
+    // Insert goal jars
+    for (const jar of defaultDbState.goalJars) {
+      await client.query(
+        `INSERT INTO goal_jars (id, user_id, name, target_amount, current_amount, icon, color)
+         VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (id) DO NOTHING`,
+        [jar.id, jar.user_id, jar.name, jar.target, jar.current, jar.icon, jar.color]
+      );
+    }
+    console.log("✅ Đã nạp thành công 1 người dùng và 7 giao dịch mẫu vào cơ sở dữ liệu!");
+  }
+}
+
+// Initialize PostgreSQL Pool
+async function initPg(customConnStr = null) {
+  const connStr = (customConnStr !== null ? customConnStr : (process.env.DATABASE_URL || '')).trim();
+
+  // If empty, revert to local
+  if (!connStr || connStr.toLowerCase() === 'local') {
+    if (pgPool) {
+      try { await pgPool.end(); } catch (_) {}
+      pgPool = null;
+    }
+    currentDbConfig = {
+      mode: 'local',
+      connectionString: '',
+      lastConnectedAt: new Date().toISOString()
+    };
+    console.log("📁 Đang sử dụng Local JSON Database (data/db.json).");
+    return { success: true, mode: 'local' };
+  }
+
+  try {
+    const isLocal = connStr.includes('localhost') || connStr.includes('127.0.0.1');
+    const newPool = new Pool({
+      connectionString: connStr,
+      ssl: isLocal ? false : { rejectUnauthorized: false },
+      connectionTimeoutMillis: 8000
+    });
+
+    const client = await newPool.connect();
+    console.log("✅ Đã kết nối thành công tới máy chủ PostgreSQL Database!");
+
+    // Execute schema to ensure tables exist
+    const schemaPath = path.join(__dirname, '..', 'database', 'schema.sql');
+    if (fs.existsSync(schemaPath)) {
+      const schemaSql = fs.readFileSync(schemaPath, 'utf8');
+      await client.query(schemaSql);
+      console.log("📋 Đã đồng bộ Schema (users, transactions, goal_jars, indexes).");
+    }
+
+    // Seed if empty
+    await seedPostgresIfEmpty(client);
+    client.release();
+
+    // Close previous pool if switching
+    if (pgPool && pgPool !== newPool) {
+      try { await pgPool.end(); } catch (_) {}
+    }
+
+    pgPool = newPool;
+    currentDbConfig = {
+      mode: 'postgres',
+      connectionString: connStr,
+      lastConnectedAt: new Date().toISOString()
+    };
+
+    return { success: true, mode: 'postgres' };
+  } catch (err) {
+    console.warn("⚠️ Kết nối PostgreSQL thất bại, chuyển về Local Database:", err.message);
+    if (pgPool) {
+      try { await pgPool.end(); } catch (_) {}
+      pgPool = null;
+    }
+    currentDbConfig = {
+      mode: 'local',
+      connectionString: '',
+      lastConnectedAt: new Date().toISOString(),
+      error: err.message
+    };
+    return { success: false, mode: 'local', error: err.message };
+  }
+}
+
+// Connect / Switch database live and optionally persist to .env
+async function connectDatabase(connectionString, { persist = true } = {}) {
+  const trimmed = (connectionString || '').trim();
+  if (!trimmed || trimmed.toLowerCase() === 'local') {
+    await initPg('');
+    if (persist) updateEnvFile('DATABASE_URL', '');
+    return {
+      success: true,
+      mode: 'local',
+      message: 'Đã chuyển về Local Database (data/db.json) an toàn.'
+    };
+  }
+
+  // Test first
+  const testInfo = await testConnection(trimmed);
+  // Then init
+  const initRes = await initPg(trimmed);
+  if (!initRes.success) {
+    throw new Error(initRes.error || "Không thể khởi tạo kết nối cơ sở dữ liệu");
+  }
+
+  if (persist) {
+    updateEnvFile('DATABASE_URL', trimmed);
+  }
+
+  return {
+    success: true,
+    mode: 'postgres',
+    database: testInfo.database,
+    version: testInfo.version,
+    latencyMs: testInfo.latencyMs,
+    message: `Đã kết nối thành công tới Database [${testInfo.database}] (${testInfo.latencyMs}ms)`
+  };
+}
+
+// Get comprehensive live DB status
+async function getDbStatus() {
+  if (pgPool) {
+    try {
+      const client = await pgPool.connect();
+      const meta = await client.query(`
+        SELECT 
+          current_database() as db_name, 
+          current_user as db_user,
+          inet_server_addr() as server_ip,
+          inet_server_port() as server_port
+      `);
+      const uCount = await client.query('SELECT count(*) as count FROM users');
+      const txCount = await client.query('SELECT count(*) as count FROM transactions');
+      client.release();
+
+      return {
+        mode: 'postgres',
+        connected: true,
+        database: meta.rows[0].db_name,
+        user: meta.rows[0].db_user,
+        host: meta.rows[0].server_ip || 'Remote Cloud Server',
+        port: meta.rows[0].server_port || 5432,
+        userCount: parseInt(uCount.rows[0].count, 10),
+        transactionCount: parseInt(txCount.rows[0].count, 10),
+        message: '🟢 Đang hoạt động trên máy chủ PostgreSQL',
+        lastConnectedAt: currentDbConfig.lastConnectedAt
+      };
+    } catch (err) {
+      return {
+        mode: 'postgres',
+        connected: false,
+        error: err.message,
+        message: '🔴 Mất kết nối tới PostgreSQL: ' + err.message
+      };
+    }
+  }
+
+  const local = readLocalDb();
+  return {
+    mode: 'local',
+    connected: true,
+    database: 'Local Persistent File (data/db.json)',
+    host: 'localhost',
+    userCount: local.users ? local.users.length : 0,
+    transactionCount: local.transactions ? local.transactions.length : 0,
+    message: '🟡 Local Database (Sẵn sàng kết nối PostgreSQL từ xa)',
+    lastConnectedAt: currentDbConfig.lastConnectedAt
+  };
+}
+
+// Re-seed demo transactions for testing
+async function seedSampleData(userId) {
+  const seedTxs = defaultDbState.transactions.map(t => ({
+    ...t,
+    id: "TX_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+    user_id: userId,
+    created_at: new Date().toISOString()
+  }));
+
+  if (pgPool) {
+    for (const tx of seedTxs) {
+      await pgPool.query(
+        `INSERT INTO transactions (id, user_id, name, amount, type, category, date, note, reference_code)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        [tx.id, tx.user_id, tx.name, tx.amount, tx.type, tx.category, tx.date, tx.note, tx.reference_code]
+      );
+    }
+    return { count: seedTxs.length };
+  }
+
+  const db = readLocalDb();
+  seedTxs.forEach(t => db.transactions.unshift(t));
+  writeLocalDb(db);
+  return { count: seedTxs.length };
 }
 
 // ==================== REPOSITORY FUNCTIONS ====================
@@ -179,22 +468,26 @@ async function findUserByEmail(email) {
   const normEmail = (email || '').toLowerCase().trim();
   if (pgPool) {
     const res = await pgPool.query('SELECT * FROM users WHERE LOWER(email) = $1', [normEmail]);
-    return res.rows[0] || null;
+    return normalizeUser(res.rows[0]) || null;
   }
   const db = readLocalDb();
-  return db.users.find(u => u.email.toLowerCase() === normEmail) || null;
+  const u = db.users.find(x => x.email.toLowerCase() === normEmail);
+  return normalizeUser(u) || null;
 }
 
 async function findUserById(id) {
   if (pgPool) {
-    const res = await pgPool.query('SELECT id, email, full_name, account_number, balance, phone, role, created_at FROM users WHERE id = $1', [id]);
-    return res.rows[0] || null;
+    const res = await pgPool.query(
+      'SELECT id, email, full_name, account_number, balance, phone, role, created_at FROM users WHERE id = $1',
+      [id]
+    );
+    return normalizeUser(res.rows[0]) || null;
   }
   const db = readLocalDb();
   const u = db.users.find(x => x.id === id);
   if (!u) return null;
   const { password_hash, ...safeUser } = u;
-  return safeUser;
+  return normalizeUser(safeUser);
 }
 
 async function createUser({ email, password, fullName, phone }) {
@@ -207,10 +500,11 @@ async function createUser({ email, password, fullName, phone }) {
   if (pgPool) {
     const res = await pgPool.query(
       `INSERT INTO users (id, email, password_hash, full_name, account_number, balance, phone) 
-       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, email, full_name, account_number, balance, phone, role, created_at`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7) 
+       RETURNING id, email, full_name, account_number, balance, phone, role, created_at`,
       [id, normEmail, passwordHash, fullName, accountNumber, initialBalance, phone || null]
     );
-    return res.rows[0];
+    return normalizeUser(res.rows[0]);
   }
 
   const db = readLocalDb();
@@ -229,7 +523,7 @@ async function createUser({ email, password, fullName, phone }) {
   writeLocalDb(db);
 
   const { password_hash, ...safeUser } = newUser;
-  return safeUser;
+  return normalizeUser(safeUser);
 }
 
 async function updateUserBalance(userId, deltaAmount) {
@@ -270,7 +564,7 @@ async function getTransactions(userId, { startDate, endDate, type, category, sea
     params.push(limit);
 
     const res = await pgPool.query(query, params);
-    return res.rows;
+    return res.rows.map(normalizeTx);
   }
 
   const db = readLocalDb();
@@ -286,7 +580,7 @@ async function getTransactions(userId, { startDate, endDate, type, category, sea
   }
 
   list.sort((a, b) => new Date(b.date + 'T23:59:59') - new Date(a.date + 'T23:59:59'));
-  return list.slice(0, limit);
+  return list.slice(0, limit).map(normalizeTx);
 }
 
 async function addTransaction(userId, { name, amount, type, category, date, note }) {
@@ -307,7 +601,7 @@ async function addTransaction(userId, { name, amount, type, category, date, note
     // Update balance
     const delta = normalizedType === 'income' ? numAmount : -numAmount;
     await updateUserBalance(userId, delta);
-    return res.rows[0];
+    return normalizeTx(res.rows[0]);
   }
 
   const db = readLocalDb();
@@ -335,7 +629,7 @@ async function addTransaction(userId, { name, amount, type, category, date, note
   }
   
   writeLocalDb(db);
-  return newTx;
+  return normalizeTx(newTx);
 }
 
 async function deleteTransaction(userId, txId) {
@@ -477,7 +771,11 @@ async function getRule503020(userId) {
 async function getGoalJars(userId) {
   if (pgPool) {
     const res = await pgPool.query('SELECT * FROM goal_jars WHERE user_id = $1 ORDER BY created_at ASC', [userId]);
-    return res.rows;
+    return res.rows.map(r => ({
+      ...r,
+      target: Number(r.target_amount || r.target),
+      current: Number(r.current_amount || r.current)
+    }));
   }
   const db = readLocalDb();
   return (db.goalJars || []).filter(j => j.user_id === userId);
@@ -485,6 +783,10 @@ async function getGoalJars(userId) {
 
 module.exports = {
   initPg,
+  testConnection,
+  connectDatabase,
+  getDbStatus,
+  seedSampleData,
   findUserByEmail,
   findUserById,
   createUser,
