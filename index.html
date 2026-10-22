@@ -9,6 +9,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<!-- Lucian UX/UI Prompt Theme Tokens & Components -->
+<link rel="stylesheet" href="lucian-uxui.css">
 <style>
 /* ============ NỀN TẢNG — BẢNG MÀU NGÂN HÀNG CAO CẤP ============ */
 :root{
@@ -823,15 +825,54 @@ footer{border-top:1px solid var(--line);padding:60px 0 34px;position:relative;z-
   </div>
 </section>
 
-<!-- ============ CON SỐ ============ -->
+<!-- ============ CON SỐ — LUCIAN UX/UI #228 CURSOR-LIT GLOWING CARDS ============ -->
+<!-- Lucian UX/UI Prompt #228 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#228 -->
 <section id="numbers">
   <div class="wrap">
-    <span class="kicker" style="margin-bottom:40px"><i class="dot"></i>Beta · Tháng 6</span>
-    <div class="nums">
-      <div class="num-it"><b class="nline"><span class="num" data-to="128412"></span><em class="sfx">+</em></b><span>người trong danh sách chờ</span></div>
-      <div class="num-it"><b class="nline"><span class="num" data-to="4.8" data-dec="1"></span><em class="sfx">/5</em></b><span>điểm trải nghiệm từ người dùng beta</span></div>
-      <div class="num-it"><b class="nline"><span class="num" data-to="1.2" data-dec="1"></span><em class="sfx">tỷ₫</em></b><span>được Đồng tự động phân chia mỗi ngày</span></div>
-      <div class="num-it"><b class="nline"><span class="num" data-to="99.98" data-dec="2"></span><em class="sfx">%</em></b><span>thời gian hoạt động trong 6 tháng beta</span></div>
+    <span class="kicker" style="margin-bottom:32px"><i class="dot"></i>Beta · Minh chứng số liệu</span>
+    <div class="ux u228" id="landingNumbersGrid">
+      <div class="u228-gd" role="list" aria-label="Các con số ấn tượng">
+        <div class="u228-c" role="listitem">
+          <div class="u228-in">
+            <div class="u228-top">
+              <small style="color:var(--ux-mint)">DANH SÁCH CHỜ</small>
+              <span class="u228-ic">🚀</span>
+            </div>
+            <b class="nline"><span class="num" data-to="128412">128412</span><em class="sfx">+</em></b>
+            <span class="sub-tag">Người đăng ký trong danh sách chờ</span>
+          </div>
+        </div>
+        <div class="u228-c" role="listitem">
+          <div class="u228-in">
+            <div class="u228-top">
+              <small style="color:var(--ux-gold)">TRẢI NGHIỆM BETA</small>
+              <span class="u228-ic">⭐</span>
+            </div>
+            <b class="nline"><span class="num" data-to="4.8" data-dec="1">4.8</span><em class="sfx">/5</em></b>
+            <span class="sub-tag">Điểm hài lòng từ người dùng beta</span>
+          </div>
+        </div>
+        <div class="u228-c" role="listitem">
+          <div class="u228-in">
+            <div class="u228-top">
+              <small style="color:#B7A4FF">DÒNG TIỀN PHÂN BỔ</small>
+              <span class="u228-ic">💰</span>
+            </div>
+            <b class="nline"><span class="num" data-to="1.2" data-dec="1">1.2</span><em class="sfx">tỷ₫</em></b>
+            <span class="sub-tag">Tự động phân chia mỗi ngày</span>
+          </div>
+        </div>
+        <div class="u228-c" role="listitem">
+          <div class="u228-in">
+            <div class="u228-top">
+              <small style="color:var(--ux-mint)">ĐỘ ỔN ĐỊNH SLA</small>
+              <span class="u228-ic">🛡️</span>
+            </div>
+            <b class="nline"><span class="num" data-to="99.98" data-dec="2">99.98</span><em class="sfx">%</em></b>
+            <span class="sub-tag">Thời gian hoạt động trong 6 tháng</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1519,9 +1560,38 @@ function boot() {
       heroIntro();
     });
 }
+// Lucian UX/UI Prompt #228 · Cursor-lit glowing card borders
+function initLucianU228() {
+  const grids = document.querySelectorAll('.u228');
+  grids.forEach(grid => {
+    const cards = grid.querySelectorAll('.u228-c');
+    grid.addEventListener('pointermove', e => {
+      const rect = grid.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      grid.style.setProperty('--x', `${x}px`);
+      grid.style.setProperty('--y', `${y}px`);
+      grid.style.setProperty('--o', '1');
+      cards.forEach(card => {
+        const cRect = card.getBoundingClientRect();
+        card.style.setProperty('--cx', `${e.clientX - cRect.left}px`);
+        card.style.setProperty('--cy', `${e.clientY - cRect.top}px`);
+        card.style.setProperty('--o', '1');
+      });
+    });
+    grid.addEventListener('pointerleave', () => {
+      grid.style.setProperty('--o', '0');
+      cards.forEach(card => card.style.setProperty('--o', '0'));
+    });
+  });
+}
+
 document.fonts.ready.then(boot);
 setTimeout(boot, 1800);
-addEventListener('load', () => ScrollTrigger.refresh());
+addEventListener('load', () => {
+  ScrollTrigger.refresh();
+  initLucianU228();
+});
 </script>
 </body>
 </html>

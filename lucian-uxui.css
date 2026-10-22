@@ -1,0 +1,768 @@
+/* Lucian UX/UI Prompt theme tokens · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/
+   Every element reads its colors from these --ux-* tokens and uses the .ux base rules below. */
+
+:root {
+  color-scheme: dark;
+  --ux-page: #04060C;
+  --ux-surface: #0B111E;
+  --ux-surface-2: #101828;
+  --ux-surface-3: #182236;
+  --ux-ink: #F2F5FA;
+  --ux-ink-2: #8A93A6;
+  --ux-ink-3: #5A6478;
+  --ux-line: rgba(255, 255, 255, 0.08);
+  --ux-line-2: rgba(255, 255, 255, 0.16);
+  --ux-accent: #00D18F;          /* Emerald Jade */
+  --ux-accent-2: #E8C57C;        /* Champagne Gold */
+  --ux-accent-soft: rgba(0, 209, 143, 0.14);
+  --ux-accent-ink: #04120C;
+  --ux-mint: #00D18F;
+  --ux-gold: #E8C57C;
+  --ux-warn: #FFB454;
+  --ux-danger: #FF5C5C;
+  --ux-glass: rgba(255, 255, 255, 0.05);
+  --ux-glass-line: rgba(255, 255, 255, 0.15);
+  --ux-shadow: rgba(0, 0, 0, 0.5);
+  --ux-shadow-strong: rgba(0, 0, 0, 0.85);
+  --ux-grad: linear-gradient(100deg, #00D18F 5%, #6FE3C1 45%, #E8C57C 100%);
+  --ux-ease: cubic-bezier(.2, .8, .2, 1);
+  --ux-spring: cubic-bezier(.34, 1.45, .64, 1);
+}
+
+.ux, .ux *, .ux *::before, .ux *::after { box-sizing: border-box; }
+.ux {
+  font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  color: var(--ux-ink);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+  -webkit-tap-highlight-color: transparent;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+:where(.ux) :is(button, input, textarea, select) { font: inherit; color: inherit; }
+:where(.ux) button { cursor: pointer; }
+.ux :focus-visible { outline: 2px solid var(--ux-accent); outline-offset: 3px; }
+.ux [hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ux, .ux *, .ux *::before, .ux *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Lucian UX/UI Prompt #228 · Cursor-lit glowing card borders
+   MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#228
+   ========================================================================== */
+.u228 {
+  position: relative;
+  width: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  background: #070B14;
+  box-shadow: 0 0 0 1px var(--ux-line), 0 30px 60px -36px var(--ux-shadow-strong);
+  color: #E9ECF5;
+  padding: 14px;
+  --x: -500px;
+  --y: -500px;
+  --o: 0;
+}
+.u228-gd {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  width: 100%;
+}
+@media (max-width: 1024px) {
+  .u228-gd { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .u228-gd { grid-template-columns: 1fr; }
+}
+.u228-c {
+  position: relative;
+  border-radius: 18px;
+  padding: 1.5px;
+  background: radial-gradient(180px circle at var(--cx) var(--cy), rgba(0, 209, 143, calc(var(--o) * 1)), rgba(232, 197, 124, calc(var(--o) * 0.6)) 40%, transparent 70%), rgba(255, 255, 255, 0.07);
+  transition: transform 0.25s ease;
+}
+.u228-c:hover {
+  transform: translateY(-2px);
+}
+.u228-in {
+  position: relative;
+  height: 100%;
+  border-radius: 16.5px;
+  background: radial-gradient(240px circle at var(--cx) var(--cy), rgba(0, 209, 143, calc(var(--o) * 0.12)), transparent 60%), #0B111E;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+.u228-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.u228-ic {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+  font-size: 18px;
+}
+.u228-in small {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ux-ink-2);
+}
+.u228-in b {
+  font-family: 'Space Grotesk', 'Be Vietnam Pro', sans-serif;
+  font-size: 25px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.u228-in .sub-tag {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ux-ink-3);
+  margin-top: auto;
+}
+
+/* ==========================================================================
+   Lucian UX/UI Prompt #097 · Donut that re-splits
+   MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#097
+   ========================================================================== */
+.u097 {
+  position: relative;
+  width: 100%;
+  border-radius: 22px;
+  background: var(--ux-surface);
+  box-shadow: 0 0 0 1px var(--ux-line);
+  color: var(--ux-ink);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.u097-h {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.u097-h small {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ux-ink-2);
+}
+.u097-h b {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.u097-dn {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  margin: 10px auto;
+}
+.u097-dn svg {
+  width: 220px;
+  height: 220px;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
+.u097-trk {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.05);
+  stroke-width: 26;
+}
+.u097-sg {
+  fill: none;
+  stroke-width: 26;
+  pointer-events: stroke;
+  cursor: pointer;
+  transition: transform 0.45s var(--ux-spring), stroke-width 0.45s var(--ux-spring), opacity 0.25s;
+}
+.u097.has .u097-sg:not(.on) { opacity: 0.35; }
+.u097-sg.on { stroke-width: 34; }
+.u097-c {
+  position: absolute;
+  inset: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  pointer-events: none;
+}
+.u097-c small {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ux-ink-2);
+}
+.u097-c b {
+  margin-top: 3px;
+  font-family: 'Space Grotesk', 'Be Vietnam Pro', sans-serif;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ux-ink);
+}
+.u097-c span {
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--ux-mint);
+  font-variant-numeric: tabular-nums;
+}
+.u097-c.sw > * { animation: u097-sw 0.32s var(--ux-ease); }
+@keyframes u097-sw { from { opacity: 0; transform: translateY(6px); } }
+
+.u097-lg {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 6px;
+}
+@media (max-width: 520px) {
+  .u097-lg { grid-template-columns: 1fr; }
+}
+.u097-it {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--ux-line);
+  border-radius: 12px;
+  background: var(--ux-surface-2);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ux-ink);
+  text-align: left;
+  transition: background-color 0.2s, border-color 0.2s, opacity 0.25s, transform 0.3s var(--ux-spring);
+}
+.u097-it:hover, .u097-it.on {
+  background: var(--ux-surface-3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.u097-it:active { transform: scale(0.97); }
+.u097-it i {
+  width: 12px;
+  height: 12px;
+  flex: none;
+  border-radius: 4px;
+  background: var(--c);
+  box-shadow: inset 0 0 0 2px var(--c);
+  transition: background-color 0.25s;
+}
+.u097-it span {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.u097-it small {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ux-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.u097-it[aria-pressed="false"] { opacity: 0.45; }
+.u097-it[aria-pressed="false"] i { background: transparent; }
+.u097-it[aria-pressed="false"] span { text-decoration: line-through; }
+
+/* ==========================================================================
+   Lucian UX/UI Prompt #095 · Bar chart that changes shape with dynamic tooltip
+   MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#095
+   ========================================================================== */
+.u095 {
+  position: relative;
+  width: 100%;
+  border-radius: 22px;
+  background: var(--ux-surface);
+  box-shadow: 0 0 0 1px var(--ux-line);
+  color: var(--ux-ink);
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.u095-h {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.u095-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.u095-lab {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ux-ink-2);
+}
+.u095-dl {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--ux-mint);
+  display: inline-flex;
+  align-items: center;
+}
+.u095-dl.dn { color: var(--ux-danger); }
+.u095-v b {
+  font-family: 'Space Grotesk', 'Be Vietnam Pro', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  margin-top: 4px;
+  display: block;
+}
+.u095-seg {
+  display: flex;
+  background: var(--ux-surface-2);
+  border: 1px solid var(--ux-line);
+  padding: 3px;
+  border-radius: 12px;
+  position: relative;
+}
+.u095-seg button {
+  padding: 6px 14px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ux-ink-2);
+  transition: all 0.2s;
+  background: none;
+  border: none;
+}
+.u095-seg button[aria-pressed="true"] {
+  background: var(--ux-surface-3);
+  color: var(--ux-mint);
+  border: 1px solid rgba(0, 209, 143, 0.3);
+}
+
+.u095-ch {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  margin-top: 6px;
+}
+.u095-grid {
+  position: absolute;
+  inset: 0 0 26px 0;
+  pointer-events: none;
+}
+.u095-gl {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.u095-gl span {
+  position: absolute;
+  right: 0;
+  top: -9px;
+  font-size: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  color: var(--ux-ink-3);
+}
+.u095-avg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--a) * (100% - 26px) + 26px);
+  height: 1px;
+  border-top: 1px dashed rgba(232, 197, 124, 0.45);
+  pointer-events: none;
+  transition: bottom 0.5s var(--ux-spring);
+}
+.u095-avg span {
+  position: absolute;
+  left: 0;
+  top: -8px;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ux-gold);
+  background: var(--ux-surface);
+  padding: 0 4px;
+}
+
+.u095-bars {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding-bottom: 26px;
+}
+.u095-b {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  background: none;
+  border: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  cursor: pointer;
+}
+.u095-b.off { display: none; }
+.u095-b i {
+  width: 100%;
+  max-width: 28px;
+  height: calc(var(--h) * 100%);
+  border-radius: 6px 6px 2px 2px;
+  background: linear-gradient(180deg, var(--ux-mint), rgba(0, 209, 143, 0.65));
+  transition: height 0.55s var(--ux-spring), background 0.25s, transform 0.25s;
+}
+.u095-b.on i {
+  background: linear-gradient(180deg, #6FE3C1, var(--ux-mint));
+  box-shadow: 0 0 16px rgba(0, 209, 143, 0.5);
+  transform: scaleY(1.03);
+}
+.u095-b.pin i {
+  border: 1px solid var(--ux-gold);
+}
+.u095-b em {
+  position: absolute;
+  bottom: -24px;
+  font-style: normal;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ux-ink-3);
+  transition: color 0.2s;
+}
+.u095-b.on em { color: var(--ux-ink); font-weight: 800; }
+
+.u095-tip {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(var(--tx, 0), var(--ty, 0));
+  background: #141B2D;
+  border: 1px solid rgba(0, 209, 143, 0.4);
+  box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.9);
+  border-radius: 10px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.15s ease-out;
+  z-index: 10;
+  white-space: nowrap;
+}
+.u095.has .u095-tip { opacity: 1; }
+.u095-tip span { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; color: #fff; }
+.u095-tip small { font-size: 11px; font-weight: 800; color: var(--ux-mint); }
+.u095-tip small.dn { color: var(--ux-danger); }
+
+/* ==========================================================================
+   Lucian UX/UI Prompt #052 · Flip-around 3D membership card
+   MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#052
+   ========================================================================== */
+.u052 {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  perspective: 1200px;
+  --ry: 0deg;
+  --sh: 50%;
+  --tilt: 0deg;
+  width: 100%;
+}
+.u052-card {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  height: 220px;
+  border: 0;
+  padding: 0;
+  background: none;
+  border-radius: 20px;
+  transform-style: preserve-3d;
+  transform: rotateX(var(--tilt)) rotateY(var(--ry));
+  transition: transform 0.75s var(--ux-spring);
+  cursor: grab;
+  touch-action: pan-y;
+  color: #fff;
+  text-align: left;
+}
+.u052-card.drag { transition: none; cursor: grabbing; }
+.u052-card:focus-visible { outline: none; }
+.u052-card:focus-visible .u052-f { box-shadow: 0 0 0 3px var(--ux-accent), 0 26px 50px -20px rgba(0, 0, 0, 0.9); }
+.u052-f {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  box-shadow: 0 26px 50px -20px rgba(0, 0, 0, 0.9);
+  transition: filter 0.6s;
+  border: 1px solid rgba(232, 197, 124, 0.4);
+}
+.u052-front {
+  background: linear-gradient(135deg, #1A2234 0%, #0D1628 45%, #052019 100%);
+}
+.u052-front::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(115deg, transparent 35%, rgba(232, 197, 124, 0.3) 45%, rgba(0, 209, 143, 0.35) 52%, rgba(155, 140, 255, 0.25) 58%, transparent 68%);
+  transform: translateX(calc(var(--sh) - 50%));
+  mix-blend-mode: screen;
+  transition: transform 0.75s var(--ux-spring);
+}
+.u052-card.drag .u052-front::before { transition: none; }
+.u052-front::after {
+  content: "";
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  right: -90px;
+  bottom: -140px;
+  border-radius: 50%;
+  border: 32px solid rgba(255, 255, 255, 0.05);
+}
+.u052-chip {
+  position: absolute;
+  left: 22px;
+  top: 68px;
+  width: 44px;
+  height: 32px;
+  border-radius: 7px;
+  background: linear-gradient(135deg, #E8C57C, #9B7C3A);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+}
+.u052-chip::before {
+  content: "";
+  position: absolute;
+  inset: 7px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+.u052-brand {
+  position: absolute;
+  left: 22px;
+  top: 22px;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ux-gold);
+}
+.u052-tier {
+  position: absolute;
+  right: 20px;
+  top: 22px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  background: rgba(232, 197, 124, 0.18);
+  border: 1px solid rgba(232, 197, 124, 0.35);
+  color: var(--ux-gold);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.u052-num {
+  position: absolute;
+  left: 22px;
+  bottom: 48px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+}
+.u052-name {
+  position: absolute;
+  left: 22px;
+  bottom: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  opacity: 0.85;
+}
+.u052-exp {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Card Back */
+.u052-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(160deg, #0B111E, #141B2D);
+}
+.u052-strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 24px;
+  height: 40px;
+  background: #04060C;
+}
+.u052-cvc {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 80px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.u052-cvc i {
+  flex: 1;
+  height: 32px;
+  border-radius: 6px;
+  background: repeating-linear-gradient(-45deg, #1A2234 0 6px, #101828 6px 12px);
+  border: 1px solid var(--ux-line);
+}
+.u052-cvc b {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #04060C;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+}
+.u052-perk {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 18px;
+  display: flex;
+  gap: 8px;
+}
+.u052-perk span {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--ux-line);
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.7);
+}
+.u052-perk b {
+  display: block;
+  font-size: 12.5px;
+  color: var(--ux-mint);
+}
+.u052-lock {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(4, 6, 12, 0.6);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.u052-lock svg {
+  width: 48px;
+  height: 48px;
+  fill: none;
+  stroke: var(--ux-gold);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform: scale(0.6);
+  transition: transform 0.5s var(--ux-spring);
+}
+.u052.is-locked .u052-f { filter: grayscale(0.8) brightness(0.75); }
+.u052.is-locked .u052-lock { opacity: 1; }
+.u052.is-locked .u052-lock svg { transform: none; }
+
+.u052-bar {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+.u052-b {
+  height: 38px;
+  padding: 0 16px;
+  border: 1px solid var(--ux-line);
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--ux-surface-2);
+  color: var(--ux-ink);
+  font-size: 13px;
+  font-weight: 600;
+  transition: transform 0.35s var(--ux-spring), background-color 0.25s, border-color 0.25s, color 0.25s;
+}
+.u052-b:hover {
+  background: var(--ux-surface-3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.u052-b:active { transform: scale(0.95); }
+.u052-b svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.u052-b[aria-pressed="true"] {
+  background: var(--ux-danger);
+  border-color: var(--ux-danger);
+  color: #fff;
+}
