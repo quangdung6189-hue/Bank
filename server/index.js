@@ -17,8 +17,40 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
+
+// Banking Security Headers
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  if (req.path.startsWith('/api/')) {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+  }
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Sẵn sàng kết nối cơ sở dữ liệu (tương thích cả Localhost và Vercel Serverless Function)
+let dbInitPromise = null;
+function ensureDbInit() {
+  if (!dbInitPromise) {
+    dbInitPromise = db.initPg().catch(err => {
+      console.warn('⚠️ Lỗi kết nối DB:', err.message);
+    });
+  }
+  return dbInitPromise;
+}
+
+app.use(async (req, res, next) => {
+  if (req.path.startsWith('/api/')) {
+    await ensureDbInit();
+  }
+  next();
+});
 
 // Serve Static Frontend files (index.html, app.html)
 app.use(express.static(path.join(__dirname, '..')));
@@ -117,7 +149,7 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
   }
 });
 
-// ==================== SPRINT 1: TRANSACTIONS ROUTES ====================
+// ==================== TRANSACTIONS ROUTES ====================
 
 // GET /api/transactions (Lấy lịch sử giao dịch + Bộ lọc)
 app.get('/api/transactions', authMiddleware, async (req, res) => {
@@ -187,7 +219,7 @@ app.delete('/api/transactions/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// ==================== SPRINT 2: BÁO CÁO & PHÂN TÍCH ====================
+// ==================== BÁO CÁO & PHÂN TÍCH TÀI CHÍNH ====================
 
 // GET /api/analytics/summary (Thẻ tổng thu nhập, tổng chi tiêu, số dư, số giao dịch)
 app.get('/api/analytics/summary', authMiddleware, async (req, res) => {
@@ -224,16 +256,23 @@ app.get('/api/analytics/cashflow', authMiddleware, async (req, res) => {
   }
 });
 
-// GET /api/budget/rule-50-30-20 (Quy tắc tài chính thông minh 50/30/20)
-app.get('/api/budget/rule-50-30-20', authMiddleware, async (req, res) => {
+// GET /api/budget/allocation & /api/budget/rule-50-30-20 (Chiến lược phân bổ tài chính thông minh thực tế)
+const budgetHandler = async (req, res) => {
   try {
-    const ruleData = await db.getRule503020(req.user.id);
-    res.json({ success: true, rule: ruleData });
+    const { strategy, income } = req.query;
+    const ruleData = await db.getWealthAllocation(req.user.id, {
+      strategy: strategy || 'urban_realistic',
+      customIncome: income ? parseFloat(income) : null
+    });
+    res.json({ success: true, rule: ruleData, allocation: ruleData });
   } catch (err) {
-    console.error('50/30/20 rule error:', err);
-    res.status(500).json({ success: false, message: 'Lỗi tính toán quy tắc ngân sách 50/30/20' });
+    console.error('Wealth allocation error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi tính toán phân bổ ngân sách: ' + err.message });
   }
-});
+};
+app.get('/api/budget/allocation', authMiddleware, budgetHandler);
+app.get('/api/budget/rule-50-30-20', authMiddleware, budgetHandler);
+
 
 // GET /api/jars (Danh sách hũ mục tiêu)
 app.get('/api/jars', authMiddleware, async (req, res) => {
@@ -310,9 +349,9 @@ app.get('/api/health', async (req, res) => {
   });
 });
 
-// Start Server
+// Start Server khi chạy local
 async function start() {
-  await db.initPg();
+  await ensureDbInit();
   app.listen(PORT, () => {
     console.log(`================================================================`);
     console.log(`🚀 Đồng Bank Server đang chạy trên cổng ${PORT}`);
@@ -323,5 +362,11 @@ async function start() {
   });
 }
 
-start();
+if (process.env.NODE_ENV !== 'test' && !process.env.VERCEL) {
+  start();
+}
+
+module.exports = app;
+
+
 

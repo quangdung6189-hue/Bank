@@ -11,12 +11,18 @@ let currentDbConfig = {
 };
 
 // Initial default seed data
-const DATA_DIR = path.join(__dirname, '..', 'data');
-const DB_FILE = process.env.DB_STORAGE_PATH || path.join(DATA_DIR, 'db.json');
+// Initial default seed data
+const isVercel = Boolean(process.env.VERCEL);
+const DATA_DIR = isVercel ? '/tmp' : path.join(__dirname, '..', 'data');
+const DB_FILE = process.env.DB_STORAGE_PATH || (isVercel ? path.join('/tmp', 'db.json') : path.join(DATA_DIR, 'db.json'));
 
 function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+  } catch (e) {
+    // Read-only filesystem warning
   }
 }
 
@@ -125,8 +131,12 @@ function readLocalDb() {
 }
 
 function writeLocalDb(data) {
-  ensureDataDir();
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+  try {
+    ensureDataDir();
+    fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+  } catch (err) {
+    console.warn("Không thể ghi file DB cục bộ:", err.message);
+  }
 }
 
 // Helpers for data normalization
@@ -266,7 +276,15 @@ async function initPg(customConnStr = null) {
     const newPool = new Pool({
       connectionString: connStr,
       ssl: isLocal ? false : { rejectUnauthorized: false },
-      connectionTimeoutMillis: 8000
+      max: 10,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 10000,
+      keepAlive: true,
+      keepAliveInitialDelayMillis: 10000
+    });
+
+    newPool.on('error', (err) => {
+      console.warn('⚠️ Neon PostgreSQL connection pool event:', err.message);
     });
 
     const client = await newPool.connect();
@@ -412,11 +430,11 @@ async function resetDatabase(userId = null) {
   if (pgPool) {
     if (userId) {
       await pgPool.query('DELETE FROM transactions WHERE user_id = $1', [userId]);
-      await pgPool.query('UPDATE users SET balance = 0, full_name = $2 WHERE id = $1', [userId, "Đặng Quang Dũng"]);
+      await pgPool.query('UPDATE users SET balance = 0 WHERE id = $1', [userId]);
       await pgPool.query('DELETE FROM goal_jars WHERE user_id = $1', [userId]);
     } else {
       await pgPool.query('DELETE FROM transactions');
-      await pgPool.query('UPDATE users SET balance = 0, full_name = $1', ["Đặng Quang Dũng"]);
+      await pgPool.query('UPDATE users SET balance = 0');
       await pgPool.query('DELETE FROM goal_jars');
     }
     return {
@@ -433,14 +451,12 @@ async function resetDatabase(userId = null) {
     const u = (db.users || []).find(x => x.id === userId);
     if (u) {
       u.balance = 0;
-      u.full_name = "Đặng Quang Dũng";
     }
     db.goalJars = (db.goalJars || []).filter(j => j.user_id !== userId);
   } else {
     db.transactions = [];
     (db.users || []).forEach(u => {
       u.balance = 0;
-      u.full_name = "Đặng Quang Dũng";
     });
     db.goalJars = [];
   }
@@ -513,7 +529,7 @@ async function createUser({ email, password, fullName, phone }) {
   const passwordHash = await bcrypt.hash(password, 10);
   const id = "u_" + Date.now();
   const accountNumber = "8888 " + Math.floor(1000 + Math.random() * 9000) + " " + Math.floor(1000 + Math.random() * 9000);
-  const initialBalance = 47250000;
+  const initialBalance = 0; // Tài khoản đăng ký mới luôn bắt đầu từ con số 0!
 
   if (pgPool) {
     const res = await pgPool.query(
@@ -562,7 +578,7 @@ async function updateUserBalance(userId, deltaAmount) {
   return null;
 }
 
-// --- TRANSACTIONS OPERATIONS (SPRINT 1 & 2) ---
+// --- TRANSACTIONS OPERATIONS ---
 async function getTransactions(userId, { startDate, endDate, type, category, search, limit = 100 }) {
   if (pgPool) {
     let query = 'SELECT * FROM transactions WHERE user_id = $1';
@@ -681,7 +697,7 @@ async function deleteTransaction(userId, txId) {
   return true;
 }
 
-// --- SPRINT 2: ANALYTICS & SUMMARY ---
+// --- ANALYTICS & SUMMARY ---
 async function getSummary(userId, { startDate, endDate } = {}) {
   const txs = await getTransactions(userId, { startDate, endDate, limit: 10000 });
   const user = await findUserById(userId);
@@ -758,32 +774,75 @@ async function getCashflowTrend(userId) {
   return trend;
 }
 
-// 50/30/20 Rule Computation
-async function getRule503020(userId) {
+// Smart Wealth Allocation Engine (Phân bổ Ngân sách Thực tế Thị trường)
+async function getWealthAllocation(userId, { strategy = 'urban_realistic', customIncome = null } = {}) {
   const summary = await getSummary(userId);
-  const income = summary.totalIncome > 0 ? summary.totalIncome : 30000000; // default 30M reference
+  const income = (customIncome !== null && customIncome !== undefined)
+    ? Number(customIncome)
+    : (summary.totalIncome > 0 ? summary.totalIncome : 0);
+
+  let stratConfig = {
+    id: 'urban_realistic',
+    name: 'Chiến lược Thực tế Đô thị (55 / 25 / 20)',
+    description: 'Mô hình chuẩn thị trường hiện nay: Cân đối chi phí sinh hoạt đô thị và đầu tư dài hạn bền vững.',
+    needsPct: 55,
+    wantsPct: 25,
+    savingsPct: 20
+  };
+
+  if (strategy === 'fire' || strategy === 'fire_acceleration' || strategy === '50_20_30') {
+    stratConfig = {
+      id: 'fire_acceleration',
+      name: 'Chiến lược Độc lập Tài chính FIRE (50 / 20 / 30)',
+      description: 'Dành cho người hướng tới tự do tài chính: Tiết giảm chi tiêu hưởng thụ, tối đa hóa 30% dòng tiền đầu tư tích sản.',
+      needsPct: 50,
+      wantsPct: 20,
+      savingsPct: 30
+    };
+  } else if (strategy === 'starter' || strategy === '60_25_15') {
+    stratConfig = {
+      id: 'starter_balanced',
+      name: 'Chiến lược Nền tảng An toàn (60 / 25 / 15)',
+      description: 'Phù hợp người mới khởi nghiệp hoặc chi phí nhà ở/sinh hoạt chiếm tỷ trọng lớn: Ưu tiên sự vững chắc của cuộc sống.',
+      needsPct: 60,
+      wantsPct: 25,
+      savingsPct: 15
+    };
+  }
+
   return {
     totalIncome: income,
+    strategy: stratConfig,
     needs: {
-      percentage: 50,
-      label: "Thiết yếu (Ăn uống, Nhà ở, Hóa đơn)",
-      target: Math.round(income * 0.5),
+      percentage: stratConfig.needsPct,
+      name: "Quỹ Vận hành Đời sống",
+      label: "Chi phí Thiết yếu (Nhà ở, Ăn uống, Điện nước, Y tế)",
+      advice: "Giới hạn tiền thuê nhà hoặc chi tiêu thiết yếu dưới tỷ trọng quy định để đảm bảo an toàn tài chính.",
+      target: income > 0 ? Math.round(income * (stratConfig.needsPct / 100)) : 0,
       color: "#00D18F"
     },
     wants: {
-      percentage: 30,
-      label: "Mong muốn (Cà phê, Mua sắm, Giải trí)",
-      target: Math.round(income * 0.3),
+      percentage: stratConfig.wantsPct,
+      name: "Quỹ Nâng cấp & Phong cách sống",
+      label: "Phát triển Bản thân & Linh hoạt (Học tập, Networking, Trải nghiệm)",
+      advice: "Đầu tư vào kỹ năng chuyên môn và các mối quan hệ tạo ra cơ hội nghề nghiệp tương lai.",
+      target: income > 0 ? Math.round(income * (stratConfig.wantsPct / 100)) : 0,
       color: "#9B8CFF"
     },
     savings: {
-      percentage: 20,
-      label: "Tích lũy & Đầu tư (Quỹ dự phòng, Tiết kiệm)",
-      target: Math.round(income * 0.2),
+      percentage: stratConfig.savingsPct,
+      name: "Quỹ Tích sản & Tự do Tài chính",
+      label: "Đầu tư Sinh lời & Dự phòng (Quỹ khẩn cấp 6 tháng, Tích lũy)",
+      advice: "Hoàn thiện Quỹ dự phòng khẩn cấp trước khi giải ngân vào các kênh đầu tư sinh lời.",
+      target: income > 0 ? Math.round(income * (stratConfig.savingsPct / 100)) : 0,
       color: "#E8C57C"
     }
   };
 }
+
+// Alias for backwards compatibility
+const getRule503020 = getWealthAllocation;
+
 
 // --- JARS OPERATIONS ---
 async function getGoalJars(userId) {
@@ -816,6 +875,7 @@ module.exports = {
   getCategoryBreakdown,
   getCashflowTrend,
   getRule503020,
+  getWealthAllocation,
   getGoalJars,
   resetDatabase
 };

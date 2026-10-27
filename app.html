@@ -11,38 +11,50 @@
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <!-- Lucian UX/UI Prompt Theme Tokens & Components -->
 <link rel="stylesheet" href="lucian-uxui.css">
+<script>
+  (function(){
+    try {
+      const t = localStorage.getItem('dong_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch(e){}
+  })();
+</script>
 <style>
-/* ============ THIẾT KẾ ĐỒNG BANK — HỆ THỐNG MÀU FINTECH CAO CẤP ============ */
+/* ============ THIẾT KẾ ĐỒNG BANK — HỆ THỐNG MÀU FINTECH DOANH NGHIỆP CAO CẤP ============ */
 :root {
-  --bg: #04060C;
-  --surface: #070B14;
-  --card: #0B111E;
-  --card-hover: #101828;
+  --bg: #080B12;
+  --surface: #0D1424;
+  --card: #121C30;
+  --card-hover: #18253F;
   --line: rgba(255, 255, 255, 0.08);
   --line-light: rgba(255, 255, 255, 0.16);
   
-  --mint: #00D18F;          /* Jade Emerald thương hiệu */
-  --mint-dim: rgba(0, 209, 143, 0.14);
-  --gold: #E8C57C;          /* Champagne Gold sang trọng */
-  --gold-dim: rgba(232, 197, 124, 0.14);
-  --cyan: #3ED6C4;
-  --violet: #9B8CFF;
-  --violet-dim: rgba(155, 140, 255, 0.14);
-  --amber: #FFB454;
-  --red: #FF5C5C;
-  --red-dim: rgba(255, 92, 92, 0.14);
-  --blue: #8FB8FF;
-  --pink: #F08FD0;
+  --mint: #00F29D;          /* Electric Emerald Jade thương hiệu */
+  --mint-dim: rgba(0, 242, 157, 0.14);
+  --gold: #F5D485;          /* Champagne Gold Titanium sang trọng */
+  --gold-dim: rgba(245, 212, 133, 0.14);
+  --cyan: #38BDF8;
+  --violet: #818CF8;
+  --violet-dim: rgba(129, 140, 248, 0.14);
+  --amber: #FBBF24;
+  --red: #F87171;
+  --red-dim: rgba(248, 113, 113, 0.14);
+  --blue: #60A5FA;
+  --pink: #F472B6;
   
-  --text: #F2F5FA;
-  --muted: #8A93A6;
-  --grad: linear-gradient(100deg, #00D18F 5%, #6FE3C1 45%, #E8C57C 100%);
-  --grad-gold: linear-gradient(135deg, #E8C57C 0%, #B89647 100%);
+  --text: #F8FAFC;
+  --muted: #94A3B8;
+  --grad: linear-gradient(100deg, #00F29D 0%, #38BDF8 50%, #F5D485 100%);
+  --grad-gold: linear-gradient(135deg, #F5D485 0%, #C69F45 100%);
   --font-num: 'Space Grotesk', 'Be Vietnam Pro', sans-serif;
   --sidebar-w: 260px;
   --header-h: 70px;
-  --radius-lg: 22px;
-  --radius-md: 14px;
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  
+  --ux-ease: cubic-bezier(.2, .8, .2, 1);
+  --ux-spring: cubic-bezier(.16, 1, .3, 1);
+  --ux-spring-bouncy: cubic-bezier(.34, 1.45, .64, 1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -136,6 +148,109 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   background: var(--card-hover);
   color: var(--mint);
   border: 1px solid rgba(0, 209, 143, 0.3);
+}
+
+/* ============ AUTH OVERLAY STYLES ============ */
+@keyframes authShake {
+  0%, 100% { transform: translateX(0); }
+  15%, 45%, 75% { transform: translateX(-8px); }
+  30%, 60%, 90% { transform: translateX(8px); }
+}
+.auth-box.shake {
+  animation: authShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  border-color: rgba(248, 113, 113, 0.7) !important;
+  box-shadow: 0 0 25px rgba(248, 113, 113, 0.2) !important;
+}
+
+.input-action-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.input-action-btn:hover {
+  color: var(--mint);
+}
+
+.caps-warning {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #FBBF24;
+  margin-top: 5px;
+  padding: 4px 8px;
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: 6px;
+  border: 1px solid rgba(251, 191, 36, 0.25);
+}
+.caps-warning.show {
+  display: flex;
+}
+
+/* Triệt tiêu hoàn toàn màu nền xanh autofill của trình duyệt Chrome / Edge */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #0B111E inset !important;
+  -webkit-text-fill-color: #F8FAFC !important;
+  caret-color: #F8FAFC !important;
+  transition: background-color 5000s ease-in-out 0s !important;
+}
+
+/* Gợi ý Kiểu Tài khoản (Account Type Chips) */
+.account-type-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+.account-type-chip {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(.16, 1, .3, 1);
+  user-select: none;
+}
+.account-type-chip:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.account-type-chip.active {
+  background: rgba(0, 242, 157, 0.12);
+  border-color: var(--mint);
+  box-shadow: 0 0 14px rgba(0, 242, 157, 0.18);
+}
+.account-type-chip .at-icon {
+  font-size: 18px;
+  display: block;
+  margin-bottom: 4px;
+}
+.account-type-chip .at-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--text);
+  display: block;
+}
+.account-type-chip.active .at-title {
+  color: var(--mint);
+}
+.account-type-chip .at-sub {
+  font-size: 9.5px;
+  color: var(--muted);
+  display: block;
+  margin-top: 2px;
 }
 
 /* APP LAYOUT */
@@ -402,7 +517,11 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   margin-top: 4px;
 }
 
-/* BUTTONS */
+/* BUTTONS & MICRO-INTERACTIONS */
+button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:active {
+  transform: scale(0.965) !important;
+  transition: transform 0.08s var(--ux-ease) !important;
+}
 .btn {
   display: inline-flex;
   align-items: center;
@@ -411,38 +530,78 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   border-radius: 999px;
   font-weight: 700;
   font-size: 13.5px;
-  transition: all 0.25s;
+  transition: transform 0.25s var(--ux-spring), box-shadow 0.25s var(--ux-spring), filter 0.2s, background-color 0.2s, border-color 0.2s;
+  will-change: transform;
 }
 .btn-mint {
-  background: linear-gradient(135deg, var(--mint), #0BA579);
-  color: #04120C;
-  box-shadow: 0 8px 24px -10px rgba(0, 209, 143, 0.6);
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--mint), #00C48C);
+  color: #021208;
+  box-shadow: 0 10px 28px -10px rgba(0, 242, 157, 0.55);
 }
-.btn-mint:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-mint:hover {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px -8px rgba(0, 242, 157, 0.65);
+}
+.btn-mint::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -120%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+  transition: left 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-mint:hover::after { left: 140%; }
 .btn-gold {
+  position: relative;
+  overflow: hidden;
   background: var(--grad-gold);
-  color: #04120C;
-  box-shadow: 0 8px 24px -10px rgba(232, 197, 124, 0.5);
+  color: #021208;
+  box-shadow: 0 10px 28px -10px rgba(245, 212, 133, 0.5);
 }
-.btn-gold:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-gold:hover {
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 36px -8px rgba(245, 212, 133, 0.65);
+}
+.btn-gold::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -120%;
+  width: 60%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+  transition: left 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.btn-gold:hover::after { left: 140%; }
 .btn-outline {
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.03);
   color: var(--text);
 }
 .btn-outline:hover {
-  border-color: rgba(255, 255, 255, 0.22);
-  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(0, 209, 143, 0.35);
+  background: rgba(0, 209, 143, 0.08);
+  color: var(--mint);
+  transform: translateY(-2px);
 }
 .btn-danger {
   background: var(--red-dim);
   border: 1px solid rgba(255, 92, 92, 0.3);
   color: var(--red);
 }
-.btn-danger:hover { background: rgba(255, 92, 92, 0.25); }
+.btn-danger:hover {
+  background: rgba(255, 92, 92, 0.25);
+  transform: translateY(-2px);
+}
 .btn-sm { padding: 7px 14px; font-size: 12px; }
 
-/* ============ SPRINT 2: 4 THẺ TỔNG QUAN (SUMMARY CARDS) ============ */
+/* ============ 4 THẺ TỔNG QUAN TÀI CHÍNH (SUMMARY CARDS) ============ */
 .summary-cards-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -456,11 +615,13 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   padding: 20px;
   position: relative;
   overflow: hidden;
-  transition: all 0.25s;
+  transition: transform 0.3s var(--ux-spring), box-shadow 0.3s var(--ux-spring), border-color 0.25s;
+  will-change: transform;
 }
 .sum-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--line-light);
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.8);
 }
 .sum-card small {
   font-size: 11.5px;
@@ -566,6 +727,138 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   transition: all 0.2s;
 }
 .stk-chip:hover { border-color: var(--mint); color: var(--mint); }
+
+/* Bank Metric Icon Boxes */
+.metric-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+.metric-icon-box.mint {
+  background: rgba(0, 209, 143, 0.12);
+  color: var(--mint);
+  border-color: rgba(0, 209, 143, 0.25);
+}
+.metric-icon-box.danger {
+  background: rgba(255, 92, 92, 0.12);
+  color: var(--red);
+  border-color: rgba(255, 92, 92, 0.25);
+}
+.metric-icon-box.gold {
+  background: rgba(232, 197, 124, 0.12);
+  color: var(--gold);
+  border-color: rgba(232, 197, 124, 0.25);
+}
+.metric-icon-box.violet {
+  background: rgba(155, 140, 255, 0.12);
+  color: var(--violet);
+  border-color: rgba(155, 140, 255, 0.25);
+}
+.metric-icon-box svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 2;
+}
+
+/* Quick Action Strip on Account Balance Card */
+.mbc-quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+.mbc-qa-btn {
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 11px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.mbc-qa-btn:hover {
+  background: rgba(0, 209, 143, 0.09);
+  border-color: rgba(0, 209, 143, 0.35);
+  color: var(--mint);
+  transform: translateY(-2px);
+}
+.mbc-qa-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.8;
+  color: var(--mint);
+}
+
+/* Bank Empty State Component */
+.bank-empty-state {
+  text-align: center;
+  padding: 38px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.bank-empty-state.full {
+  padding: 56px 24px;
+}
+.bank-empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mint);
+  margin-bottom: 14px;
+}
+.bank-empty-icon svg {
+  width: 24px;
+  height: 24px;
+  stroke: var(--mint);
+}
+.bank-empty-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+.bank-empty-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  max-width: 400px;
+  line-height: 1.55;
+  margin-bottom: 18px;
+}
+.bank-empty-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Category SVG in Transaction Items */
+.cat-svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 1.8;
+  display: block;
+}
 
 /* Quick Actions Strip */
 .quick-actions-bar {
@@ -687,7 +980,7 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
 }
 .panel-head h3 { font-size: 16px; font-weight: 700; }
 
-/* ============ SPRINT 2: BIỂU ĐỒ TRỰC QUAN (CHARTS) ============ */
+/* ============ BIỂU ĐỒ PHÂN TÍCH TÀI CHÍNH (FINANCIAL CHARTS) ============ */
 .charts-grid-two {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -757,7 +1050,7 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   height: 220px;
 }
 
-/* ============ SPRINT 2: BỘ LỌC & LỊCH SỬ NÂNG CAO ============ */
+/* ============ BỘ LỌC TÌM KIẾM & SỔ GIAO DỊCH ============ */
 .filter-toolbar-box {
   background: var(--card);
   border: 1px solid var(--line);
@@ -844,13 +1137,25 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
 }
 .tx-action-btn:hover { color: var(--red); border-color: rgba(255,92,92,.3); background: var(--red-dim); }
 
-/* ============ SPRINT 2: QUY TẮC THÔNG MINH 50/30/20 ============ */
+/* ============ CHIẾN LƯỢC PHÂN BỔ TÀI CHÍNH THÔNG MINH (SMART WEALTH ALLOCATION) ============ */
 .rule-card-banner {
   background: linear-gradient(135deg, rgba(11, 17, 30, 0.95), rgba(7, 11, 20, 0.98));
   border: 1px solid rgba(232, 197, 124, 0.35);
   border-radius: var(--radius-lg);
   padding: 28px;
   margin-bottom: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.rule-card-banner::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(232, 197, 124, 0.15), transparent 70%);
+  pointer-events: none;
 }
 .rule-three-cols {
   display: grid;
@@ -862,11 +1167,139 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--line);
   border-radius: 16px;
-  padding: 18px;
+  padding: 20px;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s;
 }
-.rule-sub-box small { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
-.rule-sub-box b { font-family: var(--font-num); font-size: 20px; display: block; }
-.rule-sub-box p { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+.rule-sub-box:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.rule-sub-box small { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: 0.05em; display: block; margin-bottom: 6px; font-weight: 700; }
+.rule-sub-box b { font-family: var(--font-num); font-size: 22px; display: block; font-variant-numeric: tabular-nums; }
+.rule-sub-box p { font-size: 12px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+.rule-sub-box .sub-advice {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed rgba(255,255,255,0.08);
+  font-size: 11.5px;
+  color: var(--text);
+  line-height: 1.45;
+}
+
+/* Strategy Selector Controls */
+.strat-pills-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 18px 0 22px;
+}
+.strat-pill-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 10px 18px;
+  border-radius: 99px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.strat-pill-btn:hover {
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.07);
+}
+.strat-pill-btn.active {
+  background: rgba(0, 209, 143, 0.12);
+  border-color: rgba(0, 209, 143, 0.45);
+  color: var(--mint);
+  box-shadow: 0 0 16px -4px rgba(0, 209, 143, 0.3);
+}
+
+/* Visual Budget Split Bar (Lucian #171 inspiration) */
+.alloc-pool-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 20px;
+  margin: 20px 0;
+}
+.alloc-pool-track {
+  display: flex;
+  height: 28px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+  margin-bottom: 12px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+}
+.alloc-pool-seg {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #052019;
+  letter-spacing: 0.02em;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.alloc-legend-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.alloc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.alloc-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  flex: none;
+}
+
+/* Income Simulator */
+.income-sim-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.sim-chip {
+  padding: 5px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sim-chip:hover {
+  color: var(--text);
+  border-color: rgba(255,255,255,0.2);
+}
+.sim-chip.active {
+  background: var(--gold-dim);
+  border-color: rgba(232, 197, 124, 0.4);
+  color: var(--gold);
+}
 
 /* ============ FORM THÊM GIAO DỊCH ============ */
 .form-group { margin-bottom: 18px; }
@@ -1056,10 +1489,10 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
 
 <!-- ================= CỔNG ĐĂNG NHẬP / ĐĂNG KÝ (AUTH GATE) ================= -->
 <div id="authGate">
-  <div class="auth-box">
+  <div class="auth-box" id="authBoxContainer">
     <div class="auth-header">
       <div class="auth-logo">
-        <svg style="width:34px;height:34px" viewBox="0 0 48 48">
+        <svg style="width:36px;height:36px" viewBox="0 0 48 48">
           <defs>
             <linearGradient id="gBrandAuth" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0" stop-color="#0B9C6D"/><stop offset="1" stop-color="#00D18F"/>
@@ -1081,56 +1514,77 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
       <div class="auth-tab" id="tabRegisterBtn" onclick="switchAuthTab('register')">Đăng ký mới</div>
     </div>
 
-    <!-- FORM ĐĂNG NHẬP -->
-    <form id="formLogin" onsubmit="handleAuthLogin(event)">
+    <!-- FORM ĐĂNG NHẬP (GỌN GÀNG, KHÔNG RƯỜM RÀ, KHÔNG BỊ GỢI Ý POPUP TRÌNH DUYỆT) -->
+    <form id="formLogin" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-lpignore="true" data-1p-ignore="true" onsubmit="handleAuthLogin(event)">
+      <!-- Ngăn trình duyệt gợi ý popup autofill -->
+      <input type="text" name="fakeusernameremembered" style="display:none!important" tabindex="-1" autocomplete="off">
+      <input type="password" name="fakepasswordremembered" style="display:none!important" tabindex="-1" autocomplete="off">
+
       <div class="form-group">
         <label class="form-label">EMAIL ĐĂNG KÝ</label>
         <div class="form-input-wrap">
           <svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          <input type="email" id="loginEmail" placeholder="demo@dongbank.vn" value="demo@dongbank.vn" required>
+          <input type="email" id="loginEmail" name="bank_usr_clean" placeholder="Nhập email của bạn..." value="" autocomplete="new-password" autocorrect="off" autocapitalize="none" spellcheck="false" data-lpignore="true" required>
         </div>
       </div>
+
       <div class="form-group">
         <label class="form-label">MẬT KHẨU</label>
         <div class="form-input-wrap">
           <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <input type="password" id="loginPass" placeholder="••••••••" value="password123" required>
+          <input type="password" id="loginPass" name="bank_pwd_clean" placeholder="••••••••" value="" autocomplete="new-password" autocorrect="off" autocapitalize="none" spellcheck="false" data-lpignore="true" required>
+          <button type="button" class="input-action-btn" id="btnTogglePassEye" onclick="togglePasswordVisibility()" title="Ẩn / Hiện mật khẩu">
+            <svg class="ic eye-open" id="iconEyeOpen" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="ic eye-closed" id="iconEyeClosed" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+        <div class="caps-warning" id="capsLockAlert">
+          <svg class="ic" viewBox="0 0 24 24" style="width:13px;height:13px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Chú ý: Phím Caps Lock đang bật!</span>
         </div>
       </div>
-      <button type="submit" class="btn btn-mint" style="width:100%;justify-content:center;padding:12px;margin-top:6px">
-        Đăng nhập vào hệ thống
+
+      <button type="submit" class="btn btn-mint" id="btnSubmitAuthLogin" style="width:100%;justify-content:center;padding:13px;font-size:15px;margin-top:8px">
+        <span id="btnSubmitText">Đăng nhập</span>
         <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
-      </button>
-      <button type="button" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:10px;font-size:12px" onclick="quickFillDemoUser()">
-        ⚡ Điền sẵn tài khoản (Đặng Quang Dũng)
       </button>
     </form>
 
-    <!-- FORM ĐĂNG KÝ -->
-    <form id="formRegister" style="display:none" onsubmit="handleAuthRegister(event)">
+    <!-- FORM ĐĂNG KÝ (TINH GỌN, CHỐNG TỰ ĐỘNG ĐIỀN) -->
+    <form id="formRegister" style="display:none" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" data-lpignore="true" data-1p-ignore="true" onsubmit="handleAuthRegister(event)">
+      <!-- Trường bẫy ngăn trình duyệt tự động điền đè tên và mật khẩu cũ -->
+      <input type="text" name="fakeusernamereg" style="display:none!important" tabindex="-1" autocomplete="off">
+      <input type="password" name="fakepasswordreg" style="display:none!important" tabindex="-1" autocomplete="off">
+
       <div class="form-group">
         <label class="form-label">HỌ VÀ TÊN</label>
         <div class="form-input-wrap">
           <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
-          <input type="text" id="regName" placeholder="Nguyễn Văn A" required>
+          <input type="text" id="regName" name="bank_reg_fullname_clean" placeholder="Nhập họ và tên của bạn..." value="" autocomplete="new-password" autocorrect="off" autocapitalize="none" spellcheck="false" data-lpignore="true" required>
         </div>
       </div>
+
       <div class="form-group">
         <label class="form-label">EMAIL</label>
         <div class="form-input-wrap">
           <svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          <input type="email" id="regEmail" placeholder="email@cua-ban.vn" required>
+          <input type="email" id="regEmail" name="bank_reg_email_clean" placeholder="email@cua-ban.vn" value="" autocomplete="new-password" autocorrect="off" autocapitalize="none" spellcheck="false" data-lpignore="true" required>
         </div>
       </div>
+
       <div class="form-group">
         <label class="form-label">MẬT KHẨU</label>
         <div class="form-input-wrap">
           <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          <input type="password" id="regPass" placeholder="Tối thiểu 6 ký tự" minlength="6" required>
+          <input type="password" id="regPass" name="bank_reg_pass_clean" placeholder="Tối thiểu 6 ký tự" minlength="6" value="" autocomplete="new-password" autocorrect="off" autocapitalize="none" spellcheck="false" data-lpignore="true" required>
+          <button type="button" class="input-action-btn" onclick="toggleRegPasswordVisibility()" title="Ẩn / Hiện mật khẩu">
+            <svg class="ic" id="iconRegEye" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
         </div>
       </div>
-      <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;padding:12px;margin-top:6px">
-        Tạo tài khoản Đồng Bank
+
+      <button type="submit" class="btn btn-gold" id="btnSubmitRegister" style="width:100%;justify-content:center;padding:13px;margin-top:10px;font-size:15px">
+        <span id="btnRegText">Tạo tài khoản Đồng Bank</span>
       </button>
     </form>
   </div>
@@ -1155,31 +1609,28 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
     </div>
 
     <nav class="sb-nav">
-      <span class="sb-group-title">Khung Web (Sprint 1)</span>
+      <span class="sb-group-title">Nghiệp vụ Tài chính</span>
       <div class="nav-item active" data-tab="dashboard">
         <svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/></svg>
-        <span>Tổng quan (Home)</span>
+        <span>Tổng quan</span>
       </div>
       <div class="nav-item" onclick="openNewTxModal()">
         <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
-        <span>Nhập thu chi</span>
-        <span class="nav-badge mint">+ Mới</span>
+        <span>Ghi chép giao dịch</span>
       </div>
 
-      <span class="sb-group-title">Báo cáo &amp; Phân tích (Sprint 2)</span>
+      <span class="sb-group-title">Quản trị &amp; Phân tích</span>
       <div class="nav-item" data-tab="analytics">
         <svg class="ic" viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
-        <span>Báo cáo &amp; Biểu đồ</span>
-        <span class="nav-badge gold">Pie &amp; Bar</span>
+        <span>Báo cáo Dòng tiền</span>
       </div>
       <div class="nav-item" data-tab="history">
         <svg class="ic" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
-        <span>Lịch sử &amp; Bộ lọc</span>
+        <span>Sổ giao dịch &amp; Tra cứu</span>
       </div>
       <div class="nav-item" data-tab="budget">
         <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-        <span>Quy tắc 50/30/20</span>
-        <span class="nav-badge violet">Chuẩn</span>
+        <span>Phân bổ Ngân sách</span>
       </div>
     </nav>
 
@@ -1187,16 +1638,24 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
       <div class="user-card-mini">
         <div class="user-avatar" id="sidebarAvatar">D</div>
         <div class="user-info">
-          <b id="sidebarUserName">Đặng Quang Dũng</b>
-          <small id="sidebarUserEmail">demo@dongbank.vn</small>
+          <div style="display:flex;align-items:center;gap:4px">
+            <b id="sidebarUserName">Đặng Quang Dũng</b>
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="var(--mint)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+          </div>
+          <small id="sidebarUserEmail">quangdung6189@gmail.com</small>
         </div>
       </div>
       <div style="display:flex;gap:8px">
         <a href="index.html" class="btn btn-outline btn-sm" style="flex:1;justify-content:center" title="Về trang chủ">Trang chủ</a>
         <button class="btn btn-outline btn-sm" style="color:var(--red);border-color:rgba(255,92,92,.3)" onclick="handleLogout()" title="Đăng xuất">Thoát</button>
       </div>
-      <button type="button" onclick="resetDatabaseToZero()" style="width:100%;margin-top:8px;padding:4px 0;background:transparent;border:none;color:var(--muted);font-size:11px;cursor:pointer;text-align:center;text-decoration:underline;opacity:0.7">
-        Làm mới số dư về 0₫
+      <!-- Lucian UX/UI Prompt #003 · Hold to Confirm Reset Database -->
+      <button type="button" class="u003-hold-btn btn btn-outline btn-sm" id="btnResetZeroHold" style="width:100%;margin-top:8px;font-size:11.5px;color:var(--muted);border-color:var(--line);justify-content:center" title="Nhấn và giữ 1.4 giây để làm mới số dư về 0₫">
+        <span class="u003-hold-progress"></span>
+        <span class="u003-hold-content" style="display:flex;align-items:center;gap:6px;position:relative;z-index:1">
+          <svg class="ic" viewBox="0 0 24 24" style="font-size:12px"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 21v-5h5"/></svg>
+          <span>Giữ để reset về 0₫</span>
+        </span>
       </button>
     </div>
   </aside>
@@ -1221,7 +1680,12 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
           <span class="status-dot" style="background:var(--mint);box-shadow:0 0 8px var(--mint)"></span>
           <span>Bảo mật SSL 256-bit</span>
         </div>
-        <button class="btn btn-mint btn-sm" onclick="openNewTxModal()">
+        <!-- Lucian #219 Theme Switcher -->
+        <button class="u219-theme-btn" id="themeToggleBtn" aria-label="Đổi giao diện Sáng / Tối" title="Đổi giao diện Sáng / Tối (Lucian #219)">
+          <svg class="u219-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg class="u219-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="btn btn-mint btn-sm btn-liquid" onclick="openNewTxModal()">
           <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
           Thêm giao dịch
         </button>
@@ -1244,16 +1708,18 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
           </button>
         </div>
 
-        <!-- 4 THẺ TỔNG QUAN (SPRINT 2) — LUCIAN UX/UI #228 CURSOR-LIT GLOWING CARDS -->
+        <!-- 4 THẺ TỔNG QUAN TÀI CHÍNH — LUCIAN UX/UI #228 CURSOR-LIT GLOWING CARDS -->
         <div class="ux u228" id="lucianSummaryGrid" style="margin-bottom: 24px;">
           <div class="u228-gd" role="list" aria-label="Thẻ báo cáo tổng quan tài chính">
             <div class="u228-c" role="listitem">
               <div class="u228-in">
                 <div class="u228-top">
                   <small style="color:var(--ux-mint)">TỔNG THU NHẬP</small>
-                  <span class="u228-ic">💵</span>
+                  <div class="metric-icon-box mint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9.2-9.2M17 17V8H8"/></svg>
+                  </div>
                 </div>
-                <b id="cardTotalIncome" style="color:var(--ux-mint)">+0₫</b>
+                <b id="cardTotalIncome" style="color:var(--ux-mint)">0₫</b>
                 <span class="sub-tag">Khoản tiền thu vào trong kỳ</span>
               </div>
             </div>
@@ -1261,9 +1727,11 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
               <div class="u228-in">
                 <div class="u228-top">
                   <small style="color:var(--ux-danger)">TỔNG CHI TIÊU</small>
-                  <span class="u228-ic">💳</span>
+                  <div class="metric-icon-box danger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7.8 16.2M7 7v9h9"/></svg>
+                  </div>
                 </div>
-                <b id="cardTotalExpense" style="color:var(--ux-danger)">-0₫</b>
+                <b id="cardTotalExpense" style="color:var(--ux-danger)">0₫</b>
                 <span class="sub-tag">Khoản tiền đã chi trong kỳ</span>
               </div>
             </div>
@@ -1271,7 +1739,9 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
               <div class="u228-in">
                 <div class="u228-top">
                   <small style="color:var(--ux-gold)">SỐ DƯ HIỆN TẠI</small>
-                  <span class="u228-ic">🏦</span>
+                  <div class="metric-icon-box gold">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+                  </div>
                 </div>
                 <b id="cardCurrentBalance" style="color:var(--ux-gold)">0₫</b>
                 <span class="sub-tag">Số dư khả dụng tài khoản</span>
@@ -1281,7 +1751,9 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
               <div class="u228-in">
                 <div class="u228-top">
                   <small style="color:#B7A4FF">TỔNG SỐ GIAO DỊCH</small>
-                  <span class="u228-ic">📑</span>
+                  <div class="metric-icon-box violet">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg>
+                  </div>
                 </div>
                 <b id="cardTotalCount" style="color:#C4B5FD">0 giao dịch</b>
                 <span class="sub-tag">Lượt thu / chi ghi nhận</span>
@@ -1294,24 +1766,56 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
         <div class="hero-stats-grid">
           <div class="main-balance-card">
             <div class="mbc-top">
-              <span>TÀI KHOẢN THANH TOÁN ĐỒNG BANK</span>
-              <button class="eye-btn" id="toggleBalanceBtn" onclick="toggleBalanceVisibility()" title="Ẩn/Hiện số dư">
-                <svg class="ic" id="eyeIcon" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-              </button>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="status-dot"></span>
+                <span>Tài khoản Thanh toán Cá nhân (Active)</span>
+              </div>
+              <!-- Lucian UX/UI Prompt #013 · Stretchy Switch for Balance Privacy -->
+              <div style="display:flex;align-items:center;gap:8px" title="Bật/Tắt chế độ ẩn số dư bảo mật">
+                <span style="font-size:11.5px;color:var(--muted);font-weight:600">Ẩn số dư</span>
+                <div class="u013-sw" id="balancePrivacySw" onclick="toggleBalanceSwitch()" role="switch" aria-checked="false" aria-label="Ẩn số dư bảo mật">
+                  <div class="u013-knob"></div>
+                </div>
+              </div>
             </div>
             <div class="mbc-amount">
-              <span id="displayBalance">47.250.000</span>
+              <span id="displayBalance">0</span>
               <span class="cur">₫</span>
             </div>
             <div class="mbc-meta">
-              <span class="badge-pill" style="background:var(--mint-dim);color:var(--mint)">
+              <span class="badge-pill" style="background:rgba(0,209,143,0.12);color:var(--mint);border:1px solid rgba(0,209,143,0.25)">
                 <svg class="ic" viewBox="0 0 24 24" style="font-size:12px"><path d="M4 16l5-5 3 3 7-8"/></svg>
-                Tích lũy thực tế: <span id="dashNetSavings" style="font-family:var(--font-num);margin-left:4px">+0₫</span>
+                Tích lũy thực tế: <span id="dashNetSavings" style="font-family:var(--font-num);margin-left:4px">0₫</span>
               </span>
-              <span class="badge-pill stk-chip" onclick="copyStk()">
-                <svg class="ic" viewBox="0 0 24 24" style="font-size:12px"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-                STK: <span id="dashAccountNumber">8888 6868 9999</span> (Sao chép)
-              </span>
+              <!-- Lucian UX/UI Prompt #008 · Interactive Copy Button with Checkmark Morph -->
+              <div class="badge-pill stk-chip" style="display:inline-flex;align-items:center;gap:8px;padding:3px 6px 3px 12px">
+                <span>STK: <strong id="dashAccountNumber" style="font-family:var(--font-num);letter-spacing:0.04em">8888 6868 9999</strong></span>
+                <button type="button" class="u008-copy-btn" id="btnCopyStk" onclick="copyStk(this)" aria-label="Sao chép số tài khoản" title="Sao chép số tài khoản (Lucian #008)">
+                  <svg class="u008-cp-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  <svg class="u008-ok-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                  <span>Chép</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Quick Banking Operations Strip -->
+            <div class="mbc-quick-actions">
+              <button type="button" class="mbc-qa-btn" onclick="openNewTxModal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+                <span>Ghi chép</span>
+              </button>
+              <button type="button" class="mbc-qa-btn" onclick="openQuickTxPreset('in')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+                <span>Nạp tiền</span>
+              </button>
+              <button type="button" class="mbc-qa-btn" onclick="openQuickTxPreset('out')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                <span>Chuyển tiền</span>
+              </button>
+              <button type="button" class="mbc-qa-btn" onclick="exportStatementCsv()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                <span>Sao kê</span>
+              </button>
             </div>
           </div>
 
@@ -1353,22 +1857,57 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
           </div>
         </div>
 
-        <!-- 2-COLUMN: BIỂU ĐỒ DÒNG TIỀN & GIAO DỊCH GẦN ĐÂY -->
+        <!-- 2-COLUMN: BIỂU ĐỒ DÒNG TIỀN (LUCIAN #095) & GIAO DỊCH GẦN ĐÂY -->
         <div class="dash-two-col">
-          <div class="panel-card">
-            <div class="panel-head">
+          <!-- Lucian UX/UI Prompt #095 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#095 -->
+          <div class="ux u095" id="dashLucian095">
+            <div class="u095-h">
               <div>
-                <h3>Biến động dòng tiền tuần này</h3>
-                <small style="color:var(--muted)">Biểu đồ cột so sánh thu nhập &amp; chi tiêu (Sprint 2)</small>
+                <div class="u095-top">
+                  <span class="u095-lab" id="dash095Label">BIẾN ĐỘNG DÒNG TIỀN TUẦN NÀY</span>
+                  <span class="u095-dl" id="dash095DeltaBadge">✦ 7 Ngày qua</span>
+                </div>
+                <div class="u095-v">
+                  <b id="dash095TotalNet">0₫</b>
+                  <small id="dash095SubNet" style="font-size:12px;color:var(--ux-ink-2);display:block;margin-top:2px">Tổng luân chuyển: 0₫</small>
+                </div>
               </div>
-              <button class="btn btn-outline btn-sm" onclick="switchTab('analytics')">Xem chi tiết &rarr;</button>
+              <div style="display:flex;gap:8px;align-items:center">
+                <button class="btn btn-outline btn-sm" onclick="switchTab('analytics')" title="Mở chi tiết phân tích">
+                  <span>Phân tích sâu</span>
+                  <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+              </div>
             </div>
-            <div class="barchart-container" id="dashBarChart"></div>
+
+            <div class="u095-ch" id="dash095ChartArea">
+              <div class="u095-grid" id="dash095Grid">
+                <div class="u095-gl" style="top: 0%"><span id="dash095GridMax">Tối đa</span></div>
+                <div class="u095-gl" style="top: 33%"><span id="dash095Grid66">66%</span></div>
+                <div class="u095-gl" style="top: 66%"><span id="dash095Grid33">33%</span></div>
+                <div class="u095-gl" style="bottom: 0%"><span>0₫</span></div>
+              </div>
+              <div class="u095-avg" id="dash095AvgLine" style="--a: 0.5">
+                <span id="dash095AvgLabel">Trung bình ngày</span>
+              </div>
+              <div class="u095-bars" id="dash095Bars">
+                <!-- Dual Bars rendered via JS with Lucian #095 spring animations -->
+              </div>
+              <div class="u095-tip" id="dash095Tip" aria-hidden="true">
+                <!-- Dynamic floating tooltip -->
+              </div>
+            </div>
+
+            <div class="u095-legend-strip">
+              <span class="u095-legend-item"><i class="u095-dot mint"></i> Tiền thu vào</span>
+              <span class="u095-legend-item"><i class="u095-dot gold"></i> Tiền chi ra</span>
+              <span class="u095-legend-hint">✦ Di chuột qua từng cột để kiểm tra số dư ngày</span>
+            </div>
           </div>
 
           <div class="panel-card">
             <div class="panel-head">
-              <h3>Giao dịch gần đây (Sprint 1)</h3>
+              <h3>Giao dịch gần đây</h3>
               <button class="btn btn-outline btn-sm" onclick="switchTab('history')">Tất cả &rarr;</button>
             </div>
             <div class="tx-list" id="dashRecentTxList"></div>
@@ -1376,14 +1915,14 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
         </div>
       </section>
 
-      <!-- ================= 2. TAB: BÁO CÁO & BIỂU ĐỒ (SPRINT 2) ================= -->
+      <!-- ================= 2. TAB: BÁO CÁO & BIỂU ĐỒ ================= -->
       <section id="view-analytics" class="view-section">
         <div class="sec-title">
           <div>
             <h1>Trực quan hóa Báo cáo &amp; Phân tích Dòng tiền</h1>
-            <p>Sprint 2: Chuyển đổi dữ liệu giao dịch thành các biểu đồ cột và tròn trực quan.</p>
+            <p>Trực quan hóa thu nhập và chi tiêu theo danh mục và chu kỳ thời gian thực.</p>
           </div>
-          <button class="btn btn-outline btn-sm" onclick="loadSprint2Data()">
+          <button class="btn btn-outline btn-sm" onclick="loadAllAnalyticsCharts()">
             <svg class="ic" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
             Làm mới biểu đồ
           </button>
@@ -1394,8 +1933,8 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
           <div class="ux u097" id="lucianDonut097">
             <div class="u097-h">
               <div>
-                <small>PHÂN TÍCH DANH MỤC (SPRINT 2)</small>
-                <b>Tỷ lệ chi tiêu thực tế</b>
+                <small>CƠ CẤU CHI TIÊU THỰC TẾ</small>
+                <b>Tỷ lệ chi tiêu danh mục</b>
               </div>
               <span class="badge-pill" style="background:rgba(255,255,255,.05);color:var(--gold);font-family:var(--font-num)" id="pieTotalExpenseLabel">0₫</span>
             </div>
@@ -1422,11 +1961,12 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
             <div class="u095-h">
               <div>
                 <div class="u095-top">
-                  <span class="u095-lab">BIẾN ĐỘNG DÒNG TIỀN (SPRINT 2)</span>
+                  <span class="u095-lab" id="analytics095Label">BIẾN ĐỘNG DÒNG TIỀN</span>
                   <span class="u095-dl" id="u095DeltaBadge">✦ Dữ liệu 7 ngày qua</span>
                 </div>
                 <div class="u095-v">
                   <b id="u095TotalVolume">0₫</b>
+                  <small id="analytics095SubNet" style="font-size:12px;color:var(--ux-ink-2);display:block;margin-top:2px">Tổng luân chuyển: 0₫</small>
                 </div>
               </div>
               <div class="u095-seg" role="tablist" aria-label="Chọn chu kỳ biểu đồ">
@@ -1436,37 +1976,38 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
             </div>
 
             <div class="u095-ch" id="u095ChartArea">
-              <div class="u095-grid">
-                <div class="u095-gl" style="top: 0%"><span>Tối đa</span></div>
-                <div class="u095-gl" style="top: 50%"><span>50%</span></div>
+              <div class="u095-grid" id="analytics095Grid">
+                <div class="u095-gl" style="top: 0%"><span id="analytics095GridMax">Tối đa</span></div>
+                <div class="u095-gl" style="top: 33%"><span id="analytics095Grid66">66%</span></div>
+                <div class="u095-gl" style="top: 66%"><span id="analytics095Grid33">33%</span></div>
                 <div class="u095-gl" style="bottom: 0%"><span>0₫</span></div>
               </div>
               <div class="u095-avg" id="u095AvgLine" style="--a: 0.5">
-                <span>Trung bình ngày</span>
+                <span id="analytics095AvgLabel">Trung bình ngày</span>
               </div>
               <div class="u095-bars" id="fullBarChart">
                 <!-- Bars rendered via JS with interactive spring heights & dynamic tooltips -->
               </div>
-              <div class="u095-tip" id="u095Tip">
-                <span id="u095TipTitle">Thứ 2</span>
-                <small id="u095TipVal">+0₫</small>
+              <div class="u095-tip" id="u095Tip" aria-hidden="true">
+                <!-- Dynamic floating tooltip -->
               </div>
             </div>
 
-            <div style="display:flex;gap:18px;justify-content:center;font-size:12px;color:var(--ux-ink-2);margin-top:2px">
-              <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:var(--ux-mint)"></span> Thu nhập (Thu vào)</span>
-              <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:3px;background:var(--ux-gold)"></span> Chi tiêu (Chi ra)</span>
+            <div class="u095-legend-strip">
+              <span class="u095-legend-item"><i class="u095-dot mint"></i> Tiền thu vào</span>
+              <span class="u095-legend-item"><i class="u095-dot gold"></i> Tiền chi ra</span>
+              <span class="u095-legend-hint">✦ Di chuột qua từng cột để kiểm tra số dư ngày</span>
             </div>
           </div>
         </div>
 
-        <!-- Banner quy tắc 50/30/20 -->
+        <!-- Banner phân bổ tài chính thông minh -->
         <div class="rule-card-banner">
           <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px">
             <div>
-              <b style="font-size:17px;color:var(--gold)">Quy tắc tài chính thông minh 50/30/20</b>
+              <b style="font-size:17px;color:var(--gold)">Chiến lược Phân bổ Tài chính Thông minh (Smart Wealth Allocation)</b>
               <p style="font-size:12.5px;color:var(--muted);margin-top:2px">
-                Hệ thống tự động tính toán dựa trên tổng thu nhập thực tế <strong id="ruleTotalIncome" style="color:var(--mint);font-family:var(--font-num)">0₫</strong> của bạn.
+                Hệ thống tự động điều phối ngân sách dựa trên tổng thu nhập thực tế <strong id="ruleTotalIncome" style="color:var(--mint);font-family:var(--font-num)">0₫</strong> của bạn.
               </p>
             </div>
             <button class="btn btn-gold btn-sm" onclick="switchTab('budget')">Xem chi tiết phân bổ &rarr;</button>
@@ -1482,8 +2023,8 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
       <section id="view-history" class="view-section">
         <div class="sec-title">
           <div>
-            <h1>Lịch sử giao dịch &amp; Tìm kiếm nâng cao</h1>
-            <p>Sprint 1 &amp; Sprint 2: Quản lý đầy đủ các khoản thu chi, lọc từ ngày đến ngày và tìm kiếm từ khóa.</p>
+            <h1>Lịch sử giao dịch &amp; Tra cứu thông minh</h1>
+            <p>Quản lý toàn diện dòng tiền, lọc nhanh theo ngày tháng và tra cứu tức thì.</p>
           </div>
           <button class="btn btn-mint btn-sm" onclick="openNewTxModal()">
             <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
@@ -1491,7 +2032,7 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
           </button>
         </div>
 
-        <!-- BỘ LỌC NÂNG CAO (SPRINT 2) -->
+        <!-- BỘ LỌC NÂNG CAO -->
         <div class="filter-toolbar-box">
           <div class="filter-field" style="flex:1;min-width:200px">
             <label>Tìm kiếm từ khóa</label>
@@ -1557,29 +2098,97 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
         </div>
       </section>
 
-      <!-- ================= 4. TAB: QUY TẮC 50/30/20 (SPRINT 2) ================= -->
+      <!-- ================= 4. TAB: CHIẾN LƯỢC PHÂN BỔ TÀI CHÍNH THÔNG MINH ================= -->
       <section id="view-budget" class="view-section">
         <div class="sec-title">
           <div>
-            <h1>Mô-đun Quy tắc Ngân sách Chuẩn 50/30/20</h1>
-            <p>Sprint 2: Tự động phân bổ ngân sách thông minh dựa trên tổng thu nhập tích lũy.</p>
+            <h1>Chiến lược Phân bổ Ngân sách Thực tế</h1>
+            <p>Hệ sinh thái điều phối dòng tiền 3 lớp chuẩn Private Banking: Vận hành đời sống (55%) — Nâng tầm trải nghiệm (25%) — Tích sản &amp; Tự do tài chính (20%).</p>
           </div>
         </div>
 
+        <!-- Strategy Selector & Income Simulator -->
         <div class="rule-card-banner">
-          <h3>Công thức Quản lý Tài chính 50 / 30 / 20</h3>
-          <p style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.6">
-            Dựa trên tổng thu nhập tháng của bạn (<strong id="budgetIncomeValue" style="color:var(--mint);font-family:var(--font-num)">0₫</strong>), Đồng Bank khuyến nghị trích lập các hũ ngân sách như sau:
-          </p>
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px">
+            <div>
+              <span class="badge-pill" style="background:rgba(232,197,124,0.15);color:var(--gold);margin-bottom:8px;display:inline-flex">
+                ✦ SMART WEALTH ALLOCATION ENGINE
+              </span>
+              <h3 id="allocStrategyTitle" style="font-size:20px;font-weight:800;letter-spacing:-0.01em;margin-top:4px">Chiến lược Thực tế Đô thị (55 / 25 / 20)</h3>
+              <p id="allocStrategyDesc" style="font-size:13px;color:var(--muted);margin-top:6px;max-width:720px;line-height:1.6">
+                Mô hình chuẩn thị trường hiện nay: Cân đối chi phí sinh hoạt đô thị hiện đại và xây dựng tài sản dài hạn bền vững.
+              </p>
+            </div>
+            
+            <div style="text-align:right">
+              <small style="color:var(--muted);font-size:11px;display:block;text-transform:uppercase;letter-spacing:0.05em">THU NHẬP CƠ SỞ TÍNH TOÁN</small>
+              <b id="budgetIncomeValue" style="font-family:var(--font-num);font-size:24px;color:var(--mint);font-variant-numeric:tabular-nums">0₫</b>
+            </div>
+          </div>
 
+          <!-- Strategy Selector Pills -->
+          <div class="strat-pills-row">
+            <button type="button" class="strat-pill-btn active" id="btnStratUrban" onclick="setAllocationStrategy('urban_realistic')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></svg>
+              <span>Thực tế Đô thị (55 / 25 / 20)</span>
+            </button>
+            <button type="button" class="strat-pill-btn" id="btnStratFire" onclick="setAllocationStrategy('fire_acceleration')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
+              <span>Tăng tốc Tích sản FIRE (50 / 20 / 30)</span>
+            </button>
+            <button type="button" class="strat-pill-btn" id="btnStratStarter" onclick="setAllocationStrategy('starter_balanced')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              <span>Nền tảng An toàn (60 / 25 / 15)</span>
+            </button>
+          </div>
+
+          <!-- Income Simulation Bar -->
+          <div class="income-sim-bar">
+            <span style="font-size:12px;color:var(--muted);font-weight:600">Mô phỏng thu nhập tháng:</span>
+            <button type="button" class="sim-chip active" id="simChipReal" onclick="simulateIncome(0)">Thực tế tài khoản</button>
+            <button type="button" class="sim-chip" onclick="simulateIncome(15000000)">15 Triệu</button>
+            <button type="button" class="sim-chip" onclick="simulateIncome(25000000)">25 Triệu</button>
+            <button type="button" class="sim-chip" onclick="simulateIncome(35000000)">35 Triệu</button>
+            <button type="button" class="sim-chip" onclick="simulateIncome(50000000)">50 Triệu</button>
+            <button type="button" class="sim-chip" onclick="simulateIncome(100000000)">100 Triệu</button>
+          </div>
+
+          <!-- Visual Multi-segment Pool Bar (Lucian #171 Inspired) -->
+          <div class="alloc-pool-box">
+            <div class="alloc-pool-track" id="allocVisualTrack" aria-label="Biểu đồ phân bổ 3 quỹ dòng tiền">
+              <div class="alloc-pool-seg" id="segNeeds" style="width:55%;background:var(--mint)">55% Vận hành</div>
+              <div class="alloc-pool-seg" id="segWants" style="width:25%;background:var(--violet)">25% Nâng cấp</div>
+              <div class="alloc-pool-seg" id="segSavings" style="width:20%;background:var(--gold)">20% Tích sản</div>
+            </div>
+            <div class="alloc-legend-row" id="allocLegendRow">
+              <div class="alloc-legend-item">
+                <span class="alloc-dot" style="background:var(--mint)"></span>
+                <span>Vận hành Đời sống: <b id="legNeedsVal" style="color:var(--mint)">0₫</b> (<span id="legNeedsPct">55%</span>)</span>
+              </div>
+              <div class="alloc-legend-item">
+                <span class="alloc-dot" style="background:var(--violet)"></span>
+                <span>Nâng cấp &amp; Phong cách: <b id="legWantsVal" style="color:var(--violet)">0₫</b> (<span id="legWantsPct">25%</span>)</span>
+              </div>
+              <div class="alloc-legend-item">
+                <span class="alloc-dot" style="background:var(--gold)"></span>
+                <span>Tích sản &amp; Tự do: <b id="legSavingsVal" style="color:var(--gold)">0₫</b> (<span id="legSavingsPct">20%</span>)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 Dynamic Allocation Advisory Cards -->
           <div class="rule-three-cols" id="budgetDetailCards">
             <!-- Rendered by JS -->
           </div>
         </div>
 
+        <!-- Budget Discipline & Real-time Reality Check -->
         <div class="panel-card">
           <div class="panel-head">
-            <h3>So sánh thực tế chi tiêu so với hạn mức 50/30/20</h3>
+            <div>
+              <h3>Đối chiếu Dòng tiền Thực tế so với Hạn mức Ngân sách</h3>
+              <small style="color:var(--muted)">Đo lường kỷ luật tài chính dựa trên các khoản giao dịch ghi nhận thực tế</small>
+            </div>
           </div>
           <div id="budgetComparisonContent" style="display:flex;flex-direction:column;gap:16px">
             <!-- Rendered by JS -->
@@ -1591,7 +2200,7 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
   </div>
 </div>
 
-<!-- ================= MODAL THÊM GIAO DỊCH MỚI (SPRINT 1) ================= -->
+<!-- ================= MODAL THÊM GIAO DỊCH MỚI ================= -->
 <div class="modal-overlay" id="newTxModal">
   <div class="modal-box">
     <span class="modal-close" onclick="closeModal('newTxModal')">&times;</span>
@@ -1602,10 +2211,12 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
       <!-- Tab Chọn Loại (Thu / Chi) -->
       <div class="type-switch-bar">
         <div class="type-btn active expense" id="btnTypeExpense" onclick="setTxType('expense')">
-          💸 Chi tiêu (-)
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7L7.8 16.2M7 7v9h9"/></svg>
+          <span>Chi tiêu (-)</span>
         </div>
         <div class="type-btn income" id="btnTypeIncome" onclick="setTxType('income')">
-          💵 Thu nhập (+)
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17l9.2-9.2M17 17V8H8"/></svg>
+          <span>Thu nhập (+)</span>
         </div>
       </div>
 
@@ -1668,11 +2279,11 @@ input, select, textarea { font-family: inherit; color: inherit; outline: none; }
 
 <script>
 /* ==========================================================================
-   ĐỒNG BANK — FRONTEND APP CONTROLLER (SPRINT 1 & SPRINT 2)
+   ĐỒNG BANK — FRONTEND APP CONTROLLER (FINTECH CORE ENGINE)
    ========================================================================== */
 
 const API_BASE = window.location.origin;
-let authToken = localStorage.getItem('DONG_TOKEN') || null;
+let authToken = sessionStorage.getItem('DONG_TOKEN') || localStorage.getItem('DONG_TOKEN') || null;
 let currentUser = null;
 let currentTxType = 'expense';
 let isBalanceHidden = false;
@@ -1692,12 +2303,38 @@ const CATEGORY_COLORS = {
   "Khác": "#A8B4C8"
 };
 
-// ==================== AUTHENTICATION & LOGIN GATE ====================
+// ==================== AUTHENTICATION CONTROLLER ====================
+
+// Ẩn / Hiện Mật Khẩu
+function togglePasswordVisibility() {
+  const p = document.getElementById('loginPass');
+  const eyeOpen = document.getElementById('iconEyeOpen');
+  const eyeClosed = document.getElementById('iconEyeClosed');
+  if (!p) return;
+  const isPass = p.type === 'password';
+  p.type = isPass ? 'text' : 'password';
+  if (eyeOpen && eyeClosed) {
+    eyeOpen.style.display = isPass ? 'none' : 'block';
+    eyeClosed.style.display = isPass ? 'block' : 'none';
+  }
+}
+
+// Báo động Rung lắc Khi Sai Mật Khẩu
+function triggerAuthShake(message) {
+  const box = document.getElementById('authBoxContainer');
+  if (box) {
+    box.classList.remove('shake');
+    void box.offsetWidth; // Force reflow
+    box.classList.add('shake');
+  }
+  showToast(message, "err");
+}
 
 function checkAuthGate() {
   const gate = document.getElementById('authGate');
   if (!authToken) {
     gate.style.display = 'flex';
+    initAuthSecurityListeners();
   } else {
     gate.style.display = 'none';
     fetchCurrentUser();
@@ -1705,23 +2342,62 @@ function checkAuthGate() {
   }
 }
 
+function initAuthSecurityListeners() {
+  const passInput = document.getElementById('loginPass');
+  const capsAlert = document.getElementById('capsLockAlert');
+  if (passInput && capsAlert) {
+    ['keydown', 'keyup'].forEach(evt => {
+      passInput.addEventListener(evt, e => {
+        if (e.getModifierState) {
+          capsAlert.classList.toggle('show', e.getModifierState('CapsLock'));
+        }
+      });
+    });
+  }
+}
+
+function selectAccountType(chip, type) {
+  document.querySelectorAll('.account-type-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  const input = document.getElementById('selectedAccountType');
+  if (input) input.value = type;
+}
+
+function toggleRegPasswordVisibility() {
+  const p = document.getElementById('regPass');
+  if (!p) return;
+  p.type = p.type === 'password' ? 'text' : 'password';
+}
+
 function switchAuthTab(tab) {
   document.getElementById('tabLoginBtn').classList.toggle('active', tab === 'login');
   document.getElementById('tabRegisterBtn').classList.toggle('active', tab === 'register');
   document.getElementById('formLogin').style.display = tab === 'login' ? 'block' : 'none';
   document.getElementById('formRegister').style.display = tab === 'register' ? 'block' : 'none';
-}
 
-function quickFillDemoUser() {
-  document.getElementById('loginEmail').value = 'demo@dongbank.vn';
-  document.getElementById('loginPass').value = 'password123';
-  showToast("Đã điền tài khoản mẫu demo@dongbank.vn");
+  // Triệt tiêu sạch sẽ dữ liệu autofill trình duyệt cố tình điền vào form đăng ký
+  if (tab === 'register') {
+    setTimeout(() => {
+      const regName = document.getElementById('regName');
+      const regEmail = document.getElementById('regEmail');
+      const regPass = document.getElementById('regPass');
+      if (regName && regName.value === 'Nguyễn Quang Hải') regName.value = '';
+      if (regPass) regPass.value = '';
+    }, 60);
+  }
 }
 
 async function handleAuthLogin(e) {
   e.preventDefault();
-  const email = document.getElementById('loginEmail').value.trim();
-  const password = document.getElementById('loginPass').value;
+  const emailInput = document.getElementById('loginEmail');
+  const passInput = document.getElementById('loginPass');
+  const email = emailInput.value.trim();
+  const password = passInput.value;
+
+  const btnSubmit = document.getElementById('btnSubmitAuthLogin');
+  const btnText = document.getElementById('btnSubmitText');
+  if (btnSubmit) btnSubmit.disabled = true;
+  if (btnText) btnText.textContent = "Đang đăng nhập...";
 
   try {
     const res = await fetch(`${API_BASE}/api/auth/login`, {
@@ -1731,20 +2407,32 @@ async function handleAuthLogin(e) {
     });
     const data = await res.json();
     if (!data.success) {
-      showToast(data.message || "Đăng nhập thất bại!", "err");
+      triggerAuthShake(data.message || "Email hoặc mật khẩu không chính xác!");
+      if (btnSubmit) btnSubmit.disabled = false;
+      if (btnText) btnText.textContent = "Đăng nhập";
       return;
     }
 
     authToken = data.token;
     localStorage.setItem('DONG_TOKEN', authToken);
+    sessionStorage.setItem('DONG_TOKEN', authToken);
+
     currentUser = data.user;
     showToast(`Chào mừng trở lại, ${currentUser.full_name}!`);
+    
+    // Dọn sạch dữ liệu bộ nhớ
+    emailInput.value = '';
+    passInput.value = '';
+
     document.getElementById('authGate').style.display = 'none';
     updateUserInterface();
     loadAllData();
   } catch (err) {
     console.error(err);
-    showToast("Không thể kết nối máy chủ backend!", "err");
+    triggerAuthShake("Không thể kết nối máy chủ backend!");
+  } finally {
+    if (btnSubmit) btnSubmit.disabled = false;
+    if (btnText) btnText.textContent = "Đăng nhập";
   }
 }
 
@@ -1753,29 +2441,41 @@ async function handleAuthRegister(e) {
   const fullName = document.getElementById('regName').value.trim();
   const email = document.getElementById('regEmail').value.trim();
   const password = document.getElementById('regPass').value;
+  const accType = document.getElementById('selectedAccountType')?.value || 'standard';
+
+  const btnSubmit = document.getElementById('btnSubmitRegister');
+  const btnText = document.getElementById('btnRegText');
+  if (btnSubmit) btnSubmit.disabled = true;
+  if (btnText) btnText.textContent = "Đang tạo tài khoản...";
 
   try {
     const res = await fetch(`${API_BASE}/api/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fullName, email, password })
+      body: JSON.stringify({ fullName, email, password, accountType: accType })
     });
     const data = await res.json();
     if (!data.success) {
       showToast(data.message || "Đăng ký thất bại!", "err");
+      if (btnSubmit) btnSubmit.disabled = false;
+      if (btnText) btnText.textContent = "Tạo tài khoản Đồng Bank";
       return;
     }
 
     authToken = data.token;
     localStorage.setItem('DONG_TOKEN', authToken);
+    sessionStorage.setItem('DONG_TOKEN', authToken);
     currentUser = data.user;
-    showToast("Đăng ký tài khoản thành công!");
+    showToast(`Đăng ký thành công! Chào mừng ${currentUser.full_name} đến với Đồng Bank.`);
     document.getElementById('authGate').style.display = 'none';
     updateUserInterface();
     loadAllData();
   } catch (err) {
     console.error(err);
     showToast("Lỗi khi kết nối đăng ký!", "err");
+  } finally {
+    if (btnSubmit) btnSubmit.disabled = false;
+    if (btnText) btnText.textContent = "Tạo tài khoản Đồng Bank";
   }
 }
 
@@ -1784,8 +2484,11 @@ function handleLogout() {
     authToken = null;
     currentUser = null;
     localStorage.removeItem('DONG_TOKEN');
+    sessionStorage.removeItem('DONG_TOKEN');
     document.getElementById('authGate').style.display = 'flex';
-    showToast("Đã đăng xuất an toàn.");
+    generateNewCaptcha();
+    initAuthSecurityListeners();
+    showToast("Đã đăng xuất & xóa sạch phiên làm việc an toàn.");
   }
 }
 
@@ -1821,22 +2524,22 @@ function updateUserInterface() {
   }
 }
 
-// ==================== LOAD ALL SPRINT DATA ====================
+// ==================== KHỞI TẠO TẢI DỮ LIỆU HỆ THỐNG ====================
 
 async function loadAllData() {
   await Promise.all([
     fetchCurrentUser(),
-    loadSprint1Transactions(),
-    loadSprint2Summary(),
-    loadSprint2Categories(),
-    loadSprint2Cashflow(),
-    loadSprint2Budget503020(),
+    loadTransactions(),
+    loadSummaryData(),
+    loadCategoryAnalytics(),
+    loadCashflowTrend(),
+    loadWealthAllocation(),
     loadDbStatus()
   ]);
 }
 
-// SPRINT 1: LẤY LỊCH SỬ GIAO DỊCH
-async function loadSprint1Transactions(filterParams = {}) {
+// NGHIỆP VỤ: LẤY LỊCH SỬ GIAO DỊCH
+async function loadTransactions(filterParams = {}) {
   try {
     const query = new URLSearchParams(filterParams).toString();
     const res = await fetch(`${API_BASE}/api/transactions?${query}`, {
@@ -1849,7 +2552,7 @@ async function loadSprint1Transactions(filterParams = {}) {
     renderDashboardRecentList(txs.slice(0, 5));
     renderFullHistoryList(txs);
   } catch (err) {
-    console.error("loadSprint1Transactions error:", err);
+    console.error("loadTransactions error:", err);
   }
 }
 
@@ -1858,10 +2561,20 @@ function renderDashboardRecentList(txs) {
   if (!box) return;
   if (txs.length === 0) {
     box.innerHTML = `
-      <div style="text-align:center;padding:36px 20px;color:var(--muted)">
-        <span style="font-size:26px;display:block;margin-bottom:6px">🌱</span>
-        <b style="color:var(--text);font-size:14px">Bắt đầu từ con số 0</b>
-        <div style="font-size:12px;margin-top:4px">Chưa có giao dịch phát sinh. Bấm <b>'+ Nhập thu chi'</b> để ghi chép khoản tiền đầu tiên!</div>
+      <div class="bank-empty-state">
+        <div class="bank-empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18M9 21V9"/>
+          </svg>
+        </div>
+        <div class="bank-empty-title">Chưa có giao dịch phát sinh</div>
+        <p class="bank-empty-desc">Sổ cái tài khoản đang sẵn sàng. Mọi giao dịch thu chi phát sinh sẽ được tự động đồng bộ và lưu trữ bảo mật.</p>
+        <div class="bank-empty-actions">
+          <button class="btn btn-mint btn-sm" onclick="openNewTxModal()">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Ghi chép giao dịch đầu tiên
+          </button>
+        </div>
       </div>
     `;
     return;
@@ -1876,10 +2589,24 @@ function renderFullHistoryList(txs) {
   countLabel.textContent = `Hiển thị ${txs.length} giao dịch`;
   if (txs.length === 0) {
     box.innerHTML = `
-      <div style="text-align:center;padding:48px 20px;color:var(--muted)">
-        <span style="font-size:28px;display:block;margin-bottom:8px">📑</span>
-        <b style="color:var(--text);font-size:14px">Sổ giao dịch đang trống — Bắt đầu từ con số 0</b>
-        <div style="font-size:12.5px;margin-top:6px;max-width:380px;margin-left:auto;margin-right:auto">Mọi khoản thu - chi phát sinh sẽ được lưu trữ và thống kê tự động tại đây.</div>
+      <div class="bank-empty-state full">
+        <div class="bank-empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>
+          </svg>
+        </div>
+        <div class="bank-empty-title">Sổ cái tài khoản đang ở trạng thái bắt đầu</div>
+        <p class="bank-empty-desc">Hệ thống đã kết nối trực tiếp với máy chủ Neon PostgreSQL. Bạn có thể tự ghi chép giao dịch hoặc nạp dữ liệu mẫu để trải nghiệm đầy đủ biểu đồ phân tích.</p>
+        <div class="bank-empty-actions">
+          <button class="btn btn-mint btn-sm" onclick="openNewTxModal()">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Ghi chép giao dịch mới
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="seedDemoTransactions()">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+            Nạp dữ liệu mẫu (Demo)
+          </button>
+        </div>
       </div>
     `;
     return;
@@ -1916,18 +2643,26 @@ function createTxItemHtml(t, allowDelete = false) {
 
 function getCategoryIcon(cat) {
   switch (cat) {
-    case 'Ăn uống': return '☕';
-    case 'Di chuyển': return '🚗';
-    case 'Mua sắm': return '🛒';
-    case 'Lương': return '💵';
-    case 'Hóa đơn': return '⚡';
-    case 'Giáo dục': return '📚';
-    case 'Y tế': return '💊';
-    default: return '📑';
+    case 'Ăn uống':
+      return `<svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`;
+    case 'Di chuyển':
+      return `<svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2.1 10.7 2 10.8 2 11v5c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>`;
+    case 'Mua sắm':
+      return `<svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`;
+    case 'Lương':
+      return `<svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>`;
+    case 'Hóa đơn':
+      return `<svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>`;
+    case 'Giáo dục':
+      return `<svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`;
+    case 'Y tế':
+      return `<svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>`;
+    default:
+      return `<svg class="cat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>`;
   }
 }
 
-// SPRINT 1: THÊM GIAO DỊCH MỚI
+// NGHIỆP VỤ: THÊM GIAO DỊCH MỚI
 function openNewTxModal() {
   document.getElementById('txDate').value = new Date().toISOString().slice(0, 10);
   document.getElementById('newTxModal').classList.add('open');
@@ -2033,8 +2768,8 @@ async function handleDeleteTx(txId) {
   }
 }
 
-// SPRINT 2: BÁO CÁO TỔNG HỢP (SUMMARY CARDS)
-async function loadSprint2Summary(params = {}) {
+// PHÂN TÍCH: BÁO CÁO TỔNG HỢP TÀI CHÍNH (SUMMARY CARDS)
+async function loadSummaryData(params = {}) {
   try {
     const q = new URLSearchParams(params).toString();
     const res = await fetch(`${API_BASE}/api/analytics/summary?${q}`, {
@@ -2044,20 +2779,24 @@ async function loadSprint2Summary(params = {}) {
     if (!data.success) return;
     const s = data.summary;
 
-    document.getElementById('cardTotalIncome').textContent = "+" + fmt(s.totalIncome) + "₫";
-    document.getElementById('cardTotalExpense').textContent = "-" + fmt(s.totalExpense) + "₫";
+    document.getElementById('cardTotalIncome').textContent = (s.totalIncome > 0 ? "+" : "") + fmt(s.totalIncome) + "₫";
+    document.getElementById('cardTotalExpense').textContent = (s.totalExpense > 0 ? "-" : "") + fmt(s.totalExpense) + "₫";
     document.getElementById('cardCurrentBalance').textContent = fmt(s.currentBalance) + "₫";
     document.getElementById('cardTotalCount').textContent = s.totalTransactions + " giao dịch";
-    document.getElementById('dashNetSavings').textContent = (s.netSavings >= 0 ? '+' : '') + fmt(s.netSavings) + "₫";
-    document.getElementById('ruleTotalIncome').textContent = fmt(s.totalIncome) + "₫";
-    document.getElementById('budgetIncomeValue').textContent = fmt(s.totalIncome) + "₫";
+    document.getElementById('dashNetSavings').textContent = (s.netSavings > 0 ? '+' : (s.netSavings < 0 ? '-' : '')) + fmt(Math.abs(s.netSavings)) + "₫";
+    const ruleInc = document.getElementById('ruleTotalIncome');
+    if (ruleInc) ruleInc.textContent = fmt(s.totalIncome) + "₫";
+    const bgInc = document.getElementById('budgetIncomeValue');
+    if (bgInc && (!currentSimIncome || currentSimIncome === 0)) {
+      bgInc.textContent = fmt(s.totalIncome > 0 ? s.totalIncome : 0) + "₫";
+    }
   } catch (err) {
-    console.error("loadSprint2Summary error:", err);
+    console.error("loadSummaryData error:", err);
   }
 }
 
-// SPRINT 2: BIỂU ĐỒ TRÒN (PIE / DONUT CHART)
-async function loadSprint2Categories(params = {}) {
+// PHÂN TÍCH: CƠ CẤU CHI TIÊU THEO DANH MỤC (PIE / DONUT CHART)
+async function loadCategoryAnalytics(params = {}) {
   try {
     const q = new URLSearchParams(params).toString();
     const res = await fetch(`${API_BASE}/api/analytics/categories?${q}`, {
@@ -2068,7 +2807,7 @@ async function loadSprint2Categories(params = {}) {
 
     renderDonutChart(data.totalExpense, data.categories || []);
   } catch (err) {
-    console.error("loadSprint2Categories error:", err);
+    console.error("loadCategoryAnalytics error:", err);
   }
 }
 
@@ -2221,7 +2960,7 @@ function renderDonutChart(totalExpense, categories) {
 let cashflowPeriod = '7d';
 let cachedCashflowTrend = [];
 
-async function loadSprint2Cashflow() {
+async function loadCashflowTrend() {
   try {
     const res = await fetch(`${API_BASE}/api/analytics/cashflow`, {
       headers: { 'Authorization': `Bearer ${authToken}` }
@@ -2231,9 +2970,9 @@ async function loadSprint2Cashflow() {
 
     cachedCashflowTrend = data.trend || [];
     renderBarChart('fullBarChart', cachedCashflowTrend);
-    renderDashboardCompactBarChart('dashBarChart', cachedCashflowTrend);
+    renderDashboardCompactBarChart('dash095Bars', cachedCashflowTrend);
   } catch (err) {
-    console.error("loadSprint2Cashflow error:", err);
+    console.error("loadCashflowTrend error:", err);
   }
 }
 
@@ -2249,144 +2988,352 @@ function setCashflowPeriod(period) {
   showToast(`Đã chuyển chu kỳ biểu đồ sang: ${period === '7d' ? '7 Ngày gần nhất' : '30 Ngày'}`);
 }
 
-function renderBarChart(containerId, trend) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
+// ==========================================================================
+// Lucian UX/UI Prompt #095 · Dual-Bar Cashflow Engine with Dynamic Tooltip
+// MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#095
+// ==========================================================================
+function renderLucian095Engine(cfg, trend) {
+  const wrap = document.getElementById(cfg.wrapId);
+  const area = document.getElementById(cfg.areaId);
+  const barsContainer = document.getElementById(cfg.barsId);
+  const tip = document.getElementById(cfg.tipId);
+  const avgLine = document.getElementById(cfg.avgLineId);
+  const avgLabel = document.getElementById(cfg.avgLabelId);
+  const totalNetElem = document.getElementById(cfg.totalNetId);
+  const subNetElem = document.getElementById(cfg.subNetId);
+  const deltaBadge = document.getElementById(cfg.deltaId);
+  const gridMax = document.getElementById(cfg.gridMaxId);
+  const grid66 = document.getElementById(cfg.grid66Id);
+  const grid33 = document.getElementById(cfg.grid33Id);
+
+  if (!barsContainer) return;
 
   const totalIncome = (trend || []).reduce((sum, t) => sum + (t.income || 0), 0);
   const totalExpense = (trend || []).reduce((sum, t) => sum + (t.expense || 0), 0);
   const totalVolume = totalIncome + totalExpense;
+  const netFlow = totalIncome - totalExpense;
 
-  const chartWrap = document.getElementById('lucianBar095');
-  const chartArea = document.getElementById('u095ChartArea');
-  const tip = document.getElementById('u095Tip');
-  const tipTitle = document.getElementById('u095TipTitle');
-  const tipVal = document.getElementById('u095TipVal');
-  const avgLine = document.getElementById('u095AvgLine');
-  const totalVolElem = document.getElementById('u095TotalVolume');
+  const resetSummary = () => {
+    if (totalNetElem) {
+      if (totalVolume === 0) {
+        totalNetElem.textContent = "0₫";
+        totalNetElem.style.color = "var(--text)";
+      } else {
+        totalNetElem.textContent = (netFlow >= 0 ? '+' : '') + fmt(netFlow) + '₫';
+        totalNetElem.style.color = netFlow >= 0 ? 'var(--ux-mint)' : 'var(--ux-danger)';
+      }
+    }
+    if (subNetElem) {
+      if (totalVolume === 0) {
+        subNetElem.textContent = "Tổng luân chuyển: 0₫";
+      } else {
+        subNetElem.innerHTML = `Tổng luân chuyển: <b style="color:var(--text)">${fmt(totalVolume)}₫</b> (Thu: +${fmt(totalIncome)}₫ · Chi: -${fmt(totalExpense)}₫)`;
+      }
+    }
+    if (deltaBadge) {
+      if (totalVolume === 0) {
+        deltaBadge.className = 'u095-dl';
+        deltaBadge.textContent = "✦ Bắt đầu từ con số 0";
+      } else {
+        deltaBadge.className = 'u095-dl' + (netFlow < 0 ? ' dn' : '');
+        deltaBadge.textContent = netFlow >= 0 ? '✦ Dòng tiền thặng dư' : '✦ Thâm hụt ngân sách';
+      }
+    }
+  };
 
+  resetSummary();
+
+  // If 0 transactions: Render clean baseline + rich overlay with quick action
   if (!trend || trend.length === 0 || totalVolume === 0) {
-    if (totalVolElem) totalVolElem.textContent = "0₫";
-    const deltaBadge = document.getElementById('u095DeltaBadge');
-    if (deltaBadge) deltaBadge.textContent = "✦ Bắt đầu từ con số 0";
-    container.innerHTML = `
-      <div style="text-align:center;padding:46px 20px;color:var(--ux-ink-2);width:100%;background:rgba(255,255,255,0.02);border-radius:14px;border:1px dashed var(--ux-line)">
-        <b style="color:var(--ux-mint);font-size:13.5px;display:block;margin-bottom:4px">✦ Bắt đầu từ con số 0</b>
-        <span style="font-size:12px;color:var(--ux-ink-3)">Chưa có dữ liệu biến động dòng tiền tuần này. Hãy ghi nhận giao dịch để quan sát biểu đồ biến thiên!</span>
+    if (gridMax) gridMax.textContent = "1.000.000₫";
+    if (grid66) grid66.textContent = "660.000₫";
+    if (grid33) grid33.textContent = "330.000₫";
+    if (avgLine) avgLine.style.setProperty('--a', '0.35');
+    if (avgLabel) avgLabel.textContent = "Cân bằng: 0₫";
+
+    const days = (trend && trend.length ? trend : [
+      { dayName: 'T2' }, { dayName: 'T3' }, { dayName: 'T4' },
+      { dayName: 'T5' }, { dayName: 'T6' }, { dayName: 'T7' }, { dayName: 'CN' }
+    ]);
+
+    barsContainer.innerHTML = days.map((t, idx) => `
+      <div class="u095-b" style="pointer-events:none">
+        <div class="u095-col-track">
+          <div class="u095-bar u095-bar-in" style="--h:0;--d:${idx}"></div>
+          <div class="u095-bar u095-bar-out" style="--h:0;--d:${idx}"></div>
+        </div>
+        <em>${t.dayName}</em>
+      </div>
+    `).join('') + `
+      <div class="u095-empty-overlay">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <b class="u095-empty-title">Dòng tiền đang ở trạng thái cân bằng</b>
+        <span class="u095-empty-desc">Chưa có phát sinh giao dịch thu chi trong chu kỳ này. Bạn có thể nạp dữ liệu mẫu để quan sát biểu đồ biến thiên.</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+          <button type="button" class="btn btn-mint btn-sm" onclick="seedDemoTransactions()">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Nạp giao dịch mẫu (Demo)
+          </button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="openNewTxModal()">
+            + Ghi nhận giao dịch
+          </button>
+        </div>
       </div>
     `;
     return;
   }
 
-  const maxVal = Math.max(...trend.map(t => Math.max(t.income, t.expense)), 2000000);
+  // Calculate scales
+  const maxRaw = Math.max(...trend.map(t => Math.max(t.income, t.expense)), 500000);
+  const p = Math.pow(10, Math.floor(Math.log10(maxRaw)));
+  const maxVal = Math.ceil(maxRaw / p) * p;
   const avgDay = totalVolume / Math.max(1, trend.length);
-  const avgRatio = Math.min(0.9, Math.max(0.1, avgDay / (maxVal * 2)));
+  const avgRatio = Math.min(0.92, Math.max(0.06, (avgDay / maxVal) * 0.82));
 
-  if (totalVolElem) totalVolElem.textContent = fmt(totalVolume) + "₫";
-  if (avgLine) avgLine.style.setProperty('--a', avgRatio.toFixed(2));
+  if (gridMax) gridMax.textContent = fmt(maxVal) + '₫';
+  if (grid66) grid66.textContent = fmt(Math.round(maxVal * 0.66)) + '₫';
+  if (grid33) grid33.textContent = fmt(Math.round(maxVal * 0.33)) + '₫';
+  if (avgLine) avgLine.style.setProperty('--a', avgRatio.toFixed(3));
+  if (avgLabel) avgLabel.textContent = `TB: ${fmt(Math.round(avgDay))}₫/ngày`;
 
-  // Render bars
-  container.innerHTML = trend.map((t, idx) => {
-    const hIn = Math.min(1, Math.max(0.04, t.income / maxVal));
-    const hOut = Math.min(1, Math.max(0.04, t.expense / maxVal));
+  // Render populated bars
+  barsContainer.innerHTML = trend.map((t, idx) => {
+    const hIn = Math.min(1, Math.max(0, t.income / maxVal));
+    const hOut = Math.min(1, Math.max(0, t.expense / maxVal));
     return `
       <button class="u095-b" type="button"
         data-index="${idx}"
         data-day="${t.dayName}"
-        data-date="${t.date}"
-        data-in="${t.income}"
-        data-out="${t.expense}"
-        aria-label="${t.dayName}: Thu +${fmt(t.income)}₫, Chi -${fmt(t.expense)}₫">
-        <div style="display:flex;gap:4px;align-items:flex-end;height:100%;width:100%;justify-content:center;padding:0 2px">
-          <i style="--h:${hIn};background:linear-gradient(180deg,#00D18F,rgba(0,209,143,0.6));border-radius:4px 4px 1px 1px;max-width:14px"></i>
-          <i style="--h:${hOut};background:linear-gradient(180deg,#E8C57C,rgba(232,197,124,0.6));border-radius:4px 4px 1px 1px;max-width:14px"></i>
+        data-date="${t.date || ''}"
+        data-in="${t.income || 0}"
+        data-out="${t.expense || 0}"
+        style="--d:${idx};"
+        aria-label="${t.dayName} (${t.date || ''}): Thu +${fmt(t.income || 0)}₫, Chi -${fmt(t.expense || 0)}₫">
+        <div class="u095-col-track">
+          <div class="u095-bar u095-bar-in" style="--h:${hIn.toFixed(3)};"></div>
+          <div class="u095-bar u095-bar-out" style="--h:${hOut.toFixed(3)};"></div>
         </div>
         <em>${t.dayName}</em>
       </button>
     `;
   }).join('');
 
-  // Interactive floating tooltip for #u095
-  if (chartArea && tip) {
-    const bars = container.querySelectorAll('.u095-b');
+  // Floating Dynamic Tooltip & Interactive Scrubbing
+  if (area && tip && wrap) {
+    const bars = barsContainer.querySelectorAll('.u095-b');
+    let pinnedBar = null;
+
+    const showBarInfo = (bar, clientX, clientY) => {
+      bars.forEach(b => b.classList.toggle('on', b === bar));
+      wrap.classList.add('has');
+
+      const day = bar.getAttribute('data-day');
+      const date = bar.getAttribute('data-date');
+      const inc = parseFloat(bar.getAttribute('data-in') || 0);
+      const exp = parseFloat(bar.getAttribute('data-out') || 0);
+      const net = inc - exp;
+
+      tip.innerHTML = `
+        <div class="u095-tip-title">${day}${date ? ' (' + date + ')' : ''}</div>
+        <div class="u095-tip-row in">
+          <span>Tiền thu vào:</span>
+          <b>+${fmt(inc)}₫</b>
+        </div>
+        <div class="u095-tip-row out">
+          <span>Tiền chi ra:</span>
+          <b>-${fmt(exp)}₫</b>
+        </div>
+        <div class="u095-tip-row net ${net >= 0 ? 'pos' : 'neg'}">
+          <span>Chênh lệch ròng:</span>
+          <b>${net >= 0 ? '+' : ''}${fmt(net)}₫</b>
+        </div>
+      `;
+
+      if (totalNetElem) {
+        totalNetElem.textContent = (net >= 0 ? '+' : '') + fmt(net) + '₫';
+        totalNetElem.style.color = net >= 0 ? 'var(--ux-mint)' : 'var(--ux-danger)';
+      }
+      if (subNetElem) {
+        subNetElem.innerHTML = `${day}: Thu <b style="color:var(--ux-mint)">+${fmt(inc)}₫</b> · Chi <b style="color:var(--ux-gold)">-${fmt(exp)}₫</b>`;
+      }
+      if (deltaBadge) {
+        deltaBadge.className = 'u095-dl' + (net < 0 ? ' dn' : '');
+        deltaBadge.textContent = net >= 0 ? '✦ Thặng dư trong ngày' : '✦ Thâm hụt trong ngày';
+      }
+
+      // Position tooltip safely bounded inside chart container
+      const areaRect = area.getBoundingClientRect();
+      const tipW = tip.offsetWidth || 190;
+      const barRect = bar.getBoundingClientRect();
+      const barCenterX = barRect.left - areaRect.left + barRect.width / 2;
+      const tx = Math.max(8, Math.min(areaRect.width - tipW - 8, barCenterX - tipW / 2));
+      const ty = Math.max(6, (clientY ? clientY - areaRect.top - 76 : 10));
+
+      tip.style.setProperty('--tx', `${tx.toFixed(1)}px`);
+      tip.style.setProperty('--ty', `${ty.toFixed(1)}px`);
+    };
+
+    const hideBarInfo = () => {
+      if (pinnedBar) {
+        showBarInfo(pinnedBar);
+        return;
+      }
+      bars.forEach(b => b.classList.remove('on'));
+      wrap.classList.remove('has');
+      resetSummary();
+    };
+
     bars.forEach(bar => {
       bar.addEventListener('pointerenter', (e) => {
-        bars.forEach(b => b.classList.remove('on'));
-        bar.classList.add('on');
-        if (chartWrap) chartWrap.classList.add('has');
-        const day = bar.getAttribute('data-day');
-        const date = bar.getAttribute('data-date');
-        const inc = parseFloat(bar.getAttribute('data-in') || 0);
-        const exp = parseFloat(bar.getAttribute('data-out') || 0);
-        const net = inc - exp;
-
-        if (tipTitle) tipTitle.textContent = `${day} (${date})`;
-        if (tipVal) {
-          tipVal.className = net >= 0 ? '' : 'dn';
-          tipVal.innerHTML = `Thu: <b style="color:var(--ux-mint)">+${fmt(inc)}₫</b> | Chi: <b style="color:var(--ux-gold)">-${fmt(exp)}₫</b> (Ròng: ${net >= 0 ? '+' : ''}${fmt(net)}₫)`;
+        showBarInfo(bar, e.clientX, e.clientY);
+      });
+      bar.addEventListener('pointermove', (e) => {
+        showBarInfo(bar, e.clientX, e.clientY);
+      });
+      bar.addEventListener('pointerleave', () => {
+        hideBarInfo();
+      });
+      bar.addEventListener('click', () => {
+        if (pinnedBar === bar) {
+          pinnedBar = null;
+          bar.classList.remove('pin');
+          hideBarInfo();
+        } else {
+          if (pinnedBar) pinnedBar.classList.remove('pin');
+          pinnedBar = bar;
+          bar.classList.add('pin');
+          showBarInfo(bar);
         }
       });
-
-      bar.addEventListener('pointermove', (e) => {
-        const areaRect = chartArea.getBoundingClientRect();
-        const tx = Math.max(10, Math.min(areaRect.width - 240, e.clientX - areaRect.left - 80));
-        const ty = Math.max(0, e.clientY - areaRect.top - 50);
-        tip.style.setProperty('--tx', `${tx}px`);
-        tip.style.setProperty('--ty', `${ty}px`);
+      bar.addEventListener('focus', () => {
+        showBarInfo(bar);
       });
-
-      bar.addEventListener('pointerleave', () => {
-        bar.classList.remove('on');
-        if (chartWrap) chartWrap.classList.remove('has');
+      bar.addEventListener('blur', () => {
+        hideBarInfo();
       });
+    });
+
+    // Keyboard navigation (ArrowLeft / ArrowRight)
+    barsContainer.addEventListener('keydown', (e) => {
+      const current = document.activeElement;
+      const idx = Array.from(bars).indexOf(current);
+      if (idx >= 0) {
+        let nextIdx = idx;
+        if (e.key === 'ArrowRight' && idx < bars.length - 1) nextIdx = idx + 1;
+        if (e.key === 'ArrowLeft' && idx > 0) nextIdx = idx - 1;
+        if (nextIdx !== idx) {
+          e.preventDefault();
+          bars[nextIdx].focus();
+        }
+      }
     });
   }
 }
 
-// Compact Bar chart on Dashboard
 function renderDashboardCompactBarChart(containerId, trend) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
+  renderLucian095Engine({
+    wrapId: 'dashLucian095',
+    areaId: 'dash095ChartArea',
+    barsId: 'dash095Bars',
+    tipId: 'dash095Tip',
+    avgLineId: 'dash095AvgLine',
+    avgLabelId: 'dash095AvgLabel',
+    totalNetId: 'dash095TotalNet',
+    subNetId: 'dash095SubNet',
+    deltaId: 'dash095DeltaBadge',
+    gridMaxId: 'dash095GridMax',
+    grid66Id: 'dash095Grid66',
+    grid33Id: 'dash095Grid33'
+  }, trend);
+}
 
-  if (!trend || trend.length === 0) {
-    container.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted)">Chưa có dữ liệu biến động tuần.</div>`;
-    return;
+function renderBarChart(containerId, trend) {
+  renderLucian095Engine({
+    wrapId: 'lucianBar095',
+    areaId: 'u095ChartArea',
+    barsId: 'fullBarChart',
+    tipId: 'u095Tip',
+    avgLineId: 'u095AvgLine',
+    avgLabelId: 'analytics095AvgLabel',
+    totalNetId: 'u095TotalVolume',
+    subNetId: 'analytics095SubNet',
+    deltaId: 'u095DeltaBadge',
+    gridMaxId: 'analytics095GridMax',
+    grid66Id: 'analytics095Grid66',
+    grid33Id: 'analytics095Grid33'
+  }, trend);
+}
+
+// QUICK BANKING ACTIONS HANDLERS
+async function seedDemoTransactions() {
+  try {
+    showToast("Đang khởi tạo các giao dịch mẫu...");
+    const res = await fetch(`${API_BASE}/api/system/seed-demo`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Đã nạp giao dịch mẫu thành công!");
+      await loadAllData();
+    } else {
+      showToast(data.message || "Lỗi khi nạp dữ liệu", "err");
+    }
+  } catch (err) {
+    showToast("Không thể kết nối máy chủ", "err");
   }
+}
 
-  const maxVal = Math.max(...trend.map(t => Math.max(t.income, t.expense)), 2000000);
-  const chartH = 120;
+function openQuickTxPreset(mode) {
+  openNewTxModal();
+  setTxType(mode === 'in' ? 'income' : 'expense');
+  if (mode === 'in') {
+    document.getElementById('txName').value = 'Nạp tiền vào tài khoản';
+    document.getElementById('txCategory').value = 'Lương';
+  } else {
+    document.getElementById('txName').value = 'Chuyển khoản thanh toán';
+    document.getElementById('txCategory').value = 'Hóa đơn';
+  }
+}
 
-  const bars = trend.map((t, i) => {
-    const x = 20 + i * 46;
-    const hIn = Math.max(6, (t.income / maxVal) * chartH);
-    const hOut = Math.max(6, (t.expense / maxVal) * chartH);
-    const yIn = 145 - hIn;
-    const yOut = 145 - hOut;
-
-    return `
-      <g class="bar-group">
-        <rect x="${x}" y="${yIn}" width="14" height="${hIn}" rx="4" fill="var(--mint)" opacity="0.9">
-          <title>${t.dayName} (${t.date}): Thu +${fmt(t.income)}₫</title>
-        </rect>
-        <rect x="${x + 18}" y="${yOut}" width="14" height="${hOut}" rx="4" fill="var(--gold)" opacity="0.9">
-          <title>${t.dayName} (${t.date}): Chi -${fmt(t.expense)}₫</title>
-        </rect>
-        <text x="${x + 16}" y="165" font-size="11" fill="var(--muted)" text-anchor="middle" font-family="var(--font-num)">${t.dayName}</text>
-      </g>
-    `;
-  }).join('');
-
-  container.innerHTML = `
-    <svg width="100%" height="180" viewBox="0 0 350 180" preserveAspectRatio="none">
-      <line x1="10" y1="145" x2="340" y2="145" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
-      <line x1="10" y1="85" x2="340" y2="85" stroke="rgba(255,255,255,0.05)" stroke-dasharray="4"/>
-      ${bars}
-    </svg>
-    <div style="display:flex;gap:18px;justify-content:center;font-size:11.5px;color:var(--muted);margin-top:2px">
-      <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--mint)"></span> Tiền thu vào</span>
-      <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--gold)"></span> Tiền chi ra</span>
-    </div>
-  `;
+function exportStatementCsv() {
+  showToast("Đang trích xuất sao kê tài khoản...");
+  fetch(`${API_BASE}/api/transactions?limit=1000`, {
+    headers: { 'Authorization': `Bearer ${authToken}` }
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (!data.success || !data.transactions || data.transactions.length === 0) {
+      showToast("Tài khoản chưa có giao dịch để xuất sao kê", "err");
+      return;
+    }
+    const headers = ["Mã GD", "Tên giao dịch", "Số tiền (VND)", "Loại", "Danh mục", "Ngày", "Ghi chú"];
+    const rows = data.transactions.map(t => [
+      t.reference_code || t.id,
+      `"${(t.name || '').replace(/"/g, '""')}"`,
+      t.amount,
+      t.type === 'income' || t.type === 'in' ? 'Thu nhập' : 'Chi tiêu',
+      `"${t.category}"`,
+      t.date,
+      `"${(t.note || '').replace(/"/g, '""')}"`
+    ]);
+    const csvContent = "\uFEFF" + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Sao_Ke_Dong_Bank_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast("Đã xuất và tải xuống file sao kê!");
+  })
+  .catch(err => {
+    showToast("Lỗi khi xuất sao kê", "err");
+  });
 }
 
 // ==========================================================================
@@ -2520,66 +3467,201 @@ function initLucianU052() {
   });
 }
 
-// SPRINT 2: QUY TẮC THÔNG MINH 50/30/20
-async function loadSprint2Budget503020() {
+// ==========================================================================
+// CHIẾN LƯỢC PHÂN BỔ TÀI CHÍNH THỰC TẾ (SMART WEALTH ALLOCATION ENGINE)
+// Kế thừa tư duy phân bổ Private Banking & Lucian UX/UI #171 Capacity Split
+// ==========================================================================
+let currentAllocationStrategy = 'urban_realistic';
+let currentSimIncome = null;
+let cachedAllocationData = null;
+
+function setAllocationStrategy(strategyId) {
+  currentAllocationStrategy = strategyId;
+  const btnUrban = document.getElementById('btnStratUrban');
+  const btnFire = document.getElementById('btnStratFire');
+  const btnStarter = document.getElementById('btnStratStarter');
+  
+  if (btnUrban) btnUrban.classList.toggle('active', strategyId === 'urban_realistic');
+  if (btnFire) btnFire.classList.toggle('active', strategyId === 'fire_acceleration' || strategyId === 'fire');
+  if (btnStarter) btnStarter.classList.toggle('active', strategyId === 'starter_balanced' || strategyId === 'starter');
+
+  loadWealthAllocation(currentAllocationStrategy, currentSimIncome);
+}
+
+function simulateIncome(amount) {
+  currentSimIncome = amount === 0 ? null : amount;
+
+  // Highlight active simulation chip
+  document.querySelectorAll('.sim-chip').forEach(chip => {
+    chip.classList.remove('active');
+  });
+  if (amount === 0) {
+    const realChip = document.getElementById('simChipReal');
+    if (realChip) realChip.classList.add('active');
+  } else {
+    // Find matching chip by text
+    document.querySelectorAll('.sim-chip').forEach(chip => {
+      const txt = chip.textContent;
+      if (amount === 15000000 && txt.includes('15')) chip.classList.add('active');
+      if (amount === 25000000 && txt.includes('25')) chip.classList.add('active');
+      if (amount === 35000000 && txt.includes('35')) chip.classList.add('active');
+      if (amount === 50000000 && txt.includes('50')) chip.classList.add('active');
+      if (amount === 100000000 && txt.includes('100')) chip.classList.add('active');
+    });
+  }
+
+  loadWealthAllocation(currentAllocationStrategy, currentSimIncome);
+}
+
+async function loadWealthAllocation(strategy = currentAllocationStrategy, simIncome = currentSimIncome) {
   try {
-    const res = await fetch(`${API_BASE}/api/budget/rule-50-30-20`, {
+    const params = new URLSearchParams();
+    if (strategy) params.set('strategy', strategy);
+    if (simIncome) params.set('income', simIncome);
+
+    const res = await fetch(`${API_BASE}/api/budget/allocation?${params.toString()}`, {
       headers: { 'Authorization': `Bearer ${authToken}` }
     });
     const data = await res.json();
     if (!data.success) return;
-    const r = data.rule;
+    const alloc = data.allocation || data.rule;
+    cachedAllocationData = alloc;
 
-    const bannerHtml = `
-      <div class="rule-sub-box" style="border-color:rgba(0, 209, 143, 0.3)">
-        <small style="color:var(--mint)">50% THIẾT YẾU</small>
-        <b style="color:var(--mint)">${fmt(r.needs.target)}₫</b>
-        <p>Chi trả nhà ở, ăn uống thiết yếu, hóa đơn điện nước sinh hoạt.</p>
+    // 1. Cập nhật Tiêu đề và Mô tả chiến lược
+    const titleEl = document.getElementById('allocStrategyTitle');
+    const descEl = document.getElementById('allocStrategyDesc');
+    const incValEl = document.getElementById('budgetIncomeValue');
+    if (titleEl && alloc.strategy) titleEl.textContent = alloc.strategy.name;
+    if (descEl && alloc.strategy) descEl.textContent = alloc.strategy.description;
+    if (incValEl) incValEl.textContent = fmt(alloc.totalIncome) + "₫";
+
+    // 2. Cập nhật Multi-segment Pool Bar (Lucian #171)
+    const segNeeds = document.getElementById('segNeeds');
+    const segWants = document.getElementById('segWants');
+    const segSavings = document.getElementById('segSavings');
+
+    if (segNeeds) {
+      segNeeds.style.width = alloc.needs.percentage + "%";
+      segNeeds.textContent = `${alloc.needs.percentage}% Vận hành`;
+    }
+    if (segWants) {
+      segWants.style.width = alloc.wants.percentage + "%";
+      segWants.textContent = `${alloc.wants.percentage}% Nâng cấp`;
+    }
+    if (segSavings) {
+      segSavings.style.width = alloc.savings.percentage + "%";
+      segSavings.textContent = `${alloc.savings.percentage}% Tích sản`;
+    }
+
+    // 3. Cập nhật Legend Row
+    const legNeedsVal = document.getElementById('legNeedsVal');
+    const legNeedsPct = document.getElementById('legNeedsPct');
+    const legWantsVal = document.getElementById('legWantsVal');
+    const legWantsPct = document.getElementById('legWantsPct');
+    const legSavingsVal = document.getElementById('legSavingsVal');
+    const legSavingsPct = document.getElementById('legSavingsPct');
+
+    if (legNeedsVal) legNeedsVal.textContent = fmt(alloc.needs.target) + "₫";
+    if (legNeedsPct) legNeedsPct.textContent = alloc.needs.percentage + "%";
+    if (legWantsVal) legWantsVal.textContent = fmt(alloc.wants.target) + "₫";
+    if (legWantsPct) legWantsPct.textContent = alloc.wants.percentage + "%";
+    if (legSavingsVal) legSavingsVal.textContent = fmt(alloc.savings.target) + "₫";
+    if (legSavingsPct) legSavingsPct.textContent = alloc.savings.percentage + "%";
+
+    // 4. Render 3 thẻ phân bổ chi tiết với chuẩn thẩm mỹ Ngân hàng
+    const cardsHtml = `
+      <div class="rule-sub-box" style="border-color:rgba(0, 209, 143, 0.35);background:radial-gradient(ellipse at top left, rgba(0,209,143,0.08), transparent 70%), rgba(255,255,255,0.02)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <small style="color:var(--mint);font-weight:700;letter-spacing:0.04em">${alloc.needs.percentage}% ${alloc.needs.name.toUpperCase()}</small>
+          <span style="font-size:11px;background:rgba(0,209,143,0.15);color:var(--mint);padding:2px 8px;border-radius:99px;font-weight:600">Thiết yếu</span>
+        </div>
+        <b style="color:var(--mint);font-size:22px">${fmt(alloc.needs.target)}₫</b>
+        <p style="font-weight:500;color:var(--text);margin-top:6px">${alloc.needs.label}</p>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--mint)" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <span style="color:rgba(255,255,255,0.85)">${alloc.needs.advice}</span>
+        </div>
       </div>
-      <div class="rule-sub-box" style="border-color:rgba(155, 140, 255, 0.3)">
-        <small style="color:var(--violet)">30% MONG MUỐN</small>
-        <b style="color:var(--violet)">${fmt(r.wants.target)}₫</b>
-        <p>Dành cho cà phê, xem phim, giải trí, mua sắm sở thích cá nhân.</p>
+
+      <div class="rule-sub-box" style="border-color:rgba(155, 140, 255, 0.35);background:radial-gradient(ellipse at top left, rgba(155,140,255,0.08), transparent 70%), rgba(255,255,255,0.02)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <small style="color:var(--violet);font-weight:700;letter-spacing:0.04em">${alloc.wants.percentage}% ${alloc.wants.name.toUpperCase()}</small>
+          <span style="font-size:11px;background:rgba(155,140,255,0.15);color:var(--violet);padding:2px 8px;border-radius:99px;font-weight:600">Linh hoạt</span>
+        </div>
+        <b style="color:var(--violet);font-size:22px">${fmt(alloc.wants.target)}₫</b>
+        <p style="font-weight:500;color:var(--text);margin-top:6px">${alloc.wants.label}</p>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--violet)" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
+          <span style="color:rgba(255,255,255,0.85)">${alloc.wants.advice}</span>
+        </div>
       </div>
-      <div class="rule-sub-box" style="border-color:rgba(232, 197, 124, 0.3)">
-        <small style="color:var(--gold)">20% TÍCH LŨY</small>
-        <b style="color:var(--gold)">${fmt(r.savings.target)}₫</b>
-        <p>Xây dựng quỹ khẩn cấp 6 tháng, đầu tư tạo lãi suất sinh lời.</p>
+
+      <div class="rule-sub-box" style="border-color:rgba(232, 197, 124, 0.35);background:radial-gradient(ellipse at top left, rgba(232,197,124,0.08), transparent 70%), rgba(255,255,255,0.02)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <small style="color:var(--gold);font-weight:700;letter-spacing:0.04em">${alloc.savings.percentage}% ${alloc.savings.name.toUpperCase()}</small>
+          <span style="font-size:11px;background:rgba(232,197,124,0.15);color:var(--gold);padding:2px 8px;border-radius:99px;font-weight:600">Tích lũy</span>
+        </div>
+        <b style="color:var(--gold);font-size:22px">${fmt(alloc.savings.target)}₫</b>
+        <p style="font-weight:500;color:var(--text);margin-top:6px">${alloc.savings.label}</p>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--gold)" stroke-width="2" style="flex:none;margin-top:2px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+          <span style="color:rgba(255,255,255,0.85)">${alloc.savings.advice}</span>
+        </div>
       </div>
     `;
 
-    document.getElementById('ruleThreeCols').innerHTML = bannerHtml;
-    document.getElementById('budgetDetailCards').innerHTML = bannerHtml;
+    const detailCards = document.getElementById('budgetDetailCards');
+    if (detailCards) detailCards.innerHTML = cardsHtml;
+    const ruleCols = document.getElementById('ruleThreeCols');
+    if (ruleCols) ruleCols.innerHTML = cardsHtml;
 
-    // Budget comparison card
-    document.getElementById('budgetComparisonContent').innerHTML = `
-      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:14px;padding:16px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <b>Định mức Thiết yếu (50%)</b>
-          <span style="font-family:var(--font-num);color:var(--mint)">Hạn mức: ${fmt(r.needs.target)}₫</span>
+    // 5. Đối chiếu chi tiêu thực tế
+    const actualExpense = totalExpenseStored || 0;
+    const needsBudget = alloc.needs.target;
+    const wantsBudget = alloc.wants.target;
+    const needsPctUsed = needsBudget > 0 ? Math.min(100, Math.round((actualExpense * 0.7 / needsBudget) * 100)) : 0;
+    const wantsPctUsed = wantsBudget > 0 ? Math.min(100, Math.round((actualExpense * 0.3 / wantsBudget) * 100)) : 0;
+
+    const compBox = document.getElementById('budgetComparisonContent');
+    if (compBox) {
+      compBox.innerHTML = `
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:14px;padding:18px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-weight:600">Định mức Vận hành Đời sống (${alloc.needs.percentage}%)</span>
+            <span style="font-family:var(--font-num);color:var(--mint);font-size:13px;font-weight:700">Hạn mức kỳ: ${fmt(needsBudget)}₫</span>
+          </div>
+          <div style="height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden">
+            <div style="height:100%;width:${actualExpense === 0 ? 0 : Math.max(5, needsPctUsed)}%;background:var(--mint);border-radius:99px;transition:width 0.4s ease"></div>
+          </div>
+          <small style="color:var(--muted);margin-top:8px;display:block">
+            ${actualExpense === 0 
+              ? 'Tài khoản bắt đầu từ con số 0. Hãy ghi chép khoản chi đầu tiên để hệ thống đối soát tự động.' 
+              : `Ước tính đã sử dụng khoảng ${needsPctUsed}% hạn mức thiết yếu. Kiểm soát tốt dưới 100% để duy trì kỷ luật.`}
+          </small>
         </div>
-        <div style="height:6px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden">
-          <div style="height:100%;width:68%;background:var(--mint);border-radius:99px"></div>
+
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:14px;padding:18px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <span style="font-weight:600">Định mức Nâng cấp & Phong cách (${alloc.wants.percentage}%)</span>
+            <span style="font-family:var(--font-num);color:var(--violet);font-size:13px;font-weight:700">Hạn mức kỳ: ${fmt(wantsBudget)}₫</span>
+          </div>
+          <div style="height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden">
+            <div style="height:100%;width:${actualExpense === 0 ? 0 : Math.max(5, wantsPctUsed)}%;background:var(--violet);border-radius:99px;transition:width 0.4s ease"></div>
+          </div>
+          <small style="color:var(--muted);margin-top:8px;display:block">
+            ${actualExpense === 0 
+              ? 'Ngân sách linh hoạt đã sẵn sàng: Dành cho học tập phát triển bản thân và trải nghiệm cá nhân.' 
+              : `Còn lại khoảng ${Math.max(0, 100 - wantsPctUsed)}% ngân sách linh hoạt cho giai đoạn tiếp theo.`}
+          </small>
         </div>
-        <small style="color:var(--muted);margin-top:6px;display:block">Bạn đã chi khoảng 68% hạn mức thiết yếu trong kỳ này. Rất cân bằng!</small>
-      </div>
-      <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:14px;padding:16px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <b>Định mức Mong muốn (30%)</b>
-          <span style="font-family:var(--font-num);color:var(--violet)">Hạn mức: ${fmt(r.wants.target)}₫</span>
-        </div>
-        <div style="height:6px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden">
-          <div style="height:100%;width:45%;background:var(--violet);border-radius:99px"></div>
-        </div>
-        <small style="color:var(--muted);margin-top:6px;display:block">Còn lại 55% ngân sách giải trí cho những ngày cuối tháng.</small>
-      </div>
-    `;
+      `;
+    }
   } catch (err) {
-    console.error("loadSprint2Budget503020 error:", err);
+    console.error("loadWealthAllocation error:", err);
   }
 }
 
-// SPRINT 2: BỘ LỌC TÌM KIẾM NÂNG CAO
+// BỘ LỌC TÌM KIẾM NÂNG CAO
 function setQuickDateFilter(range) {
   const startInput = document.getElementById('filterStartDate');
   const endInput = document.getElementById('filterEndDate');
@@ -2619,7 +3701,7 @@ function triggerFilterChange() {
   if (type !== 'all') params.type = type;
   if (category !== 'all') params.category = category;
 
-  loadSprint1Transactions(params);
+  loadTransactions(params);
 
   // Đồng bộ lên Thẻ tổng quan & Biểu đồ nếu được tích chọn
   const syncCharts = document.getElementById('syncFilterToCharts')?.checked;
@@ -2627,8 +3709,8 @@ function triggerFilterChange() {
     const chartParams = {};
     if (startDate) chartParams.startDate = startDate;
     if (endDate) chartParams.endDate = endDate;
-    loadSprint2Summary(chartParams);
-    loadSprint2Categories(chartParams);
+    loadSummaryData(chartParams);
+    loadCategoryAnalytics(chartParams);
   }
 }
 
@@ -2640,9 +3722,9 @@ function resetFilters() {
   document.getElementById('filterCategory').value = 'all';
   const syncBox = document.getElementById('syncFilterToCharts');
   if (syncBox) syncBox.checked = false;
-  loadSprint1Transactions();
-  loadSprint2Summary();
-  loadSprint2Categories();
+  loadTransactions();
+  loadSummaryData();
+  loadCategoryAnalytics();
 }
 
 function handleGlobalSearch(q) {
@@ -2740,24 +3822,87 @@ document.getElementById('mobileToggle').addEventListener('click', () => {
   document.getElementById('sidebar').classList.toggle('mobile-open');
 });
 
-// Toggle Balance eye
-function toggleBalanceVisibility() {
+// Lucian UX/UI Prompt #013 · Stretchy Switch Balance Privacy
+function toggleBalanceSwitch() {
   isBalanceHidden = !isBalanceHidden;
-  const eyeIcon = document.getElementById('eyeIcon');
+  const sw = document.getElementById('balancePrivacySw');
+  if (sw) {
+    sw.classList.add('is-stretch');
+    sw.classList.toggle('is-on', isBalanceHidden);
+    sw.setAttribute('aria-checked', String(isBalanceHidden));
+    setTimeout(() => sw.classList.remove('is-stretch'), 200);
+  }
   if (isBalanceHidden) {
     document.getElementById('displayBalance').textContent = "••••••••";
     document.getElementById('cardCurrentBalance').textContent = "••••••••";
-    eyeIcon.innerHTML = `<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/>`;
+    showToast("Đã ẩn số dư an toàn.");
   } else {
     updateUserInterface();
-    eyeIcon.innerHTML = `<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>`;
+    showToast("Đã hiển thị số dư.");
   }
 }
 
-function copyStk() {
-  const stk = document.getElementById('dashAccountNumber').textContent;
-  navigator.clipboard.writeText(stk);
+// Lucian UX/UI Prompt #008 · Interactive Copy STK
+function copyStk(btn) {
+  const stkEl = document.getElementById('dashAccountNumber');
+  const stk = stkEl ? stkEl.textContent.trim() : '8888 6868 9999';
+  navigator.clipboard.writeText(stk).catch(() => {});
+  
+  const targetBtn = btn || document.getElementById('btnCopyStk');
+  if (targetBtn) {
+    targetBtn.classList.add('is-copied');
+    setTimeout(() => targetBtn.classList.remove('is-copied'), 2000);
+  }
   showToast("Đã sao chép số tài khoản: " + stk);
+  playAudioSuccess();
+}
+
+// Lucian UX/UI Prompt #003 · Hold to Confirm Reset Database
+function initHoldToReset() {
+  const btn = document.getElementById('btnResetZeroHold');
+  if (!btn) return;
+  let holdTimer = null;
+  const DURATION = 1400; // 1.4s hold
+
+  function startHold(e) {
+    if (e.button !== undefined && e.button !== 0) return; // Only left click
+    btn.classList.add('holding');
+    holdTimer = setTimeout(() => {
+      btn.classList.remove('holding');
+      resetDatabaseToZero();
+    }, DURATION);
+  }
+
+  function cancelHold() {
+    btn.classList.remove('holding');
+    if (holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+  }
+
+  btn.addEventListener('mousedown', startHold);
+  btn.addEventListener('touchstart', startHold, { passive: true });
+  window.addEventListener('mouseup', cancelHold);
+  window.addEventListener('touchend', cancelHold);
+  btn.addEventListener('mouseleave', cancelHold);
+}
+
+// Lucian UX/UI Prompt #219 · Dual Theme Switching logic
+function initAppTheme() {
+  const current = localStorage.getItem('dong_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', current);
+
+  const btn = document.getElementById('themeToggleBtn');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = cur === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { localStorage.setItem('dong_theme', next); } catch(e){}
+      showToast(next === 'light' ? 'Chế độ Sáng (Pearl Platinum) thanh lịch' : 'Chế độ Tối (Obsidian Titanium) bảo mật');
+    });
+  }
 }
 
 // Modal Helpers
@@ -2858,11 +4003,52 @@ function animateCanvas() {
 requestAnimationFrame(animateCanvas);
 
 // Init on Load
+function initUniversalSpotlights() {
+  const cards = document.querySelectorAll('.sum-card, .panel-card, .main-balance-card, .user-card-mini, .spotlight-card, .tx-item, .qa-card, .auth-box');
+  cards.forEach(card => {
+    card.classList.add('spotlight-card');
+    card.addEventListener('pointermove', e => {
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+      card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+      card.style.setProperty('--mouse-active', '1');
+    });
+    card.addEventListener('pointerleave', () => {
+      card.style.setProperty('--mouse-active', '0');
+    });
+  });
+}
+
 window.addEventListener('DOMContentLoaded', () => {
+  // Check URL parameters from landing page
+  const urlParams = new URLSearchParams(window.location.search);
+  const qStrat = urlParams.get('strategy');
+  const qInc = urlParams.get('income');
+
+  if (qStrat) {
+    if (qStrat === 'fire') currentAllocationStrategy = 'fire_acceleration';
+    else if (qStrat === 'family' || qStrat === 'starter') currentAllocationStrategy = 'starter_balanced';
+    else currentAllocationStrategy = 'urban_realistic';
+  }
+  if (qInc) {
+    const numInc = Number(qInc);
+    if (numInc > 0) currentSimIncome = numInc;
+  }
+
   loadDbStatus();
   checkAuthGate();
+  initAppTheme();
+  initHoldToReset();
   initLucianU228();
   initLucianU052();
+  initUniversalSpotlights();
+
+  if ((qStrat || qInc) && authToken) {
+    setTimeout(() => {
+      switchTab('budget');
+      simulateIncome(currentSimIncome || 0);
+    }, 400);
+  }
 });
 </script>
 </body>
