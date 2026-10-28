@@ -3003,6 +3003,13 @@ async function loadCashflowTrend() {
     if (!data.success) return;
 
     cachedCashflowTrend = data.trend || [];
+    // Sắp xếp theo ngày để thứ/thứ của biểu đồ không bị lệch
+    cachedCashflowTrend.sort((a, b) => {
+      const da = new Date(a.date || 0);
+      const db = new Date(b.date || 0);
+      return da - db;
+    });
+
     renderBarChart('fullBarChart', cachedCashflowTrend);
     renderDashboardCompactBarChart('dash095Bars', cachedCashflowTrend);
   } catch (err) {
@@ -3210,6 +3217,16 @@ function renderLucian095Engine(cfg, trend) {
       tip.style.setProperty('--ty', `${ty.toFixed(1)}px`);
     };
 
+    // Throttle pointermove bằng requestAnimationFrame để tránh giật giật khi di chuột liên tục
+    let rafId = null;
+    const throttledShowBarInfo = (bar, clientX, clientY) => {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        showBarInfo(bar, clientX, clientY);
+        rafId = null;
+      });
+    };
+
     const hideBarInfo = () => {
       if (pinnedBar) {
         showBarInfo(pinnedBar);
@@ -3222,10 +3239,10 @@ function renderLucian095Engine(cfg, trend) {
 
     bars.forEach(bar => {
       bar.addEventListener('pointerenter', (e) => {
-        showBarInfo(bar, e.clientX, e.clientY);
+        throttledShowBarInfo(bar, e.clientX, e.clientY);
       });
       bar.addEventListener('pointermove', (e) => {
-        showBarInfo(bar, e.clientX, e.clientY);
+        throttledShowBarInfo(bar, e.clientX, e.clientY);
       });
       bar.addEventListener('pointerleave', () => {
         hideBarInfo();
