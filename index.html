@@ -672,24 +672,12 @@ footer{border-top:1px solid var(--line);padding:60px 0 34px;position:relative;z-
       <a href="#arch">Kiến trúc</a>
       <a href="app.html" style="color:var(--gold);font-weight:700">Internet Banking &rarr;</a>
     </nav>
-    <!-- Lucian #219 Theme Switcher -->
-    <button class="u219-theme-btn" id="themeToggleBtn" aria-label="Đổi giao diện Sáng / Tối" title="Đổi giao diện Sáng / Tối">
-      <svg class="u219-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      <svg class="u219-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
     <a href="app.html" class="n-cta btn-liquid">Mở Web App</a>
     <button id="menuBtn" aria-label="Menu"><span></span><span></span></button>
   </div>
 </header>
 <div id="mmenu">
   <div class="mm-logo"><svg class="lmark" viewBox="0 0 48 48" style="width:36px;height:36px"><rect x="2" y="2" width="44" height="44" rx="13" fill="url(#gBrand)"/><rect x="4.5" y="4.5" width="39" height="39" rx="10.5" fill="none" stroke="#E8C57C" stroke-width="1.6" opacity=".85"/><g fill="none" stroke="#052019" stroke-width="4.2" stroke-linecap="round"><path d="M18 14v20"/><path d="M18 14h5a10 10 0 0 1 0 20h-5"/><path d="M10 24h22"/></g></svg>Đồng</div>
-  <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0 16px;border-bottom:1px solid var(--line)">
-    <span style="font-size:15px;font-weight:600;color:var(--muted)">Đổi giao diện Sáng / Tối:</span>
-    <button class="u219-theme-btn" id="mThemeToggleBtn" aria-label="Đổi giao diện Sáng / Tối">
-      <svg class="u219-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-      <svg class="u219-moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-    </button>
-  </div>
   <a href="app.html" style="color:var(--mint)">Vào Web App Ngân hàng &rarr;</a>
   <a href="#features">Tính năng</a>
   <a href="#calc">Trải nghiệm</a>
@@ -2073,24 +2061,6 @@ function initLucianU228() {
   });
 }
 
-// Lucian UX/UI Prompt #219 · Dual Theme Switching logic
-function initDongTheme() {
-  const current = localStorage.getItem('dong_theme') || 'dark';
-  document.documentElement.setAttribute('data-theme', current);
-
-  function toggle() {
-    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
-    const next = cur === 'dark' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('dong_theme', next); } catch(e){}
-  }
-
-  const b1 = document.getElementById('themeToggleBtn');
-  const b2 = document.getElementById('mThemeToggleBtn');
-  if (b1) b1.addEventListener('click', toggle);
-  if (b2) b2.addEventListener('click', toggle);
-}
-
 // Universal Spotlight Cursor Follower on all Interactive Cards
 function initUniversalSpotlights() {
   const cards = document.querySelectorAll('.p-card, .rt-card, .bal, .sum-card, .panel-card, .main-balance-card, .spotlight-card, .tx');
@@ -2128,7 +2098,6 @@ setTimeout(() => {
 addEventListener('load', () => {
   if (typeof ScrollTrigger !== 'undefined') ScrollTrigger.refresh();
   try { initLucianU228(); } catch(e){}
-  try { initDongTheme(); } catch(e){}
   try { initUniversalSpotlights(); } catch(e){}
 });
 </script>
