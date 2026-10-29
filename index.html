@@ -13,9 +13,10 @@
 <link rel="stylesheet" href="lucian-uxui.css">
 <script>
   (function(){
+    // TRANG CHỦ LUÔN MÀU ĐEN — không đọc/chia sẻ theme từ app.html
     try {
-      const t = localStorage.getItem('dong_theme') || 'dark';
-      document.documentElement.setAttribute('data-theme', t);
+      localStorage.removeItem('dong_theme');
+      document.documentElement.setAttribute('data-theme', 'dark');
     } catch(e){}
   })();
 </script>
