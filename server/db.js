@@ -524,6 +524,26 @@ async function findUserById(id) {
   return normalizeUser(safeUser);
 }
 
+async function savePasswordResetToken(userId, token) {
+  if (pgPool) {
+    const id = "pr_" + Date.now();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24h
+    await pgPool.query(
+      `INSERT INTO password_resets (id, user_id, token, expires_at) VALUES ($1, $2, $3, $4)`,
+      [id, userId, token, expiresAt]
+    );
+    return { id, user_id: userId, token, expires_at: expiresAt };
+  }
+  const db = readLocalDb();
+  if (!db.passwordResets) db.passwordResets = [];
+  const id = "pr_" + Date.now();
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  const record = { id, user_id: userId, token, expires_at: expiresAt, used: false, created_at: new Date().toISOString() };
+  db.passwordResets.push(record);
+  writeLocalDb(db);
+  return record;
+}
+
 async function createUser({ email, password, fullName, phone }) {
   const normEmail = email.toLowerCase().trim();
   const passwordHash = await bcrypt.hash(password, 10);
@@ -877,5 +897,6 @@ module.exports = {
   getRule503020,
   getWealthAllocation,
   getGoalJars,
+  savePasswordResetToken,
   resetDatabase
 };

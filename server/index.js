@@ -135,6 +135,46 @@ app.post('/api/auth/login', async (req, res) => {
   }
 });
 
+// POST /api/auth/forgot-password (Yêu cầu khôi phục mật khẩu)
+app.post('/api/auth/forgot-password', async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập email' });
+    }
+
+    const user = await db.findUserByEmail(email);
+    if (!user) {
+      // Không tiết lộ email có tồn tại hay không (bảo mật)
+      return res.json({
+        success: true,
+        message: 'Nếu email này tồn tại trong hệ thống, chúng tôi đã gửi hướng dẫn khôi phục mật khẩu.'
+      });
+    }
+
+    // Tạo mã reset tạm thời (24h)
+    const resetToken = jwt.sign(
+      { id: user.id, type: 'password_reset' },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    // Lưu reset token vào user (hoặc có thể lưu vào bảng riêng)
+    await db.savePasswordResetToken(user.id, resetToken);
+
+    // Trong môi trường thực, gửi email tại đây
+    // Hiện tại chỉ trả về thành công
+
+    res.json({
+      success: true,
+      message: 'Nếu email này tồn tại trong hệ thống, chúng tôi đã gửi hướng dẫn khôi phục mật khẩu.'
+    });
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi máy chủ khi xử lý khôi phục mật khẩu' });
+  }
+});
+
 // GET /api/auth/me
 app.get('/api/auth/me', authMiddleware, async (req, res) => {
   try {

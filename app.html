@@ -1639,6 +1639,10 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
         <span id="btnSubmitText">Đăng nhập</span>
         <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
       </button>
+      <div style="display:flex;justify-content:space-between;margin-top:10px;font-size:12px;color:var(--muted)">
+        <span style="color:var(--mint);cursor:pointer" onclick="openForgotPasswordModal()" title="Quên mật khẩu">Quên mật khẩu?</span>
+        <span style="color:var(--gold);cursor:pointer" onclick="switchAuthTab('register')" title="Đăng ký mới">Tạo tài khoản mới</span>
+      </div>
     </form>
 
     <!-- FORM ĐĂNG KÝ (TINH GỌN, CHỐNG TỰ ĐỘNG ĐIỀN) -->
@@ -1678,6 +1682,43 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
         <span id="btnRegText">Tạo tài khoản Đồng Bank</span>
       </button>
     </form>
+    <!-- MODAL QUÊN MẬT KHẨU -->
+    <div class="modal-overlay" id="forgotPasswordModal">
+      <div class="modal-box modal-lg">
+        <button class="modal-close" onclick="closeForgotPasswordModal()">&times;</button>
+        <div class="auth-header" style="margin-bottom:24px">
+          <div class="auth-logo" style="font-size:20px">
+            <svg style="width:28px;height:28px" viewBox="0 0 48 48">
+              <defs>
+                <linearGradient id="gBrandAuth2" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#0B9C6D"/><stop offset="1" stop-color="#00D18F"/>
+                </linearGradient>
+              </defs>
+              <rect width="48" height="48" rx="13" fill="url(#gBrandAuth2)"/>
+              <rect x="4.5" y="4.5" width="39" height="39" rx="10.5" fill="none" stroke="#E8C57C" stroke-width="1.6" opacity=".85"/>
+            </svg>
+            <span>Khôi phục mật khẩu</span>
+          </div>
+          <p style="font-size:13px;color:var(--muted)">Nhập email đăng ký để nhận hướng dẫn đặt lại mật khẩu</p>
+        </div>
+        <form id="formForgotPassword" onsubmit="handleForgotPassword(event)">
+          <div class="form-group">
+            <label class="form-label">EMAIL ĐĂNG KÝ</label>
+            <div class="form-input-wrap">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <input type="email" id="forgotEmail" placeholder="Nhập email của bạn..." autocomplete="new-password" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-mint" id="btnSubmitForgotPassword" style="width:100%;justify-content:center;padding:13px;font-size:15px;margin-top:8px">
+            <span id="btnForgotText">Gửi yêu cầu khôi phục</span>
+            <svg class="ic" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+          </button>
+          <div style="margin-top:10px;font-size:12px;color:var(--muted);text-align:center">
+            <span style="color:var(--mint);cursor:pointer" onclick="closeForgotPasswordModal()" title="Quay lại">Quay lại đăng nhập</span>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2563,6 +2604,46 @@ async function handleAuthRegister(e) {
   } finally {
     if (btnSubmit) btnSubmit.disabled = false;
     if (btnText) btnText.textContent = "Tạo tài khoản Đồng Bank";
+  }
+}
+
+function openForgotPasswordModal() {
+  document.getElementById('forgotPasswordModal').classList.add('open');
+  document.getElementById('forgotEmail').value = '';
+}
+
+function closeForgotPasswordModal() {
+  document.getElementById('forgotPasswordModal').classList.remove('open');
+}
+
+async function handleForgotPassword(e) {
+  e.preventDefault();
+  const email = document.getElementById('forgotEmail').value.trim();
+  const btnSubmit = document.getElementById('btnSubmitForgotPassword');
+  const btnText = document.getElementById('btnForgotText');
+  if (btnSubmit) btnSubmit.disabled = true;
+  if (btnText) btnText.textContent = "Đang gửi...";
+
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/forgot-password`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (!data.success) {
+      showToast(data.message || "Không thể gửi yêu cầu khôi phục!", "err");
+      if (btnSubmit) btnSubmit.disabled = false;
+      if (btnText) btnText.textContent = "Gửi yêu cầu khôi phục";
+      return;
+    }
+    showToast(data.message || "Đã gửi hướng dẫn khôi phục mật khẩu đến email của bạn!");
+    closeForgotPasswordModal();
+  } catch (err) {
+    console.error(err);
+    showToast("Không thể kết nối máy chủ backend!", "err");
+    if (btnSubmit) btnSubmit.disabled = false;
+    if (btnText) btnText.textContent = "Gửi yêu cầu khôi phục";
   }
 }
 
@@ -4037,8 +4118,21 @@ function playAudioSuccess() {
 
 // Toast helper
 function showToast(msg, type = 'ok') {
-  // Tắt hệ thống thông báo toast khi nhấn chức năng
-  return;
+  const box = document.getElementById('toastBox');
+  const t = document.createElement('div');
+  t.className = 'toast-msg ' + type;
+  const ic = type === 'ok'
+    ? `<svg class="ic" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>`
+    : `<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/></svg>`;
+  t.innerHTML = ic + `<span>${msg}</span>`;
+  box.appendChild(t);
+  setTimeout(() => {
+    t.style.opacity = '0';
+    t.style.transform = 'translateY(10px)';
+    t.style.transition = 'all 0.3s';
+    setTimeout(() => t.remove(), 300);
+  }, 3500);
+}
 
 function escapeHtml(str) {
   if (!str) return '';
