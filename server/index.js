@@ -299,10 +299,13 @@ app.get('/api/analytics/cashflow', authMiddleware, async (req, res) => {
 // GET /api/budget/allocation & /api/budget/rule-50-30-20 (Chiến lược phân bổ tài chính thông minh thực tế)
 const budgetHandler = async (req, res) => {
   try {
-    const { strategy, income } = req.query;
+    const { strategy, income, needs, wants, savings } = req.query;
     const ruleData = await db.getWealthAllocation(req.user.id, {
-      strategy: strategy || 'urban_realistic',
-      customIncome: income ? parseFloat(income) : null
+      strategy: strategy || null,
+      customIncome: income ? parseFloat(income) : null,
+      customNeeds: needs ? parseFloat(needs) : null,
+      customWants: wants ? parseFloat(wants) : null,
+      customSavings: savings ? parseFloat(savings) : null
     });
     res.json({ success: true, rule: ruleData, allocation: ruleData });
   } catch (err) {
@@ -312,6 +315,32 @@ const budgetHandler = async (req, res) => {
 };
 app.get('/api/budget/allocation', authMiddleware, budgetHandler);
 app.get('/api/budget/rule-50-30-20', authMiddleware, budgetHandler);
+
+// POST /api/budget/auto-sweep (Lưu và kích hoạt cấu hình Auto-Sweep)
+app.post('/api/budget/auto-sweep', authMiddleware, async (req, res) => {
+  try {
+    const config = req.body || {};
+    const result = await db.saveAutoSweepConfig(req.user.id, config);
+    res.json({
+      success: true,
+      message: 'Đã kích hoạt thành công cơ chế Tự động Phân bổ Auto-Sweep cho tài khoản!',
+      config: result
+    });
+  } catch (err) {
+    console.error('Auto-sweep error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi thiết lập Auto-Sweep: ' + err.message });
+  }
+});
+
+// GET /api/budget/auto-sweep (Lấy trạng thái Auto-Sweep)
+app.get('/api/budget/auto-sweep', authMiddleware, async (req, res) => {
+  try {
+    const config = await db.getAutoSweepConfig(req.user.id);
+    res.json({ success: true, config });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Lỗi truy xuất trạng thái Auto-Sweep' });
+  }
+});
 
 
 // GET /api/jars (Danh sách hũ mục tiêu)

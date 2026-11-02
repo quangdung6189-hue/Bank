@@ -794,70 +794,215 @@ async function getCashflowTrend(userId) {
   return trend;
 }
 
-// Smart Wealth Allocation Engine (Phân bổ Ngân sách Thực tế Thị trường)
-async function getWealthAllocation(userId, { strategy = 'urban_realistic', customIncome = null } = {}) {
+// Smart Wealth Allocation Engine (Phân bổ Động theo Phân khúc Thu nhập & Private Banking)
+async function getWealthAllocation(userId, {
+  strategy = null,
+  customIncome = null,
+  customNeeds = null,
+  customWants = null,
+  customSavings = null
+} = {}) {
   const summary = await getSummary(userId);
   const income = (customIncome !== null && customIncome !== undefined)
     ? Number(customIncome)
-    : (summary.totalIncome > 0 ? summary.totalIncome : 0);
+    : (summary.totalIncome > 0 ? summary.totalIncome : 106300000);
 
-  let stratConfig = {
-    id: 'urban_realistic',
-    name: 'Chiến lược Thực tế Đô thị (55 / 25 / 20)',
-    description: 'Mô hình chuẩn thị trường hiện nay: Cân đối chi phí sinh hoạt đô thị và đầu tư dài hạn bền vững.',
-    needsPct: 55,
-    wantsPct: 25,
-    savingsPct: 20
+  // Danh mục 4 Chiến lược Chuẩn thị trường & Private Banking
+  const strategies = {
+    starter_safety: {
+      id: 'starter_safety',
+      name: 'Chiến lược Nền tảng An toàn (60 / 20 / 20)',
+      shortName: 'Nền tảng An toàn (60 / 20 / 20)',
+      description: 'Ưu tiên bảo vệ dòng tiền thiết yếu và xây dựng quỹ dự phòng khẩn cấp cho mức thu nhập khởi điểm.',
+      needsPct: 60,
+      wantsPct: 20,
+      savingsPct: 20,
+      recommendedRange: '15 Triệu - 25 Triệu',
+      minIncome: 0,
+      maxIncome: 25000000
+    },
+    urban_realistic: {
+      id: 'urban_realistic',
+      name: 'Chiến lược Thực tế Đô thị (50 / 25 / 25)',
+      shortName: 'Thực tế Đô thị (50 / 25 / 25)',
+      description: 'Mô hình cân bằng chuẩn đô thị: Đảm bảo chất lượng sống, phát triển bản thân và tích lũy bền vững.',
+      needsPct: 50,
+      wantsPct: 25,
+      savingsPct: 25,
+      recommendedRange: '25 Triệu - 45 Triệu',
+      minIncome: 25000000,
+      maxIncome: 50000000
+    },
+    wealth_acceleration: {
+      id: 'wealth_acceleration',
+      name: 'Chiến lược Tăng tốc Thịnh vượng - Private Wealth (30 / 25 / 45)',
+      shortName: 'Tăng tốc Thịnh vượng (30 / 25 / 45)',
+      description: 'Chuẩn phân bổ Priority Banking theo Định luật Engel: Tối ưu hóa chi phí sinh hoạt, đẩy mạnh dòng tiền vào nhân bản tài sản.',
+      needsPct: 30,
+      wantsPct: 25,
+      savingsPct: 45,
+      recommendedRange: 'Thu nhập >= 50 Triệu (Priority Banking)',
+      minIncome: 50000000,
+      maxIncome: Infinity
+    },
+    fire_max: {
+      id: 'fire_max',
+      name: 'Chiến lược Tối đa Tích sản FIRE (25 / 15 / 60)',
+      shortName: 'Tối đa Tích sản FIRE (25 / 15 / 60)',
+      description: 'Chiến lược nén chi phí sinh hoạt xuống mức tối giản để tối đa hóa tốc độ nghỉ hưu sớm và tự do tài chính.',
+      needsPct: 25,
+      wantsPct: 15,
+      savingsPct: 60,
+      recommendedRange: 'Độc lập Tài chính & FIRE',
+      minIncome: 0,
+      maxIncome: Infinity
+    }
   };
 
-  if (strategy === 'fire' || strategy === 'fire_acceleration' || strategy === '50_20_30') {
+  // Cơ chế Đề xuất Tự động (Auto-Recommendation) theo ngưỡng thu nhập
+  let recommendedStrategyId = 'wealth_acceleration';
+  if (income < 25000000) {
+    recommendedStrategyId = 'starter_safety';
+  } else if (income < 50000000) {
+    recommendedStrategyId = 'urban_realistic';
+  } else {
+    recommendedStrategyId = 'wealth_acceleration';
+  }
+
+  // Xác định chiến lược được áp dụng
+  let activeKey = strategy;
+  if (!activeKey || activeKey === 'auto') {
+    activeKey = recommendedStrategyId;
+  }
+
+  // Tương thích ngược các alias cũ
+  if (activeKey === 'starter' || activeKey === 'starter_balanced' || activeKey === '60_20_20' || activeKey === '60_25_15') {
+    activeKey = 'starter_safety';
+  } else if (activeKey === 'fire' || activeKey === 'fire_acceleration' || activeKey === '50_20_30' || activeKey === '25_15_60') {
+    activeKey = 'fire_max';
+  } else if (activeKey === 'private_wealth' || activeKey === 'wealth' || activeKey === '30_25_45') {
+    activeKey = 'wealth_acceleration';
+  }
+
+  let stratConfig;
+  if (activeKey === 'custom') {
+    let n = customNeeds !== null && !isNaN(customNeeds) ? Math.max(5, Math.min(85, Number(customNeeds))) : 30;
+    let w = customWants !== null && !isNaN(customWants) ? Math.max(5, Math.min(85, Number(customWants))) : 25;
+    let s = customSavings !== null && !isNaN(customSavings) ? Math.max(5, Math.min(85, Number(customSavings))) : (100 - n - w);
     stratConfig = {
-      id: 'fire_acceleration',
-      name: 'Chiến lược Độc lập Tài chính FIRE (50 / 20 / 30)',
-      description: 'Dành cho người hướng tới tự do tài chính: Tiết giảm chi tiêu hưởng thụ, tối đa hóa 30% dòng tiền đầu tư tích sản.',
-      needsPct: 50,
-      wantsPct: 20,
-      savingsPct: 30
+      id: 'custom',
+      name: 'Chiến lược Tùy chỉnh Cá nhân (Custom Studio)',
+      shortName: 'Tùy chỉnh Cá nhân',
+      description: 'Bộ tỷ lệ được tinh chỉnh thủ công theo nhu cầu và phong cách chi tiêu cá nhân hóa của bạn.',
+      needsPct: n,
+      wantsPct: w,
+      savingsPct: s,
+      recommendedRange: 'Tự do tinh chỉnh'
     };
-  } else if (strategy === 'starter' || strategy === '60_25_15') {
-    stratConfig = {
-      id: 'starter_balanced',
-      name: 'Chiến lược Nền tảng An toàn (60 / 25 / 15)',
-      description: 'Phù hợp người mới khởi nghiệp hoặc chi phí nhà ở/sinh hoạt chiếm tỷ trọng lớn: Ưu tiên sự vững chắc của cuộc sống.',
-      needsPct: 60,
-      wantsPct: 25,
-      savingsPct: 15
+  } else {
+    stratConfig = strategies[activeKey] || strategies[recommendedStrategyId];
+  }
+
+  const needsTarget = Math.round(income * (stratConfig.needsPct / 100));
+  const wantsTarget = Math.round(income * (stratConfig.wantsPct / 100));
+  const savingsTarget = Math.round(income * (stratConfig.savingsPct / 100));
+
+  // Dự phóng Tích lũy Lãi kép 1 năm (Lãi suất 10%/năm, góp đều đặn hàng tháng vào đầu kỳ)
+  const rMo = 0.10 / 12;
+  const projectedSavings1Y = savingsTarget > 0
+    ? Math.round(savingsTarget * ((Math.pow(1 + rMo, 12) - 1) / rMo) * (1 + rMo))
+    : 0;
+
+  // Chỉ báo Sức khỏe Phân bổ & Cảnh báo Thông minh (Smart Financial Guardrails)
+  let healthGuardrail = {
+    status: 'optimal',
+    badge: 'Đạt chuẩn Private Banking',
+    title: 'Cấu trúc dòng tiền tối ưu: Đạt chuẩn tích sản bền vững Private Banking.',
+    message: 'Tỷ lệ phân bổ phản ánh chính xác cấu trúc tài chính lành mạnh, đẩy mạnh dòng tiền tích lũy và bảo vệ chất lượng sống.'
+  };
+
+  if (stratConfig.needsPct > 50 && income >= 50000000) {
+    healthGuardrail = {
+      status: 'warning',
+      badge: 'Cảnh báo Vượt ngưỡng Chi phí',
+      title: 'Lưu ý: Chi phí vận hành đang vượt ngưỡng khuyến nghị (35.000.000đ/tháng) đối với phân khúc thu nhập cao.',
+      message: 'Bạn có thể tối ưu thêm dòng tiền sang Quỹ Tích sản để gia tăng tốc độ gia tăng tài sản ròng theo Định luật Engel.'
+    };
+  } else if (stratConfig.savingsPct < 20) {
+    healthGuardrail = {
+      status: 'danger',
+      badge: 'Cảnh báo Thiếu hụt Tích sản',
+      title: 'Cảnh báo: Tỷ lệ tích sản dưới ngưỡng an toàn 20%, làm chậm tiến độ xây dựng Quỹ dự phòng 6 tháng.',
+      message: 'Nên duy trì tỷ lệ tích sản tối thiểu 20-25% để đảm bảo an toàn tài chính trước các biến động không lường trước.'
     };
   }
 
   return {
     totalIncome: income,
     strategy: stratConfig,
+    recommendedStrategyId,
+    strategiesList: Object.values(strategies),
+    guardrail: healthGuardrail,
+    projectedSavings1Y,
     needs: {
       percentage: stratConfig.needsPct,
       name: "Quỹ Vận hành Đời sống",
       label: "Chi phí Thiết yếu (Nhà ở, Ăn uống, Điện nước, Y tế)",
       advice: "Giới hạn tiền thuê nhà hoặc chi tiêu thiết yếu dưới tỷ trọng quy định để đảm bảo an toàn tài chính.",
-      target: income > 0 ? Math.round(income * (stratConfig.needsPct / 100)) : 0,
-      color: "#00D18F"
+      target: needsTarget,
+      color: "#10B981",
+      subBuckets: [
+        { name: "Nhà ở & Hóa đơn", percentage: 50, amount: Math.round(needsTarget * 0.50), desc: "Tiền thuê/mua nhà, điện nước, internet sinh hoạt" },
+        { name: "Ẩm thực & Sinh hoạt", percentage: 35, amount: Math.round(needsTarget * 0.35), desc: "Ăn uống dinh dưỡng, siêu thị & nhu yếu phẩm hàng ngày" },
+        { name: "Y tế & Bảo hiểm", percentage: 15, amount: Math.round(needsTarget * 0.15), desc: "Bảo hiểm sức khỏe, khám định kỳ & thuốc men" }
+      ]
     },
     wants: {
       percentage: stratConfig.wantsPct,
       name: "Quỹ Nâng cấp & Phong cách sống",
       label: "Phát triển Bản thân & Linh hoạt (Học tập, Networking, Trải nghiệm)",
       advice: "Đầu tư vào kỹ năng chuyên môn và các mối quan hệ tạo ra cơ hội nghề nghiệp tương lai.",
-      target: income > 0 ? Math.round(income * (stratConfig.wantsPct / 100)) : 0,
-      color: "#9B8CFF"
+      target: wantsTarget,
+      color: "#6366F1",
+      subBuckets: [
+        { name: "Đào tạo & Kỹ năng", percentage: 35, amount: Math.round(wantsTarget * 0.35), desc: "Sách, khóa học nâng cao nghiệp vụ, chứng chỉ nghề" },
+        { name: "Networking & Quan hệ", percentage: 40, amount: Math.round(wantsTarget * 0.40), desc: "Cafe đối tác, duy trì và phát triển mạng lưới công việc" },
+        { name: "Trải nghiệm & Giải trí", percentage: 25, amount: Math.round(wantsTarget * 0.25), desc: "Du lịch, thể thao, tái tạo năng lượng sáng tạo" }
+      ]
     },
     savings: {
       percentage: stratConfig.savingsPct,
       name: "Quỹ Tích sản & Tự do Tài chính",
       label: "Đầu tư Sinh lời & Dự phòng (Quỹ khẩn cấp 6 tháng, Tích lũy)",
       advice: "Hoàn thiện Quỹ dự phòng khẩn cấp trước khi giải ngân vào các kênh đầu tư sinh lời.",
-      target: income > 0 ? Math.round(income * (stratConfig.savingsPct / 100)) : 0,
-      color: "#E8C57C"
+      target: savingsTarget,
+      color: "#F59E0B",
+      subBuckets: [
+        { name: "Dự phòng Sinh lời tự động", percentage: 20, amount: Math.round(savingsTarget * 0.20), desc: "Quỹ khẩn cấp 6 tháng (sinh lời qua đêm/Money Market)" },
+        { name: "Đầu tư Tăng trưởng ETF/Cổ phiếu", percentage: 50, amount: Math.round(savingsTarget * 0.50), desc: "Tích sản chỉ số VN30/Diamond, cổ phiếu tăng trưởng" },
+        { name: "Tài sản Phòng vệ Vàng/Trái phiếu", percentage: 30, amount: Math.round(savingsTarget * 0.30), desc: "Vàng miếng tích lũy, trái phiếu tổ chức uy tín" }
+      ]
     }
   };
+}
+
+// Auto-Sweep Configuration Persistence
+async function saveAutoSweepConfig(userId, config) {
+  const db = readLocalDb();
+  if (!db.autoSweeps) db.autoSweeps = {};
+  db.autoSweeps[userId] = {
+    ...config,
+    userId,
+    active: true,
+    updatedAt: new Date().toISOString()
+  };
+  writeLocalDb(db);
+  return db.autoSweeps[userId];
+}
+
+async function getAutoSweepConfig(userId) {
+  const db = readLocalDb();
+  return (db.autoSweeps && db.autoSweeps[userId]) || null;
 }
 
 // Alias for backwards compatibility
@@ -897,6 +1042,8 @@ module.exports = {
   getRule503020,
   getWealthAllocation,
   getGoalJars,
+  saveAutoSweepConfig,
+  getAutoSweepConfig,
   savePasswordResetToken,
   resetDatabase
 };

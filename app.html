@@ -1297,6 +1297,7 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   align-items: center;
   gap: 8px;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
 }
 .strat-pill-btn:hover {
   color: var(--text);
@@ -1309,6 +1310,38 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   color: var(--mint);
   box-shadow: 0 0 16px -4px rgba(0, 209, 143, 0.3);
 }
+.strat-pill-btn.strat-wealth.active {
+  background: rgba(245, 212, 133, 0.14);
+  border-color: rgba(245, 212, 133, 0.5);
+  color: var(--gold);
+  box-shadow: 0 0 18px -4px rgba(245, 212, 133, 0.35);
+}
+.strat-pill-btn.strat-custom.active {
+  background: rgba(129, 140, 248, 0.14);
+  border-color: rgba(129, 140, 248, 0.5);
+  color: var(--violet);
+  box-shadow: 0 0 18px -4px rgba(129, 140, 248, 0.35);
+}
+.strat-rec-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: rgba(245, 158, 11, 0.22);
+  color: #FBBF24;
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  letter-spacing: 0.02em;
+  margin-left: 4px;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+  animation: pulseGold 2s infinite ease-in-out;
+}
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 0 6px rgba(245, 158, 11, 0.2); }
+  50% { box-shadow: 0 0 14px rgba(245, 158, 11, 0.5); }
+}
 
 /* Visual Budget Split Bar (Lucian #171 inspiration) */
 .alloc-pool-box {
@@ -1317,6 +1350,14 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   border-radius: 14px;
   padding: 18px 20px;
   margin: 20px 0;
+}
+.alloc-pool-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 .alloc-pool-track {
   display: flex;
@@ -1337,6 +1378,10 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   color: #052019;
   letter-spacing: 0.02em;
   transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 4px;
 }
 .alloc-legend-row {
   display: flex;
@@ -1358,6 +1403,25 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   border-radius: 3px;
   flex: none;
 }
+.btn-reset-rec {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 99px;
+  background: rgba(245, 212, 133, 0.12);
+  border: 1px solid rgba(245, 212, 133, 0.35);
+  color: var(--gold);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-reset-rec:hover {
+  background: rgba(245, 212, 133, 0.22);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
 
 /* Income Simulator */
 .income-sim-bar {
@@ -1372,7 +1436,7 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   flex-wrap: wrap;
 }
 .sim-chip {
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 99px;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.04);
@@ -1381,6 +1445,9 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 .sim-chip:hover {
   color: var(--text);
@@ -1390,6 +1457,380 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   background: var(--gold-dim);
   border-color: rgba(232, 197, 124, 0.4);
   color: var(--gold);
+  font-weight: 700;
+  box-shadow: 0 0 12px -2px rgba(232, 197, 124, 0.3);
+}
+
+/* Smart Financial Guardrails Health Banner */
+.alloc-health-banner {
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin: 16px 0 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  transition: all 0.3s ease;
+}
+.alloc-health-banner.optimal {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.03));
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  box-shadow: 0 4px 20px -8px rgba(16, 185, 129, 0.25);
+}
+.alloc-health-banner.warning {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(245, 158, 11, 0.03));
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  box-shadow: 0 4px 20px -8px rgba(245, 158, 11, 0.25);
+}
+.alloc-health-banner.danger {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.14), rgba(239, 68, 68, 0.03));
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  box-shadow: 0 4px 20px -8px rgba(239, 68, 68, 0.25);
+}
+.health-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.alloc-health-banner.optimal .health-icon-wrap { background: rgba(16, 185, 129, 0.18); color: #10B981; }
+.alloc-health-banner.warning .health-icon-wrap { background: rgba(245, 158, 11, 0.18); color: #F59E0B; }
+.alloc-health-banner.danger .health-icon-wrap { background: rgba(239, 68, 68, 0.18); color: #EF4444; }
+.health-content { flex: 1; min-width: 240px; }
+.health-title { font-size: 13px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.alloc-health-banner.optimal .health-title { color: #10B981; }
+.alloc-health-banner.warning .health-title { color: #F59E0B; }
+.alloc-health-banner.danger .health-title { color: #EF4444; }
+.health-desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+
+/* Interactive Sliders & Locks */
+.fund-slider-box {
+  margin: 14px 0 10px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+.fund-slider-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.fund-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.08);
+  outline: none;
+  transition: opacity 0.2s;
+  margin: 4px 0;
+}
+.fund-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  cursor: grab;
+  box-shadow: 0 0 10px rgba(0,0,0,0.6);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.fund-slider::-webkit-slider-thumb:hover { transform: scale(1.2); }
+.fund-slider::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.1); }
+.fund-slider-needs::-webkit-slider-thumb { border: 3px solid #10B981; box-shadow: 0 0 12px rgba(16, 185, 129, 0.6); }
+.fund-slider-wants::-webkit-slider-thumb { border: 3px solid #6366F1; box-shadow: 0 0 12px rgba(99, 102, 241, 0.6); }
+.fund-slider-savings::-webkit-slider-thumb { border: 3px solid #F59E0B; box-shadow: 0 0 12px rgba(245, 158, 11, 0.6); }
+.fund-slider:disabled { opacity: 0.45; cursor: not-allowed; }
+.fund-slider:disabled::-webkit-slider-thumb { cursor: not-allowed; background: #64748B; border-color: #475569; box-shadow: none; }
+
+.fund-lock-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 10.5px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fund-lock-btn:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.fund-lock-btn.locked {
+  background: rgba(245, 158, 11, 0.16);
+  border-color: rgba(245, 158, 11, 0.45);
+  color: var(--gold);
+  box-shadow: 0 0 10px -2px rgba(245, 158, 11, 0.35);
+}
+
+/* Fund Amount Box (Click-to-edit inline) */
+.fund-amount-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+  padding: 2px 6px;
+  margin-left: -6px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+.fund-amount-box:hover { background: rgba(255, 255, 255, 0.05); }
+.fund-amount-box:hover .fund-edit-icon { opacity: 1; }
+.fund-edit-icon { opacity: 0.35; transition: opacity 0.2s; }
+.fund-num-input {
+  background: #0B111E;
+  border: 1px solid var(--gold);
+  color: #FFF;
+  font-family: var(--font-num);
+  font-size: 19px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 8px;
+  outline: none;
+  width: 170px;
+}
+
+/* Sub-Buckets Breakdown */
+.fund-sub-box {
+  background: rgba(0, 0, 0, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 14px;
+}
+.fund-sub-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.sub-bucket-row { margin-bottom: 8px; }
+.sub-bucket-row:last-child { margin-bottom: 0; }
+.sub-bucket-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11.5px;
+  margin-bottom: 4px;
+}
+.sub-bucket-name {
+  color: var(--text);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sub-bucket-pct { font-size: 10px; color: var(--muted); font-weight: 600; }
+.sub-bucket-amount {
+  font-family: var(--font-num);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.sub-bucket-track {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.sub-bucket-fill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Compound Wealth Projection Box */
+.compound-projection-box {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.03));
+  border: 1px solid rgba(245, 158, 11, 0.32);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.compound-projection-box::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 60px;
+  height: 60px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.2), transparent 70%);
+  pointer-events: none;
+}
+.proj-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.proj-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+.proj-amount {
+  font-family: var(--font-num);
+  font-size: 21px;
+  font-weight: 800;
+  color: #FBBF24;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.proj-rate-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 99px;
+  background: rgba(245, 158, 11, 0.2);
+  color: var(--gold);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.proj-subtext {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Actionable Banking CTA Bar */
+.alloc-cta-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: linear-gradient(135deg, rgba(245, 212, 133, 0.08), rgba(11, 17, 30, 0.95));
+  border: 1px solid rgba(245, 212, 133, 0.35);
+  border-radius: 16px;
+  padding: 18px 22px;
+  margin-top: 24px;
+}
+.alloc-cta-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 260px;
+}
+.alloc-cta-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(245, 212, 133, 0.15);
+  border: 1px solid rgba(245, 212, 133, 0.3);
+  color: var(--gold);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex: none;
+}
+.alloc-cta-btn {
+  background: linear-gradient(135deg, #F5D485, #D4A843);
+  color: #070B14;
+  font-weight: 800;
+  border: none;
+  padding: 13px 26px;
+  border-radius: 99px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  box-shadow: 0 4px 18px rgba(245, 212, 133, 0.3);
+  transition: all 0.25s;
+}
+.alloc-cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 26px rgba(245, 212, 133, 0.45);
+}
+.sweep-active-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #10B981;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-weight: 600;
+}
+.sweep-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 8px #10B981;
+  animation: pulseGreen 1.5s infinite;
+}
+@keyframes pulseGreen {
+  0%, 100% { opacity: 0.6; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Auto-Sweep Modal Details */
+.sweep-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 16px 0 20px;
+}
+.sweep-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+.sweep-schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 14px 0 20px;
+}
+.sweep-schedule-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sweep-schedule-item:hover, .sweep-schedule-item.active {
+  background: rgba(245, 212, 133, 0.08);
+  border-color: rgba(245, 212, 133, 0.4);
 }
 
 /* ============ FORM THÊM GIAO DỊCH ============ */
@@ -2231,7 +2672,7 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
         <div class="sec-title">
           <div>
             <h1>Chiến lược Phân bổ Ngân sách Thực tế</h1>
-            <p>Hệ sinh thái điều phối dòng tiền 3 lớp chuẩn Private Banking: Vận hành đời sống (55%) — Nâng tầm trải nghiệm (25%) — Tích sản &amp; Tự do tài chính (20%).</p>
+            <p>Hệ sinh thái điều phối dòng tiền 3 lớp chuẩn Private Banking: Phân bổ Động theo Phân khúc Thu nhập &amp; Bộ Tinh chỉnh Cá nhân hóa.</p>
           </div>
         </div>
 
@@ -2242,38 +2683,56 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
               <span class="badge-pill" style="background:rgba(232,197,124,0.15);color:var(--gold);margin-bottom:8px;display:inline-flex">
                 ✦ SMART WEALTH ALLOCATION ENGINE
               </span>
-              <h3 id="allocStrategyTitle" style="font-size:20px;font-weight:800;letter-spacing:-0.01em;margin-top:4px">Chiến lược Thực tế Đô thị (55 / 25 / 20)</h3>
+              <h3 id="allocStrategyTitle" style="font-size:20px;font-weight:800;letter-spacing:-0.01em;margin-top:4px">Chiến lược Tăng tốc Thịnh vượng - Private Wealth (30 / 25 / 45)</h3>
               <p id="allocStrategyDesc" style="font-size:13px;color:var(--muted);margin-top:6px;max-width:720px;line-height:1.6">
-                Mô hình chuẩn thị trường hiện nay: Cân đối chi phí sinh hoạt đô thị hiện đại và xây dựng tài sản dài hạn bền vững.
+                Chuẩn phân bổ Priority Banking theo Định luật Engel: Tối ưu hóa chi phí sinh hoạt, đẩy mạnh dòng tiền vào nhân bản tài sản.
               </p>
             </div>
             
             <div style="text-align:right">
               <small style="color:var(--muted);font-size:11px;display:block;text-transform:uppercase;letter-spacing:0.05em">THU NHẬP CƠ SỞ TÍNH TOÁN</small>
-              <b id="budgetIncomeValue" style="font-family:var(--font-num);font-size:24px;color:var(--mint);font-variant-numeric:tabular-nums">0₫</b>
+              <b id="budgetIncomeValue" style="font-family:var(--font-num);font-size:24px;color:var(--mint);font-variant-numeric:tabular-nums">106.300.000₫</b>
+              <div id="allocIncomeTierBadge" style="margin-top:4px">
+                <span class="badge-pill" style="background:rgba(245,212,133,0.15);color:var(--gold);font-size:10px;font-weight:700">✦ Priority Banking Tier</span>
+              </div>
             </div>
           </div>
 
-          <!-- Strategy Selector Pills -->
-          <div class="strat-pills-row">
-            <button type="button" class="strat-pill-btn active" id="btnStratUrban" onclick="setAllocationStrategy('urban_realistic')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></svg>
-              <span>Thực tế Đô thị (55 / 25 / 20)</span>
+          <!-- Strategy Selector Pills (4 Chuẩn Thực tế + Custom Mode) -->
+          <div class="strat-pills-row" id="stratPillsRow">
+            <button type="button" class="strat-pill-btn" id="btnStratStarter" onclick="setAllocationStrategy('starter_safety')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+              <span>Nền tảng An toàn (60 / 20 / 20)</span>
+              <span class="strat-rec-badge" id="recBadgeStarter" style="display:none">✦ Đề xuất tối ưu</span>
             </button>
-            <button type="button" class="strat-pill-btn" id="btnStratFire" onclick="setAllocationStrategy('fire_acceleration')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
-              <span>Tăng tốc Tích sản FIRE (50 / 20 / 30)</span>
+            <button type="button" class="strat-pill-btn" id="btnStratUrban" onclick="setAllocationStrategy('urban_realistic')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></svg>
+              <span>Thực tế Đô thị (50 / 25 / 25)</span>
+              <span class="strat-rec-badge" id="recBadgeUrban" style="display:none">✦ Đề xuất tối ưu</span>
             </button>
-            <button type="button" class="strat-pill-btn" id="btnStratStarter" onclick="setAllocationStrategy('starter_balanced')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-              <span>Nền tảng An toàn (60 / 25 / 15)</span>
+            <button type="button" class="strat-pill-btn strat-wealth active" id="btnStratWealth" onclick="setAllocationStrategy('wealth_acceleration')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
+              <span>Tăng tốc Thịnh vượng (30 / 25 / 45)</span>
+              <span class="strat-rec-badge" id="recBadgeWealth">✦ Đề xuất tối ưu</span>
+            </button>
+            <button type="button" class="strat-pill-btn" id="btnStratFire" onclick="setAllocationStrategy('fire_max')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              <span>Tối đa Tích sản FIRE (25 / 15 / 60)</span>
+              <span class="strat-rec-badge" id="recBadgeFire" style="display:none">✦ Đề xuất tối ưu</span>
+            </button>
+            <button type="button" class="strat-pill-btn strat-custom" id="btnStratCustom" onclick="setAllocationStrategy('custom')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><line x1="4" x2="20" y1="21" y2="21"/><line x1="4" x2="20" y1="3" y2="3"/><line x1="12" x2="12" y1="3" y2="21"/><circle cx="12" cy="12" r="3"/></svg>
+              <span>Tùy chỉnh Cá nhân</span>
             </button>
           </div>
 
           <!-- Income Simulation Bar -->
           <div class="income-sim-bar">
-            <span style="font-size:12px;color:var(--muted);font-weight:600">Mô phỏng thu nhập tháng:</span>
-            <button type="button" class="sim-chip active" id="simChipReal" onclick="simulateIncome(0)">Thực tế tài khoản</button>
+            <span style="font-size:12px;color:var(--muted);font-weight:700;display:inline-flex;align-items:center;gap:6px">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              Mô phỏng thu nhập tháng:
+            </span>
+            <button type="button" class="sim-chip active" id="simChipReal" onclick="simulateIncome(0)">Thực tế tài khoản: 106.300.000đ</button>
             <button type="button" class="sim-chip" onclick="simulateIncome(15000000)">15 Triệu</button>
             <button type="button" class="sim-chip" onclick="simulateIncome(25000000)">25 Triệu</button>
             <button type="button" class="sim-chip" onclick="simulateIncome(35000000)">35 Triệu</button>
@@ -2283,30 +2742,71 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
 
           <!-- Visual Multi-segment Pool Bar (Lucian #171 Inspired) -->
           <div class="alloc-pool-box">
-            <div class="alloc-pool-track" id="allocVisualTrack" aria-label="Biểu đồ phân bổ 3 quỹ dòng tiền">
-              <div class="alloc-pool-seg" id="segNeeds" style="width:55%;background:var(--mint)">55% Vận hành</div>
-              <div class="alloc-pool-seg" id="segWants" style="width:25%;background:var(--violet)">25% Nâng cấp</div>
-              <div class="alloc-pool-seg" id="segSavings" style="width:20%;background:var(--gold)">20% Tích sản</div>
+            <div class="alloc-pool-header">
+              <div style="display:flex;align-items:center;gap:10px">
+                <span style="font-size:11px;font-weight:700;letter-spacing:0.05em;color:var(--muted);text-transform:uppercase">TỶ TRỌNG PHÂN BỔ DÒNG TIỀN</span>
+                <span id="allocTotalCheck" class="badge-pill" style="background:rgba(16,185,129,0.15);color:#10B981;font-size:10.5px;font-weight:700">Tổng: 100%</span>
+              </div>
+              <div id="allocResetWrap" style="display:none">
+                <button type="button" class="btn-reset-rec" onclick="resetToRecommended()">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                  <span>Khôi phục chuẩn đề xuất</span>
+                </button>
+              </div>
             </div>
+
+            <div class="alloc-pool-track" id="allocVisualTrack" aria-label="Biểu đồ phân bổ 3 quỹ dòng tiền">
+              <div class="alloc-pool-seg" id="segNeeds" style="width:30%;background:#10B981">30% Vận hành</div>
+              <div class="alloc-pool-seg" id="segWants" style="width:25%;background:#6366F1">25% Nâng cấp</div>
+              <div class="alloc-pool-seg" id="segSavings" style="width:45%;background:#F59E0B">45% Tích sản</div>
+            </div>
+
             <div class="alloc-legend-row" id="allocLegendRow">
               <div class="alloc-legend-item">
-                <span class="alloc-dot" style="background:var(--mint)"></span>
-                <span>Vận hành Đời sống: <b id="legNeedsVal" style="color:var(--mint)">0₫</b> (<span id="legNeedsPct">55%</span>)</span>
+                <span class="alloc-dot" style="background:#10B981"></span>
+                <span>Vận hành Đời sống: <b id="legNeedsVal" style="color:#10B981">31.890.000₫</b> (<span id="legNeedsPct">30%</span>)</span>
               </div>
               <div class="alloc-legend-item">
-                <span class="alloc-dot" style="background:var(--violet)"></span>
-                <span>Nâng cấp &amp; Phong cách: <b id="legWantsVal" style="color:var(--violet)">0₫</b> (<span id="legWantsPct">25%</span>)</span>
+                <span class="alloc-dot" style="background:#6366F1"></span>
+                <span>Nâng cấp &amp; Phong cách: <b id="legWantsVal" style="color:#6366F1">26.575.000₫</b> (<span id="legWantsPct">25%</span>)</span>
               </div>
               <div class="alloc-legend-item">
-                <span class="alloc-dot" style="background:var(--gold)"></span>
-                <span>Tích sản &amp; Tự do: <b id="legSavingsVal" style="color:var(--gold)">0₫</b> (<span id="legSavingsPct">20%</span>)</span>
+                <span class="alloc-dot" style="background:#F59E0B"></span>
+                <span>Tích sản &amp; Tự do: <b id="legSavingsVal" style="color:#F59E0B">47.835.000₫</b> (<span id="legSavingsPct">45%</span>)</span>
               </div>
             </div>
           </div>
 
-          <!-- 3 Dynamic Allocation Advisory Cards -->
+          <!-- Smart Financial Guardrails Health Banner -->
+          <div id="allocHealthBanner" class="alloc-health-banner optimal">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- 3 Dynamic Allocation Advisory Cards (Fine-Tuning Studio) -->
           <div class="rule-three-cols" id="budgetDetailCards">
             <!-- Rendered by JS -->
+          </div>
+
+          <!-- Actionable Banking CTA Bar (Auto-Sweep Integration) -->
+          <div class="alloc-cta-bar">
+            <div class="alloc-cta-info">
+              <div class="alloc-cta-icon">✦</div>
+              <div>
+                <b style="font-size:14px;color:var(--gold);display:block">Áp dụng &amp; Thiết lập Tự động Phân bổ (Auto-Sweep)</b>
+                <p style="font-size:12px;color:var(--muted);margin-top:2px">
+                  Tự động điều chuyển dòng tiền vào 3 quỹ tài khoản chuyên biệt mỗi khi có tiền về. Duy trì kỷ luật tài chính tự động theo chuẩn Private Banking.
+                </p>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+              <div id="autoSweepStatusBadge" style="display:none">
+                <span class="sweep-active-chip"><span class="sweep-dot"></span> Đang bật Auto-Sweep (Kỳ: Ngày 05)</span>
+              </div>
+              <button type="button" class="alloc-cta-btn" onclick="openAutoSweepModal()">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                <span>Thiết lập Auto-Sweep</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -2325,6 +2825,90 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
       </section>
 
     </main>
+  </div>
+</div>
+
+<!-- ================= MODAL AUTO-SWEEP THIẾT LẬP TỰ ĐỘNG PHÂN BỔ ================= -->
+<div class="modal-overlay" id="autoSweepModal">
+  <div class="modal-box modal-lg" style="max-width:560px">
+    <span class="modal-close" onclick="closeAutoSweepModal()">&times;</span>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span class="badge-pill" style="background:rgba(245,212,133,0.15);color:var(--gold);font-size:11px">✦ PRIVATE WEALTH ENGINE</span>
+    </div>
+    <h3 style="margin-bottom:6px;font-size:20px;font-weight:800">Thiết lập Tự động Phân bổ Ngân sách (Auto-Sweep)</h3>
+    <p style="font-size:12.5px;color:var(--muted);margin-bottom:18px;line-height:1.5">
+      Mỗi khi tài khoản phát sinh dòng tiền thu nhập, hệ thống Đồng Online sẽ tự động điều phối và chuyển tiền vào các tài khoản/hũ chuyên biệt theo đúng tỷ trọng bạn đã tinh chỉnh.
+    </p>
+
+    <!-- Preview 3 Funds Split -->
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--gold);letter-spacing:0.05em;margin-bottom:8px">
+      DỰ KIẾN PHÂN BỔ ĐỊNH KỲ MỖI KỲ LƯƠNG (<span id="sweepIncomeLabel">106.300.000₫</span>)
+    </div>
+    <div class="sweep-grid">
+      <div class="sweep-card" style="border-color:rgba(16,185,129,0.3);background:radial-gradient(ellipse at top, rgba(16,185,129,0.08), transparent 70%)">
+        <small style="color:#10B981;font-size:10px;font-weight:700;display:block">VẬN HÀNH (<span id="sweepNeedsPct">30%</span>)</small>
+        <b id="sweepNeedsAmount" style="font-family:var(--font-num);font-size:14.5px;color:#10B981;margin:4px 0 2px;display:block">31.890.000₫</b>
+        <span style="font-size:9.5px;color:var(--muted)">Thẻ chính sinh hoạt</span>
+      </div>
+      <div class="sweep-card" style="border-color:rgba(99,102,241,0.3);background:radial-gradient(ellipse at top, rgba(99,102,241,0.08), transparent 70%)">
+        <small style="color:#818CF8;font-size:10px;font-weight:700;display:block">NÂNG CẤP (<span id="sweepWantsPct">25%</span>)</small>
+        <b id="sweepWantsAmount" style="font-family:var(--font-num);font-size:14.5px;color:#818CF8;margin:4px 0 2px;display:block">26.575.000₫</b>
+        <span style="font-size:9.5px;color:var(--muted)">TK Phong cách sống</span>
+      </div>
+      <div class="sweep-card" style="border-color:rgba(245,158,11,0.3);background:radial-gradient(ellipse at top, rgba(245,158,11,0.08), transparent 70%)">
+        <small style="color:#F59E0B;font-size:10px;font-weight:700;display:block">TÍCH SẢN (<span id="sweepSavingsPct">45%</span>)</small>
+        <b id="sweepSavingsAmount" style="font-family:var(--font-num);font-size:14.5px;color:#F59E0B;margin:4px 0 2px;display:block">47.835.000₫</b>
+        <span style="font-size:9.5px;color:var(--muted)">Quỹ Đầu tư &amp; ETF</span>
+      </div>
+    </div>
+
+    <!-- Schedule Selection -->
+    <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--muted);letter-spacing:0.05em;margin-bottom:8px">
+      CHỌN THỜI ĐIỂM KÍCH HOẠT QUÉT TỰ ĐỘNG (SCHEDULE)
+    </div>
+    <div class="sweep-schedule-list">
+      <label class="sweep-schedule-item active" id="sweepSched05" onclick="selectSweepSchedule('day_05')">
+        <input type="radio" name="sweepSchedule" value="day_05" checked style="accent-color:var(--gold);margin-top:2px">
+        <div>
+          <b style="font-size:13px;color:var(--text);display:block">Ngày 05 hàng tháng (Khuyên dùng)</b>
+          <span style="font-size:11.5px;color:var(--muted)">Tự động quét và phân luồng ngay sau kỳ chuyển khoản lương phổ biến.</span>
+        </div>
+      </label>
+      <label class="sweep-schedule-item" id="sweepSched15" onclick="selectSweepSchedule('day_15')">
+        <input type="radio" name="sweepSchedule" value="day_15" style="accent-color:var(--gold);margin-top:2px">
+        <div>
+          <b style="font-size:13px;color:var(--text);display:block">Ngày 15 hàng tháng</b>
+          <span style="font-size:11.5px;color:var(--muted)">Phù hợp với doanh nghiệp chi trả thu nhập giữa tháng hoặc 2 kỳ.</span>
+        </div>
+      </label>
+      <label class="sweep-schedule-item" id="sweepSchedInstant" onclick="selectSweepSchedule('instant')">
+        <input type="radio" name="sweepSchedule" value="instant" style="accent-color:var(--gold);margin-top:2px">
+        <div>
+          <b style="font-size:13px;color:var(--text);display:block">Tức thời (Real-time Auto-Sweep)</b>
+          <span style="font-size:11.5px;color:var(--muted)">Phân tách tự động ngay khi tài khoản phát sinh giao dịch nhận tiền &gt; 5.000.000₫.</span>
+        </div>
+      </label>
+    </div>
+
+    <!-- Extra Checkboxes -->
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:12px 14px">
+      <label style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text);cursor:pointer">
+        <input type="checkbox" id="sweepOptAutoInvest" checked style="accent-color:var(--gold)">
+        <span>Tự động chuyển Quỹ Tích sản vào Money Market sinh lời qua đêm &amp; Quỹ chỉ số ETF</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text);cursor:pointer">
+        <input type="checkbox" id="sweepOptNotify" checked style="accent-color:var(--gold)">
+        <span>Gửi tin nhắn thông báo &amp; báo cáo số dư hũ ngay sau mỗi kỳ quét thành công</span>
+      </label>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px">
+      <button type="button" class="btn btn-outline btn-sm" onclick="closeAutoSweepModal()">Đóng</button>
+      <button type="button" class="btn btn-gold btn-sm" onclick="handleConfirmAutoSweep()">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Xác nhận &amp; Kích hoạt Auto-Sweep</span>
+      </button>
+    </div>
   </div>
 </div>
 
@@ -3659,37 +4243,130 @@ function initLucianU052() {
 
 // ==========================================================================
 // CHIẾN LƯỢC PHÂN BỔ TÀI CHÍNH THỰC TẾ (SMART WEALTH ALLOCATION ENGINE)
-// Kế thừa tư duy phân bổ Private Banking & Lucian UX/UI #171 Capacity Split
+// Phân bổ Động theo Phân khúc Thu nhập & Bộ Tinh chỉnh Cá nhân hóa Private Banking
 // ==========================================================================
-let currentAllocationStrategy = 'urban_realistic';
+
+const STRATEGY_PRESETS = {
+  starter_safety: {
+    id: 'starter_safety',
+    name: 'Chiến lược Nền tảng An toàn (60 / 20 / 20)',
+    shortName: 'Nền tảng An toàn (60 / 20 / 20)',
+    description: 'Ưu tiên bảo vệ dòng tiền thiết yếu và xây dựng quỹ dự phòng khẩn cấp cho mức thu nhập khởi điểm.',
+    needsPct: 60,
+    wantsPct: 20,
+    savingsPct: 20,
+    recommendedRange: 'Thu nhập 15 Triệu - 25 Triệu'
+  },
+  urban_realistic: {
+    id: 'urban_realistic',
+    name: 'Chiến lược Thực tế Đô thị (50 / 25 / 25)',
+    shortName: 'Thực tế Đô thị (50 / 25 / 25)',
+    description: 'Mô hình cân bằng chuẩn đô thị: Đảm bảo chất lượng sống, phát triển bản thân và tích lũy bền vững.',
+    needsPct: 50,
+    wantsPct: 25,
+    savingsPct: 25,
+    recommendedRange: 'Thu nhập 25 Triệu - 45 Triệu'
+  },
+  wealth_acceleration: {
+    id: 'wealth_acceleration',
+    name: 'Chiến lược Tăng tốc Thịnh vượng - Private Wealth (30 / 25 / 45)',
+    shortName: 'Tăng tốc Thịnh vượng (30 / 25 / 45)',
+    description: 'Chuẩn phân bổ Priority Banking theo Định luật Engel: Tối ưu hóa chi phí sinh hoạt, đẩy mạnh dòng tiền vào nhân bản tài sản.',
+    needsPct: 30,
+    wantsPct: 25,
+    savingsPct: 45,
+    recommendedRange: 'Thu nhập >= 50 Triệu (Priority Banking)'
+  },
+  fire_max: {
+    id: 'fire_max',
+    name: 'Chiến lược Tối đa Tích sản FIRE (25 / 15 / 60)',
+    shortName: 'Tối đa Tích sản FIRE (25 / 15 / 60)',
+    description: 'Chiến lược nén chi phí sinh hoạt xuống mức tối giản để tối đa hóa tốc độ nghỉ hưu sớm và tự do tài chính.',
+    needsPct: 25,
+    wantsPct: 15,
+    savingsPct: 60,
+    recommendedRange: 'Độc lập Tài chính & FIRE'
+  },
+  custom: {
+    id: 'custom',
+    name: 'Chiến lược Tùy chỉnh Cá nhân (Custom Studio)',
+    shortName: 'Tùy chỉnh Cá nhân',
+    description: 'Bộ tỷ lệ được tinh chỉnh thủ công theo nhu cầu và phong cách chi tiêu cá nhân hóa của bạn.',
+    recommendedRange: 'Tự do tinh chỉnh'
+  }
+};
+
+let currentAllocationStrategy = 'wealth_acceleration'; // Mặc định Priority Wealth 30/25/45 cho 106.3M
 let currentSimIncome = null;
 let cachedAllocationData = null;
+let currentEffectiveIncome = 106300000;
+let lockedFunds = { needs: false, wants: false, savings: false };
+let fundPercentages = { needs: 30, wants: 25, savings: 45 };
+let autoSweepSchedule = 'day_05';
+
+function getRecommendedStrategyId(income) {
+  if (income < 25000000) return 'starter_safety';
+  if (income < 50000000) return 'urban_realistic';
+  return 'wealth_acceleration';
+}
+
+function updateRecommendationBadges(recId) {
+  const badgeMap = {
+    starter_safety: document.getElementById('recBadgeStarter'),
+    urban_realistic: document.getElementById('recBadgeUrban'),
+    wealth_acceleration: document.getElementById('recBadgeWealth'),
+    fire_max: document.getElementById('recBadgeFire')
+  };
+  Object.keys(badgeMap).forEach(key => {
+    const el = badgeMap[key];
+    if (el) el.style.display = key === recId ? 'inline-flex' : 'none';
+  });
+}
+
+function updateStrategyPillsUI() {
+  const btnStarter = document.getElementById('btnStratStarter');
+  const btnUrban = document.getElementById('btnStratUrban');
+  const btnWealth = document.getElementById('btnStratWealth');
+  const btnFire = document.getElementById('btnStratFire');
+  const btnCustom = document.getElementById('btnStratCustom');
+
+  if (btnStarter) btnStarter.classList.toggle('active', currentAllocationStrategy === 'starter_safety');
+  if (btnUrban) btnUrban.classList.toggle('active', currentAllocationStrategy === 'urban_realistic');
+  if (btnWealth) btnWealth.classList.toggle('active', currentAllocationStrategy === 'wealth_acceleration');
+  if (btnFire) btnFire.classList.toggle('active', currentAllocationStrategy === 'fire_max');
+  if (btnCustom) btnCustom.classList.toggle('active', currentAllocationStrategy === 'custom');
+
+  // Nút Khôi phục chuẩn đề xuất
+  const resetWrap = document.getElementById('allocResetWrap');
+  if (resetWrap) {
+    resetWrap.style.display = currentAllocationStrategy === 'custom' ? 'block' : 'none';
+  }
+}
 
 function setAllocationStrategy(strategyId) {
   currentAllocationStrategy = strategyId;
-  const btnUrban = document.getElementById('btnStratUrban');
-  const btnFire = document.getElementById('btnStratFire');
-  const btnStarter = document.getElementById('btnStratStarter');
-  
-  if (btnUrban) btnUrban.classList.toggle('active', strategyId === 'urban_realistic');
-  if (btnFire) btnFire.classList.toggle('active', strategyId === 'fire_acceleration' || strategyId === 'fire');
-  if (btnStarter) btnStarter.classList.toggle('active', strategyId === 'starter_balanced' || strategyId === 'starter');
-
-  loadWealthAllocation(currentAllocationStrategy, currentSimIncome);
+  if (strategyId !== 'custom') {
+    lockedFunds = { needs: false, wants: false, savings: false };
+    const preset = STRATEGY_PRESETS[strategyId];
+    if (preset) {
+      fundPercentages.needs = preset.needsPct;
+      fundPercentages.wants = preset.wantsPct;
+      fundPercentages.savings = preset.savingsPct;
+    }
+  }
+  updateStrategyPillsUI();
+  applyAllocationCalculations();
 }
 
 function simulateIncome(amount) {
   currentSimIncome = amount === 0 ? null : amount;
 
   // Highlight active simulation chip
-  document.querySelectorAll('.sim-chip').forEach(chip => {
-    chip.classList.remove('active');
-  });
+  document.querySelectorAll('.sim-chip').forEach(chip => chip.classList.remove('active'));
   if (amount === 0) {
     const realChip = document.getElementById('simChipReal');
     if (realChip) realChip.classList.add('active');
   } else {
-    // Find matching chip by text
     document.querySelectorAll('.sim-chip').forEach(chip => {
       const txt = chip.textContent;
       if (amount === 15000000 && txt.includes('15')) chip.classList.add('active');
@@ -3700,14 +4377,476 @@ function simulateIncome(amount) {
     });
   }
 
-  loadWealthAllocation(currentAllocationStrategy, currentSimIncome);
+  // Thu nhập thực tế hoặc mô phỏng
+  const baseInc = (cachedAllocationData && cachedAllocationData.totalIncome > 0) ? cachedAllocationData.totalIncome : 106300000;
+  currentEffectiveIncome = (amount > 0) ? amount : baseInc;
+
+  // Cập nhật nhãn thu nhập cơ sở
+  const incValEl = document.getElementById('budgetIncomeValue');
+  if (incValEl) incValEl.textContent = fmt(currentEffectiveIncome) + "₫";
+
+  // Cập nhật Badge phân khúc thu nhập
+  const tierBadgeEl = document.getElementById('allocIncomeTierBadge');
+  if (tierBadgeEl) {
+    if (currentEffectiveIncome >= 50000000) {
+      tierBadgeEl.innerHTML = `<span class="badge-pill" style="background:rgba(245,212,133,0.15);color:var(--gold);font-size:10px;font-weight:700">✦ Priority Banking Tier</span>`;
+    } else if (currentEffectiveIncome >= 25000000) {
+      tierBadgeEl.innerHTML = `<span class="badge-pill" style="background:rgba(129,140,248,0.15);color:var(--violet);font-size:10px;font-weight:700">✦ Urban Premium Tier</span>`;
+    } else {
+      tierBadgeEl.innerHTML = `<span class="badge-pill" style="background:rgba(0,209,143,0.15);color:var(--mint);font-size:10px;font-weight:700">✦ Starter Foundation Tier</span>`;
+    }
+  }
+
+  // Tự động kích hoạt badge đề xuất tối ưu theo mức thu nhập
+  const recId = getRecommendedStrategyId(currentEffectiveIncome);
+  updateRecommendationBadges(recId);
+
+  // Nếu người dùng chưa khóa tỷ trọng, tự động chuyển sang chiến lược khuyến nghị
+  const hasLocks = Object.values(lockedFunds).some(Boolean);
+  if (currentAllocationStrategy !== 'custom' || !hasLocks) {
+    setAllocationStrategy(recId);
+  } else {
+    applyAllocationCalculations();
+  }
 }
 
+// BỘ ĐIỀU CHỈNH THANH TRƯỢT THÔNG MINH (INTERACTIVE SLIDERS + LOCKS)
+function handleFundSlider(changedKey, rawVal) {
+  let val = parseInt(rawVal, 10);
+  if (isNaN(val)) val = 5;
+  val = Math.max(5, Math.min(85, val));
+
+  if (lockedFunds[changedKey]) return;
+
+  // Tự động kích hoạt Custom Mode
+  currentAllocationStrategy = 'custom';
+  updateStrategyPillsUI();
+
+  const otherKeys = ['needs', 'wants', 'savings'].filter(k => k !== changedKey);
+  const k1 = otherKeys[0];
+  const k2 = otherKeys[1];
+
+  if (lockedFunds[k1] && lockedFunds[k2]) {
+    val = 100 - fundPercentages[k1] - fundPercentages[k2];
+    fundPercentages[changedKey] = Math.max(5, Math.min(85, val));
+  } else if (lockedFunds[k1] && !lockedFunds[k2]) {
+    let rem = 100 - val - fundPercentages[k1];
+    if (rem < 5) { rem = 5; val = 100 - fundPercentages[k1] - 5; }
+    if (rem > 85) { rem = 85; val = 100 - fundPercentages[k1] - 85; }
+    fundPercentages[changedKey] = val;
+    fundPercentages[k2] = rem;
+  } else if (lockedFunds[k2] && !lockedFunds[k1]) {
+    let rem = 100 - val - fundPercentages[k2];
+    if (rem < 5) { rem = 5; val = 100 - fundPercentages[k2] - 5; }
+    if (rem > 85) { rem = 85; val = 100 - fundPercentages[k2] - 85; }
+    fundPercentages[changedKey] = val;
+    fundPercentages[k1] = rem;
+  } else {
+    fundPercentages[changedKey] = val;
+    let remaining = 100 - val;
+    let currentOtherSum = fundPercentages[k1] + fundPercentages[k2];
+    let p1, p2;
+    if (currentOtherSum > 0) {
+      p1 = Math.round(fundPercentages[k1] * (remaining / currentOtherSum));
+      p2 = remaining - p1;
+    } else {
+      p1 = Math.floor(remaining / 2);
+      p2 = remaining - p1;
+    }
+    p1 = Math.max(5, Math.min(85, p1));
+    p2 = 100 - val - p1;
+    if (p2 < 5) { p2 = 5; p1 = 100 - val - 5; }
+    if (p2 > 85) { p2 = 85; p1 = 100 - val - 85; }
+    fundPercentages[k1] = p1;
+    fundPercentages[k2] = p2;
+  }
+
+  applyAllocationCalculations();
+}
+
+function startAmountEdit(fundKey) {
+  const displayEl = document.getElementById(`fundAmountDisplay_${fundKey}`);
+  const inputEl = document.getElementById(`fundAmountInput_${fundKey}`);
+  if (!displayEl || !inputEl) return;
+  displayEl.style.display = 'none';
+  inputEl.style.display = 'inline-block';
+  inputEl.value = fmt(Math.round(currentEffectiveIncome * (fundPercentages[fundKey] / 100)));
+  inputEl.focus();
+  inputEl.select();
+}
+
+function commitAmountEdit(fundKey, inputEl) {
+  const raw = (inputEl.value || '').replace(/[^\d]/g, '');
+  const num = parseFloat(raw) || 0;
+  if (num > 0 && currentEffectiveIncome > 0) {
+    const pct = Math.round((num / currentEffectiveIncome) * 100);
+    handleFundSlider(fundKey, pct);
+  }
+  const displayEl = document.getElementById(`fundAmountDisplay_${fundKey}`);
+  if (displayEl) displayEl.style.display = 'inline-flex';
+  inputEl.style.display = 'none';
+}
+
+function toggleFundLock(fundKey) {
+  const lockedCount = Object.values(lockedFunds).filter(Boolean).length;
+  if (!lockedFunds[fundKey] && lockedCount >= 2) {
+    showToast("Tối đa chỉ được khóa 2 quỹ để quỹ còn lại tự động bù trừ 100%!", "err");
+    return;
+  }
+  lockedFunds[fundKey] = !lockedFunds[fundKey];
+  const nameMap = { needs: 'Quỹ Vận hành', wants: 'Quỹ Nâng cấp', savings: 'Quỹ Tích sản' };
+  showToast(lockedFunds[fundKey] ? `Đã khóa cố định tỷ trọng ${nameMap[fundKey]}!` : `Đã mở khóa tỷ trọng ${nameMap[fundKey]}!`);
+  applyAllocationCalculations();
+}
+
+function resetToRecommended() {
+  lockedFunds = { needs: false, wants: false, savings: false };
+  const recId = getRecommendedStrategyId(currentEffectiveIncome);
+  setAllocationStrategy(recId);
+  showToast("Đã khôi phục về chiến lược chuẩn khuyến nghị cho mức thu nhập!");
+  if (typeof playAudioSuccess === 'function') playAudioSuccess();
+}
+
+// CÔNG THỨC TÍNH TOÁN DÒNG TIỀN VÀ HIỂN THỊ CHI TIẾT
+function applyAllocationCalculations() {
+  const income = currentEffectiveIncome;
+  const needsPct = fundPercentages.needs;
+  const wantsPct = fundPercentages.wants;
+  const savingsPct = fundPercentages.savings;
+
+  const needsTarget = Math.round(income * (needsPct / 100));
+  const wantsTarget = Math.round(income * (wantsPct / 100));
+  const savingsTarget = Math.round(income * (savingsPct / 100));
+
+  // 1. Cập nhật Tiêu đề & Mô tả chiến lược
+  const titleEl = document.getElementById('allocStrategyTitle');
+  const descEl = document.getElementById('allocStrategyDesc');
+  const incValEl = document.getElementById('budgetIncomeValue');
+  const strat = STRATEGY_PRESETS[currentAllocationStrategy] || STRATEGY_PRESETS.wealth_acceleration;
+
+  if (titleEl) {
+    titleEl.textContent = currentAllocationStrategy === 'custom' 
+      ? `Chiến lược Tùy chỉnh Cá nhân (${needsPct} / ${wantsPct} / ${savingsPct})` 
+      : strat.name;
+  }
+  if (descEl) descEl.textContent = strat.description;
+  if (incValEl) incValEl.textContent = fmt(income) + "₫";
+
+  // 2. Cập nhật Multi-segment Pool Bar
+  const segNeeds = document.getElementById('segNeeds');
+  const segWants = document.getElementById('segWants');
+  const segSavings = document.getElementById('segSavings');
+  if (segNeeds) { segNeeds.style.width = needsPct + "%"; segNeeds.textContent = `${needsPct}% Vận hành`; }
+  if (segWants) { segWants.style.width = wantsPct + "%"; segWants.textContent = `${wantsPct}% Nâng cấp`; }
+  if (segSavings) { segSavings.style.width = savingsPct + "%"; segSavings.textContent = `${savingsPct}% Tích sản`; }
+
+  // 3. Cập nhật Legend Row
+  const legNeedsVal = document.getElementById('legNeedsVal');
+  const legNeedsPct = document.getElementById('legNeedsPct');
+  const legWantsVal = document.getElementById('legWantsVal');
+  const legWantsPct = document.getElementById('legWantsPct');
+  const legSavingsVal = document.getElementById('legSavingsVal');
+  const legSavingsPct = document.getElementById('legSavingsPct');
+
+  if (legNeedsVal) legNeedsVal.textContent = fmt(needsTarget) + "₫";
+  if (legNeedsPct) legNeedsPct.textContent = needsPct + "%";
+  if (legWantsVal) legWantsVal.textContent = fmt(wantsTarget) + "₫";
+  if (legWantsPct) legWantsPct.textContent = wantsPct + "%";
+  if (legSavingsVal) legSavingsVal.textContent = fmt(savingsTarget) + "₫";
+  if (legSavingsPct) legSavingsPct.textContent = savingsPct + "%";
+
+  // 4. Chỉ báo Sức khỏe Phân bổ & Cảnh báo Thông minh (Smart Financial Guardrails)
+  renderHealthGuardrail(needsPct, wantsPct, savingsPct, income);
+
+  // 5. Dự phóng Tích lũy Lãi kép 1 năm (10%/năm)
+  const rMo = 0.10 / 12;
+  const projectedSavings1Y = savingsTarget > 0
+    ? Math.round(savingsTarget * ((Math.pow(1 + rMo, 12) - 1) / rMo) * (1 + rMo))
+    : 0;
+
+  // 6. Phân rã Hạng mục con (Sub-Buckets)
+  const needsSubs = [
+    { name: 'Nhà ở & Hóa đơn', pct: 50, amount: Math.round(needsTarget * 0.50), desc: 'Tiền thuê/mua nhà, điện nước, internet sinh hoạt' },
+    { name: 'Ẩm thực & Sinh hoạt', pct: 35, amount: Math.round(needsTarget * 0.35), desc: 'Ăn uống dinh dưỡng, siêu thị & nhu yếu phẩm hàng ngày' },
+    { name: 'Y tế & Bảo hiểm', pct: 15, amount: Math.round(needsTarget * 0.15), desc: 'Bảo hiểm sức khỏe, khám định kỳ & thuốc men' }
+  ];
+  const wantsSubs = [
+    { name: 'Đào tạo & Kỹ năng', pct: 35, amount: Math.round(wantsTarget * 0.35), desc: 'Sách, khóa học nâng cao nghiệp vụ, chứng chỉ nghề' },
+    { name: 'Networking & Quan hệ', pct: 40, amount: Math.round(wantsTarget * 0.40), desc: 'Cafe đối tác, duy trì và phát triển mạng lưới công việc' },
+    { name: 'Trải nghiệm & Giải trí', pct: 25, amount: Math.round(wantsTarget * 0.25), desc: 'Du lịch, thể thao, tái tạo năng lượng sáng tạo' }
+  ];
+  const savingsSubs = [
+    { name: 'Dự phòng Sinh lời tự động', pct: 20, amount: Math.round(savingsTarget * 0.20), desc: 'Quỹ khẩn cấp 6 tháng (sinh lời qua đêm/Money Market)' },
+    { name: 'Đầu tư Tăng trưởng ETF/Cổ phiếu', pct: 50, amount: Math.round(savingsTarget * 0.50), desc: 'Tích sản chỉ số VN30/Diamond, cổ phiếu tăng trưởng' },
+    { name: 'Tài sản Phòng vệ Vàng/Trái phiếu', pct: 30, amount: Math.round(savingsTarget * 0.30), desc: 'Vàng miếng tích lũy, trái phiếu tổ chức uy tín' }
+  ];
+
+  // Helper render Sub-Buckets HTML
+  const renderSubsHtml = (subs, fundColor) => `
+    <div class="fund-sub-box">
+      <div class="fund-sub-head">
+        <span>PHÂN RÃ HẠNG MỤC CON THEO ĐỊNH MỨC</span>
+        <span>HẠN MỨC GỢI Ý</span>
+      </div>
+      ${subs.map(s => `
+        <div class="sub-bucket-row" title="${s.desc}">
+          <div class="sub-bucket-meta">
+            <span class="sub-bucket-name">
+              ${s.name} <span class="sub-bucket-pct">(${s.pct}%)</span>
+            </span>
+            <span class="sub-bucket-amount" style="color:${fundColor}">${fmt(s.amount)}₫</span>
+          </div>
+          <div class="sub-bucket-track">
+            <div class="sub-bucket-fill" style="width:${s.pct}%;background:${fundColor}"></div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+
+  // 7. Render 3 Thẻ Quỹ Chi Tiết (Fine-Tuning Studio)
+  const cardsHtml = `
+    <!-- 1. QUỸ VẬN HÀNH ĐỜI SỐNG -->
+    <div class="rule-sub-box" style="border-color:rgba(16, 185, 129, 0.4);background:radial-gradient(ellipse at top left, rgba(16,185,129,0.08), transparent 70%), rgba(255,255,255,0.02)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;background:rgba(16,185,129,0.15);color:#10B981;padding:3px 9px;border-radius:99px;font-weight:700">Thiết yếu</span>
+          <small style="color:#10B981;font-weight:800;letter-spacing:0.04em">QUỸ VẬN HÀNH ĐỜI SỐNG</small>
+        </div>
+        <button type="button" class="fund-lock-btn ${lockedFunds.needs ? 'locked' : ''}" onclick="toggleFundLock('needs')" title="${lockedFunds.needs ? 'Đang khóa tỷ trọng - Nhấn để mở khóa' : 'Nhấn để khóa cố định tỷ trọng'}">
+          ${lockedFunds.needs 
+            ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Đã khóa</span>' 
+            : '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>'}
+        </button>
+      </div>
+
+      <!-- Amount Edit Area -->
+      <div style="margin: 6px 0 2px">
+        <div class="fund-amount-box" onclick="startAmountEdit('needs')" title="Bấm để chỉnh sửa số tiền trực tiếp">
+          <b id="fundAmountDisplay_needs" style="color:#10B981;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">${fmt(needsTarget)}₫</b>
+          <input type="text" class="fund-num-input" id="fundAmountInput_needs" style="display:none" onblur="commitAmountEdit('needs', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('needs', this)">
+          <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </div>
+        <p style="font-weight:500;color:var(--text);font-size:12px;margin-top:2px">Chi phí Thiết yếu (Nhà ở, Ăn uống, Điện nước, Y tế)</p>
+      </div>
+
+      <!-- Slider Control -->
+      <div class="fund-slider-box">
+        <div class="fund-slider-head">
+          <span>Tỷ trọng ngân sách: <strong style="color:#10B981;font-size:12.5px">${needsPct}%</strong></span>
+          <span style="font-size:10px;color:var(--muted)">Min 5% — Max 85%</span>
+        </div>
+        <input type="range" min="5" max="85" value="${needsPct}" class="fund-slider fund-slider-needs" ${lockedFunds.needs ? 'disabled' : ''} oninput="handleFundSlider('needs', this.value)">
+      </div>
+
+      <!-- Sub-Buckets Breakdown -->
+      ${renderSubsHtml(needsSubs, '#10B981')}
+
+      <div style="font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#10B981" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span style="color:rgba(255,255,255,0.85)">Giới hạn chi phí thiết yếu dưới tỷ trọng quy định để đảm bảo thanh khoản an toàn.</span>
+      </div>
+    </div>
+
+    <!-- 2. QUỸ NÂNG CẤP & PHONG CÁCH SỐNG -->
+    <div class="rule-sub-box" style="border-color:rgba(99, 102, 241, 0.4);background:radial-gradient(ellipse at top left, rgba(99,102,241,0.08), transparent 70%), rgba(255,255,255,0.02)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;background:rgba(99,102,241,0.15);color:#818CF8;padding:3px 9px;border-radius:99px;font-weight:700">Linh hoạt</span>
+          <small style="color:#818CF8;font-weight:800;letter-spacing:0.04em">QUỸ NÂNG CẤP &amp; PHONG CÁCH</small>
+        </div>
+        <button type="button" class="fund-lock-btn ${lockedFunds.wants ? 'locked' : ''}" onclick="toggleFundLock('wants')" title="${lockedFunds.wants ? 'Đang khóa tỷ trọng - Nhấn để mở khóa' : 'Nhấn để khóa cố định tỷ trọng'}">
+          ${lockedFunds.wants 
+            ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Đã khóa</span>' 
+            : '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>'}
+        </button>
+      </div>
+
+      <!-- Amount Edit Area -->
+      <div style="margin: 6px 0 2px">
+        <div class="fund-amount-box" onclick="startAmountEdit('wants')" title="Bấm để chỉnh sửa số tiền trực tiếp">
+          <b id="fundAmountDisplay_wants" style="color:#818CF8;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">${fmt(wantsTarget)}₫</b>
+          <input type="text" class="fund-num-input" id="fundAmountInput_wants" style="display:none" onblur="commitAmountEdit('wants', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('wants', this)">
+          <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </div>
+        <p style="font-weight:500;color:var(--text);font-size:12px;margin-top:2px">Phát triển Bản thân &amp; Linh hoạt (Học tập, Networking, Trải nghiệm)</p>
+      </div>
+
+      <!-- Slider Control -->
+      <div class="fund-slider-box">
+        <div class="fund-slider-head">
+          <span>Tỷ trọng ngân sách: <strong style="color:#818CF8;font-size:12.5px">${wantsPct}%</strong></span>
+          <span style="font-size:10px;color:var(--muted)">Min 5% — Max 85%</span>
+        </div>
+        <input type="range" min="5" max="85" value="${wantsPct}" class="fund-slider fund-slider-wants" ${lockedFunds.wants ? 'disabled' : ''} oninput="handleFundSlider('wants', this.value)">
+      </div>
+
+      <!-- Sub-Buckets Breakdown -->
+      ${renderSubsHtml(wantsSubs, '#818CF8')}
+
+      <div style="font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#818CF8" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
+        <span style="color:rgba(255,255,255,0.85)">Đầu tư vào kỹ năng chuyên môn và mở rộng networking mang lại lợi nhuận nghề nghiệp vượt trội.</span>
+      </div>
+    </div>
+
+    <!-- 3. QUỸ TÍCH SẢN & TỰ DO TÀI CHÍNH -->
+    <div class="rule-sub-box" style="border-color:rgba(245, 158, 11, 0.4);background:radial-gradient(ellipse at top left, rgba(245,158,11,0.08), transparent 70%), rgba(255,255,255,0.02)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;background:rgba(245,158,11,0.15);color:#F59E0B;padding:3px 9px;border-radius:99px;font-weight:700">Tích lũy</span>
+          <small style="color:#F59E0B;font-weight:800;letter-spacing:0.04em">QUỸ TÍCH SẢN &amp; TỰ DO TÀI CHÍNH</small>
+        </div>
+        <button type="button" class="fund-lock-btn ${lockedFunds.savings ? 'locked' : ''}" onclick="toggleFundLock('savings')" title="${lockedFunds.savings ? 'Đang khóa tỷ trọng - Nhấn để mở khóa' : 'Nhấn để khóa cố định tỷ trọng'}">
+          ${lockedFunds.savings 
+            ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Đã khóa</span>' 
+            : '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>'}
+        </button>
+      </div>
+
+      <!-- Amount Edit Area -->
+      <div style="margin: 6px 0 2px">
+        <div class="fund-amount-box" onclick="startAmountEdit('savings')" title="Bấm để chỉnh sửa số tiền trực tiếp">
+          <b id="fundAmountDisplay_savings" style="color:#F59E0B;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">${fmt(savingsTarget)}₫</b>
+          <input type="text" class="fund-num-input" id="fundAmountInput_savings" style="display:none" onblur="commitAmountEdit('savings', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('savings', this)">
+          <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </div>
+        <p style="font-weight:500;color:var(--text);font-size:12px;margin-top:2px">Đầu tư Sinh lời &amp; Dự phòng (Quỹ khẩn cấp 6 tháng, Tích lũy)</p>
+      </div>
+
+      <!-- Slider Control -->
+      <div class="fund-slider-box">
+        <div class="fund-slider-head">
+          <span>Tỷ trọng ngân sách: <strong style="color:#F59E0B;font-size:12.5px">${savingsPct}%</strong></span>
+          <span style="font-size:10px;color:var(--muted)">Min 5% — Max 85%</span>
+        </div>
+        <input type="range" min="5" max="85" value="${savingsPct}" class="fund-slider fund-slider-savings" ${lockedFunds.savings ? 'disabled' : ''} oninput="handleFundSlider('savings', this.value)">
+      </div>
+
+      <!-- Sub-Buckets Breakdown -->
+      ${renderSubsHtml(savingsSubs, '#F59E0B')}
+
+      <!-- Compound Interest Wealth Projection Box -->
+      <div class="compound-projection-box">
+        <div class="proj-head">
+          <span style="display:flex;align-items:center;gap:6px">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
+            DỰ BÁO TÍCH LŨY PRIVATE BANKING
+          </span>
+          <span class="proj-rate-badge">+10%/năm lãi kép</span>
+        </div>
+        <div class="proj-value-row">
+          <span style="font-size:12px;color:var(--muted)">Dự kiến tích lũy sau 1 năm:</span>
+          <span class="proj-amount">${fmt(projectedSavings1Y)}₫</span>
+        </div>
+        <div class="proj-subtext">
+          Tính toán dựa trên cơ chế gửi góp đều đặn <strong>${fmt(savingsTarget)}₫/tháng</strong> và tự động tái đầu tư sinh lời.
+        </div>
+      </div>
+    </div>
+  `;
+
+  const detailCards = document.getElementById('budgetDetailCards');
+  if (detailCards) detailCards.innerHTML = cardsHtml;
+  const ruleCols = document.getElementById('ruleThreeCols');
+  if (ruleCols) ruleCols.innerHTML = cardsHtml;
+
+  // 8. Cập nhật Đối chiếu Dòng tiền Thực tế
+  renderRealityCheck(needsTarget, wantsTarget, needsPct, wantsPct);
+}
+
+// HIỂN THỊ CHỈ BÁO SỨC KHỎE DÒNG TIỀN (SMART GUARDRAILS BANNER)
+function renderHealthGuardrail(needsPct, wantsPct, savingsPct, income) {
+  const banner = document.getElementById('allocHealthBanner');
+  if (!banner) return;
+
+  let status = 'optimal';
+  let title = 'Cấu trúc dòng tiền tối ưu: Đạt chuẩn tích sản bền vững Private Banking.';
+  let desc = 'Tỷ lệ phân bổ phản ánh chính xác cấu trúc tài chính lành mạnh, đẩy mạnh dòng tiền tích lũy và bảo vệ chất lượng sống.';
+  let iconSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>`;
+
+  if (needsPct > 50 && income >= 50000000) {
+    status = 'warning';
+    title = 'Lưu ý: Chi phí vận hành đang vượt ngưỡng khuyến nghị (35.000.000đ/tháng) đối với phân khúc thu nhập cao.';
+    desc = 'Bạn có thể tối ưu thêm dòng tiền sang Quỹ Tích sản để gia tăng tốc độ gia tăng tài sản ròng theo Định luật Engel.';
+    iconSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+  } else if (savingsPct < 20) {
+    status = 'danger';
+    title = 'Cảnh báo: Tỷ lệ tích sản dưới ngưỡng an toàn 20%, làm chậm tiến độ xây dựng Quỹ dự phòng 6 tháng.';
+    desc = 'Nên duy trì tỷ lệ tích sản tối thiểu 20-25% để đảm bảo an toàn tài chính trước các biến động không lường trước.';
+    iconSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+  }
+
+  banner.className = `alloc-health-banner ${status}`;
+  banner.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;flex:1;min-width:280px">
+      <div class="health-icon-wrap">
+        ${iconSvg}
+      </div>
+      <div class="health-content">
+        <div class="health-title">${title}</div>
+        <div class="health-desc">${desc}</div>
+      </div>
+    </div>
+    ${currentAllocationStrategy === 'custom' 
+      ? `<button type="button" class="btn-reset-rec" onclick="resetToRecommended()">↺ Khôi phục chuẩn đề xuất</button>` 
+      : ''}
+  `;
+}
+
+// ĐỐI CHIẾU DÒNG TIỀN THỰC TẾ
+function renderRealityCheck(needsBudget, wantsBudget, needsPct, wantsPct) {
+  const compBox = document.getElementById('budgetComparisonContent');
+  if (!compBox) return;
+
+  const actualExpense = totalExpenseStored || 0;
+  const needsPctUsed = needsBudget > 0 ? Math.min(100, Math.round((actualExpense * 0.7 / needsBudget) * 100)) : 0;
+  const wantsPctUsed = wantsBudget > 0 ? Math.min(100, Math.round((actualExpense * 0.3 / wantsBudget) * 100)) : 0;
+
+  compBox.innerHTML = `
+    <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:14px;padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-weight:600">Định mức Vận hành Đời sống (${needsPct}%)</span>
+        <span style="font-family:var(--font-num);color:#10B981;font-size:13px;font-weight:700">Hạn mức kỳ: ${fmt(needsBudget)}₫</span>
+      </div>
+      <div style="height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden">
+        <div style="height:100%;width:${actualExpense === 0 ? 0 : Math.max(5, needsPctUsed)}%;background:#10B981;border-radius:99px;transition:width 0.4s ease"></div>
+      </div>
+      <small style="color:var(--muted);margin-top:8px;display:block">
+        ${actualExpense === 0 
+          ? 'Tài khoản bắt đầu từ con số 0. Hãy ghi chép khoản chi đầu tiên để hệ thống đối soát tự động.' 
+          : `Ước tính đã sử dụng khoảng ${needsPctUsed}% hạn mức thiết yếu. Kiểm soát tốt dưới 100% để duy trì kỷ luật.`}
+      </small>
+    </div>
+
+    <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:14px;padding:18px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span style="font-weight:600">Định mức Nâng cấp &amp; Phong cách (${wantsPct}%)</span>
+        <span style="font-family:var(--font-num);color:#818CF8;font-size:13px;font-weight:700">Hạn mức kỳ: ${fmt(wantsBudget)}₫</span>
+      </div>
+      <div style="height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden">
+        <div style="height:100%;width:${actualExpense === 0 ? 0 : Math.max(5, wantsPctUsed)}%;background:#818CF8;border-radius:99px;transition:width 0.4s ease"></div>
+      </div>
+      <small style="color:var(--muted);margin-top:8px;display:block">
+        ${actualExpense === 0 
+          ? 'Ngân sách linh hoạt đã sẵn sàng: Dành cho học tập phát triển bản thân và trải nghiệm cá nhân.' 
+          : `Còn lại khoảng ${Math.max(0, 100 - wantsPctUsed)}% ngân sách linh hoạt cho giai đoạn tiếp theo.`}
+      </small>
+    </div>
+  `;
+}
+
+// TẢI DỮ LIỆU TỪ BACKEND
 async function loadWealthAllocation(strategy = currentAllocationStrategy, simIncome = currentSimIncome) {
   try {
     const params = new URLSearchParams();
     if (strategy) params.set('strategy', strategy);
     if (simIncome) params.set('income', simIncome);
+    if (strategy === 'custom') {
+      params.set('needs', fundPercentages.needs);
+      params.set('wants', fundPercentages.wants);
+      params.set('savings', fundPercentages.savings);
+    }
 
     const res = await fetch(`${API_BASE}/api/budget/allocation?${params.toString()}`, {
       headers: { 'Authorization': `Bearer ${authToken}` }
@@ -3717,137 +4856,152 @@ async function loadWealthAllocation(strategy = currentAllocationStrategy, simInc
     const alloc = data.allocation || data.rule;
     cachedAllocationData = alloc;
 
-    // 1. Cập nhật Tiêu đề và Mô tả chiến lược
-    const titleEl = document.getElementById('allocStrategyTitle');
-    const descEl = document.getElementById('allocStrategyDesc');
-    const incValEl = document.getElementById('budgetIncomeValue');
-    if (titleEl && alloc.strategy) titleEl.textContent = alloc.strategy.name;
-    if (descEl && alloc.strategy) descEl.textContent = alloc.strategy.description;
-    if (incValEl) incValEl.textContent = fmt(alloc.totalIncome) + "₫";
-
-    // 2. Cập nhật Multi-segment Pool Bar (Lucian #171)
-    const segNeeds = document.getElementById('segNeeds');
-    const segWants = document.getElementById('segWants');
-    const segSavings = document.getElementById('segSavings');
-
-    if (segNeeds) {
-      segNeeds.style.width = alloc.needs.percentage + "%";
-      segNeeds.textContent = `${alloc.needs.percentage}% Vận hành`;
-    }
-    if (segWants) {
-      segWants.style.width = alloc.wants.percentage + "%";
-      segWants.textContent = `${alloc.wants.percentage}% Nâng cấp`;
-    }
-    if (segSavings) {
-      segSavings.style.width = alloc.savings.percentage + "%";
-      segSavings.textContent = `${alloc.savings.percentage}% Tích sản`;
+    // Cập nhật mức thu nhập thực tế nếu có
+    if (alloc.totalIncome > 0 && !simIncome) {
+      currentEffectiveIncome = alloc.totalIncome;
+      // Cập nhật tên nút simChipReal
+      const realChip = document.getElementById('simChipReal');
+      if (realChip) realChip.textContent = `Thực tế tài khoản: ${fmt(alloc.totalIncome)}₫`;
     }
 
-    // 3. Cập nhật Legend Row
-    const legNeedsVal = document.getElementById('legNeedsVal');
-    const legNeedsPct = document.getElementById('legNeedsPct');
-    const legWantsVal = document.getElementById('legWantsVal');
-    const legWantsPct = document.getElementById('legWantsPct');
-    const legSavingsVal = document.getElementById('legSavingsVal');
-    const legSavingsPct = document.getElementById('legSavingsPct');
-
-    if (legNeedsVal) legNeedsVal.textContent = fmt(alloc.needs.target) + "₫";
-    if (legNeedsPct) legNeedsPct.textContent = alloc.needs.percentage + "%";
-    if (legWantsVal) legWantsVal.textContent = fmt(alloc.wants.target) + "₫";
-    if (legWantsPct) legWantsPct.textContent = alloc.wants.percentage + "%";
-    if (legSavingsVal) legSavingsVal.textContent = fmt(alloc.savings.target) + "₫";
-    if (legSavingsPct) legSavingsPct.textContent = alloc.savings.percentage + "%";
-
-    // 4. Render 3 thẻ phân bổ chi tiết với chuẩn thẩm mỹ Ngân hàng
-    const cardsHtml = `
-      <div class="rule-sub-box" style="border-color:rgba(0, 209, 143, 0.35);background:radial-gradient(ellipse at top left, rgba(0,209,143,0.08), transparent 70%), rgba(255,255,255,0.02)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <small style="color:var(--mint);font-weight:700;letter-spacing:0.04em">${alloc.needs.percentage}% ${alloc.needs.name.toUpperCase()}</small>
-          <span style="font-size:11px;background:rgba(0,209,143,0.15);color:var(--mint);padding:2px 8px;border-radius:99px;font-weight:600">Thiết yếu</span>
-        </div>
-        <b style="color:var(--mint);font-size:22px">${fmt(alloc.needs.target)}₫</b>
-        <p style="font-weight:500;color:var(--text);margin-top:6px">${alloc.needs.label}</p>
-        <div style="font-size:11.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--mint)" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <span style="color:rgba(255,255,255,0.85)">${alloc.needs.advice}</span>
-        </div>
-      </div>
-
-      <div class="rule-sub-box" style="border-color:rgba(155, 140, 255, 0.35);background:radial-gradient(ellipse at top left, rgba(155,140,255,0.08), transparent 70%), rgba(255,255,255,0.02)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <small style="color:var(--violet);font-weight:700;letter-spacing:0.04em">${alloc.wants.percentage}% ${alloc.wants.name.toUpperCase()}</small>
-          <span style="font-size:11px;background:rgba(155,140,255,0.15);color:var(--violet);padding:2px 8px;border-radius:99px;font-weight:600">Linh hoạt</span>
-        </div>
-        <b style="color:var(--violet);font-size:22px">${fmt(alloc.wants.target)}₫</b>
-        <p style="font-weight:500;color:var(--text);margin-top:6px">${alloc.wants.label}</p>
-        <div style="font-size:11.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--violet)" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
-          <span style="color:rgba(255,255,255,0.85)">${alloc.wants.advice}</span>
-        </div>
-      </div>
-
-      <div class="rule-sub-box" style="border-color:rgba(232, 197, 124, 0.35);background:radial-gradient(ellipse at top left, rgba(232,197,124,0.08), transparent 70%), rgba(255,255,255,0.02)">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <small style="color:var(--gold);font-weight:700;letter-spacing:0.04em">${alloc.savings.percentage}% ${alloc.savings.name.toUpperCase()}</small>
-          <span style="font-size:11px;background:rgba(232,197,124,0.15);color:var(--gold);padding:2px 8px;border-radius:99px;font-weight:600">Tích lũy</span>
-        </div>
-        <b style="color:var(--gold);font-size:22px">${fmt(alloc.savings.target)}₫</b>
-        <p style="font-weight:500;color:var(--text);margin-top:6px">${alloc.savings.label}</p>
-        <div style="font-size:11.5px;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--gold)" stroke-width="2" style="flex:none;margin-top:2px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
-          <span style="color:rgba(255,255,255,0.85)">${alloc.savings.advice}</span>
-        </div>
-      </div>
-    `;
-
-    const detailCards = document.getElementById('budgetDetailCards');
-    if (detailCards) detailCards.innerHTML = cardsHtml;
-    const ruleCols = document.getElementById('ruleThreeCols');
-    if (ruleCols) ruleCols.innerHTML = cardsHtml;
-
-    // 5. Đối chiếu chi tiêu thực tế
-    const actualExpense = totalExpenseStored || 0;
-    const needsBudget = alloc.needs.target;
-    const wantsBudget = alloc.wants.target;
-    const needsPctUsed = needsBudget > 0 ? Math.min(100, Math.round((actualExpense * 0.7 / needsBudget) * 100)) : 0;
-    const wantsPctUsed = wantsBudget > 0 ? Math.min(100, Math.round((actualExpense * 0.3 / wantsBudget) * 100)) : 0;
-
-    const compBox = document.getElementById('budgetComparisonContent');
-    if (compBox) {
-      compBox.innerHTML = `
-        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:14px;padding:18px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-weight:600">Định mức Vận hành Đời sống (${alloc.needs.percentage}%)</span>
-            <span style="font-family:var(--font-num);color:var(--mint);font-size:13px;font-weight:700">Hạn mức kỳ: ${fmt(needsBudget)}₫</span>
-          </div>
-          <div style="height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden">
-            <div style="height:100%;width:${actualExpense === 0 ? 0 : Math.max(5, needsPctUsed)}%;background:var(--mint);border-radius:99px;transition:width 0.4s ease"></div>
-          </div>
-          <small style="color:var(--muted);margin-top:8px;display:block">
-            ${actualExpense === 0 
-              ? 'Tài khoản bắt đầu từ con số 0. Hãy ghi chép khoản chi đầu tiên để hệ thống đối soát tự động.' 
-              : `Ước tính đã sử dụng khoảng ${needsPctUsed}% hạn mức thiết yếu. Kiểm soát tốt dưới 100% để duy trì kỷ luật.`}
-          </small>
-        </div>
-
-        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:14px;padding:18px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <span style="font-weight:600">Định mức Nâng cấp & Phong cách (${alloc.wants.percentage}%)</span>
-            <span style="font-family:var(--font-num);color:var(--violet);font-size:13px;font-weight:700">Hạn mức kỳ: ${fmt(wantsBudget)}₫</span>
-          </div>
-          <div style="height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden">
-            <div style="height:100%;width:${actualExpense === 0 ? 0 : Math.max(5, wantsPctUsed)}%;background:var(--violet);border-radius:99px;transition:width 0.4s ease"></div>
-          </div>
-          <small style="color:var(--muted);margin-top:8px;display:block">
-            ${actualExpense === 0 
-              ? 'Ngân sách linh hoạt đã sẵn sàng: Dành cho học tập phát triển bản thân và trải nghiệm cá nhân.' 
-              : `Còn lại khoảng ${Math.max(0, 100 - wantsPctUsed)}% ngân sách linh hoạt cho giai đoạn tiếp theo.`}
-          </small>
-        </div>
-      `;
+    // Đồng bộ phần trăm từ server nếu không phải custom mode do client chỉnh
+    if (currentAllocationStrategy !== 'custom' && alloc.needs && alloc.wants && alloc.savings) {
+      fundPercentages.needs = alloc.needs.percentage;
+      fundPercentages.wants = alloc.wants.percentage;
+      fundPercentages.savings = alloc.savings.percentage;
+      if (alloc.strategy && alloc.strategy.id) {
+        currentAllocationStrategy = alloc.strategy.id;
+      }
     }
+
+    // Đề xuất tối ưu
+    const recId = alloc.recommendedStrategyId || getRecommendedStrategyId(currentEffectiveIncome);
+    updateRecommendationBadges(recId);
+    updateStrategyPillsUI();
+    applyAllocationCalculations();
+
+    // Tải cấu hình Auto-Sweep từ server nếu có
+    loadAutoSweepStatus();
   } catch (err) {
     console.error("loadWealthAllocation error:", err);
+    applyAllocationCalculations();
+  }
+}
+
+// AUTO-SWEEP CONTROLLER
+function openAutoSweepModal() {
+  const income = currentEffectiveIncome;
+  const needsAmt = Math.round(income * (fundPercentages.needs / 100));
+  const wantsAmt = Math.round(income * (fundPercentages.wants / 100));
+  const savingsAmt = Math.round(income * (fundPercentages.savings / 100));
+
+  const incLbl = document.getElementById('sweepIncomeLabel');
+  if (incLbl) incLbl.textContent = fmt(income) + "₫";
+
+  const nPct = document.getElementById('sweepNeedsPct');
+  const nAmt = document.getElementById('sweepNeedsAmount');
+  if (nPct) nPct.textContent = fundPercentages.needs + "%";
+  if (nAmt) nAmt.textContent = fmt(needsAmt) + "₫";
+
+  const wPct = document.getElementById('sweepWantsPct');
+  const wAmt = document.getElementById('sweepWantsAmount');
+  if (wPct) wPct.textContent = fundPercentages.wants + "%";
+  if (wAmt) wAmt.textContent = fmt(wantsAmt) + "₫";
+
+  const sPct = document.getElementById('sweepSavingsPct');
+  const sAmt = document.getElementById('sweepSavingsAmount');
+  if (sPct) sPct.textContent = fundPercentages.savings + "%";
+  if (sAmt) sAmt.textContent = fmt(savingsAmt) + "₫";
+
+  const modal = document.getElementById('autoSweepModal');
+  if (modal) modal.classList.add('open');
+}
+
+function closeAutoSweepModal() {
+  const modal = document.getElementById('autoSweepModal');
+  if (modal) modal.classList.remove('open');
+}
+
+function selectSweepSchedule(schedId) {
+  autoSweepSchedule = schedId;
+  const items = document.querySelectorAll('.sweep-schedule-item');
+  items.forEach(item => item.classList.remove('active'));
+
+  const radio = document.querySelector(`input[name="sweepSchedule"][value="${schedId}"]`);
+  if (radio) {
+    radio.checked = true;
+    const parent = radio.closest('.sweep-schedule-item');
+    if (parent) parent.classList.add('active');
+  }
+}
+
+async function handleConfirmAutoSweep() {
+  const scheduleLabels = {
+    day_05: 'Ngày 05 hàng tháng',
+    day_15: 'Ngày 15 hàng tháng',
+    instant: 'Ngay khi phát sinh thu nhập'
+  };
+  const label = scheduleLabels[autoSweepSchedule] || 'Ngày 05 hàng tháng';
+
+  try {
+    const payload = {
+      schedule: autoSweepSchedule,
+      percentages: fundPercentages,
+      autoInvest: document.getElementById('sweepOptAutoInvest') ? document.getElementById('sweepOptAutoInvest').checked : true,
+      notify: document.getElementById('sweepOptNotify') ? document.getElementById('sweepOptNotify').checked : true
+    };
+
+    localStorage.setItem('DONG_AUTOSWEEP', JSON.stringify(payload));
+
+    if (authToken) {
+      await fetch(`${API_BASE}/api/budget/auto-sweep`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify(payload)
+      });
+    }
+
+    closeAutoSweepModal();
+    showToast(`Đã thiết lập thành công cơ chế Auto-Sweep tự động phân bổ! Kỳ quét: ${label}`);
+    if (typeof playAudioSuccess === 'function') playAudioSuccess();
+
+    // Hiển thị badge kích hoạt trên CTA bar
+    const badge = document.getElementById('autoSweepStatusBadge');
+    if (badge) {
+      badge.style.display = 'block';
+      badge.innerHTML = `<span class="sweep-active-chip"><span class="sweep-dot"></span> Đang bật Auto-Sweep (Kỳ: ${label})</span>`;
+    }
+  } catch (err) {
+    console.error('Auto-sweep error:', err);
+    closeAutoSweepModal();
+    showToast(`Đã lưu thiết lập Auto-Sweep cục bộ cho tài khoản! Kỳ quét: ${label}`);
+  }
+}
+
+async function loadAutoSweepStatus() {
+  try {
+    const raw = localStorage.getItem('DONG_AUTOSWEEP');
+    if (raw) {
+      const cfg = JSON.parse(raw);
+      if (cfg && cfg.schedule) {
+        const scheduleLabels = {
+          day_05: 'Ngày 05 hàng tháng',
+          day_15: 'Ngày 15 hàng tháng',
+          instant: 'Ngay khi có thu nhập'
+        };
+        const label = scheduleLabels[cfg.schedule] || 'Ngày 05 hàng tháng';
+        const badge = document.getElementById('autoSweepStatusBadge');
+        if (badge) {
+          badge.style.display = 'block';
+          badge.innerHTML = `<span class="sweep-active-chip"><span class="sweep-dot"></span> Đang bật Auto-Sweep (Kỳ: ${label})</span>`;
+        }
+      }
+    }
+  } catch (e) {
+    // Ignore local storage error
   }
 }
 
