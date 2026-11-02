@@ -1377,7 +1377,7 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   font-weight: 700;
   color: #052019;
   letter-spacing: 0.02em;
-  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.12s ease-out;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -1532,6 +1532,8 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   outline: none;
   transition: opacity 0.2s;
   margin: 4px 0;
+  touch-action: pan-y;
+  cursor: grab;
 }
 .fund-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
@@ -1657,7 +1659,7 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
 .sub-bucket-fill {
   height: 100%;
   border-radius: 99px;
-  transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.15s ease-out;
 }
 
 /* Compound Wealth Projection Box */
@@ -1719,6 +1721,129 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   color: var(--muted);
   margin-top: 4px;
   line-height: 1.4;
+}
+
+/* Emergency Buffer Overflow Gate */
+.emergency-buffer-box {
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 14px;
+}
+.buffer-gate-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gold);
+}
+.buffer-gate-toggle {
+  display: flex;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 3px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  margin-top: 8px;
+  gap: 4px;
+}
+.buffer-gate-btn {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.buffer-gate-btn:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
+}
+.buffer-gate-btn.active {
+  background: rgba(245, 158, 11, 0.2);
+  color: #FBBF24;
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 0 12px -2px rgba(245, 158, 11, 0.35);
+}
+.buffer-gate-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(245, 158, 11, 0.9);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* Banking Micro-Metrics */
+.daily-safe-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-size: 11px;
+  margin-top: 8px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.daily-safe-pill strong {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+}
+.overnight-yield-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.22);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.4;
+}
+.proj-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+.proj-grid-cell {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(245, 158, 11, 0.22);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.proj-grid-cell small {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.proj-grid-cell strong {
+  font-family: var(--font-num);
+  font-size: 16px;
+  color: #FBBF24;
+  margin-top: 2px;
+  display: block;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
 }
 
 /* Actionable Banking CTA Bar */
@@ -2683,7 +2808,7 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
               <span class="badge-pill" style="background:rgba(232,197,124,0.15);color:var(--gold);margin-bottom:8px;display:inline-flex">
                 ✦ SMART WEALTH ALLOCATION ENGINE
               </span>
-              <h3 id="allocStrategyTitle" style="font-size:20px;font-weight:800;letter-spacing:-0.01em;margin-top:4px">Chiến lược Tăng tốc Thịnh vượng - Private Wealth (30 / 25 / 45)</h3>
+              <h3 id="allocStrategyTitle" style="font-size:20px;font-weight:800;letter-spacing:-0.01em;margin-top:4px">Chiến lược Chuẩn Private Wealth (30 / 25 / 45)</h3>
               <p id="allocStrategyDesc" style="font-size:13px;color:var(--muted);margin-top:6px;max-width:720px;line-height:1.6">
                 Chuẩn phân bổ Priority Banking theo Định luật Engel: Tối ưu hóa chi phí sinh hoạt, đẩy mạnh dòng tiền vào nhân bản tài sản.
               </p>
@@ -2707,17 +2832,17 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
             </button>
             <button type="button" class="strat-pill-btn" id="btnStratUrban" onclick="setAllocationStrategy('urban_realistic')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/></svg>
-              <span>Thực tế Đô thị (50 / 25 / 25)</span>
+              <span>Cân bằng Đô thị (50 / 25 / 25)</span>
               <span class="strat-rec-badge" id="recBadgeUrban" style="display:none">✦ Đề xuất tối ưu</span>
             </button>
             <button type="button" class="strat-pill-btn strat-wealth active" id="btnStratWealth" onclick="setAllocationStrategy('wealth_acceleration')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
-              <span>Tăng tốc Thịnh vượng (30 / 25 / 45)</span>
+              <span>Chuẩn Private Wealth (30 / 25 / 45)</span>
               <span class="strat-rec-badge" id="recBadgeWealth">✦ Đề xuất tối ưu</span>
             </button>
             <button type="button" class="strat-pill-btn" id="btnStratFire" onclick="setAllocationStrategy('fire_max')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-              <span>Tối đa Tích sản FIRE (25 / 15 / 60)</span>
+              <span>Tăng tốc FIRE (25 / 15 / 60)</span>
               <span class="strat-rec-badge" id="recBadgeFire" style="display:none">✦ Đề xuất tối ưu</span>
             </button>
             <button type="button" class="strat-pill-btn strat-custom" id="btnStratCustom" onclick="setAllocationStrategy('custom')">
@@ -4259,8 +4384,8 @@ const STRATEGY_PRESETS = {
   },
   urban_realistic: {
     id: 'urban_realistic',
-    name: 'Chiến lược Thực tế Đô thị (50 / 25 / 25)',
-    shortName: 'Thực tế Đô thị (50 / 25 / 25)',
+    name: 'Chiến lược Cân bằng Đô thị (50 / 25 / 25)',
+    shortName: 'Cân bằng Đô thị (50 / 25 / 25)',
     description: 'Mô hình cân bằng chuẩn đô thị: Đảm bảo chất lượng sống, phát triển bản thân và tích lũy bền vững.',
     needsPct: 50,
     wantsPct: 25,
@@ -4269,8 +4394,8 @@ const STRATEGY_PRESETS = {
   },
   wealth_acceleration: {
     id: 'wealth_acceleration',
-    name: 'Chiến lược Tăng tốc Thịnh vượng - Private Wealth (30 / 25 / 45)',
-    shortName: 'Tăng tốc Thịnh vượng (30 / 25 / 45)',
+    name: 'Chiến lược Chuẩn Private Wealth (30 / 25 / 45)',
+    shortName: 'Chuẩn Private Wealth (30 / 25 / 45)',
     description: 'Chuẩn phân bổ Priority Banking theo Định luật Engel: Tối ưu hóa chi phí sinh hoạt, đẩy mạnh dòng tiền vào nhân bản tài sản.',
     needsPct: 30,
     wantsPct: 25,
@@ -4279,8 +4404,8 @@ const STRATEGY_PRESETS = {
   },
   fire_max: {
     id: 'fire_max',
-    name: 'Chiến lược Tối đa Tích sản FIRE (25 / 15 / 60)',
-    shortName: 'Tối đa Tích sản FIRE (25 / 15 / 60)',
+    name: 'Chiến lược Tăng tốc Độc lập Tài chính FIRE (25 / 15 / 60)',
+    shortName: 'Tăng tốc FIRE (25 / 15 / 60)',
     description: 'Chiến lược nén chi phí sinh hoạt xuống mức tối giản để tối đa hóa tốc độ nghỉ hưu sớm và tự do tài chính.',
     needsPct: 25,
     wantsPct: 15,
@@ -4302,7 +4427,9 @@ let cachedAllocationData = null;
 let currentEffectiveIncome = 106300000;
 let lockedFunds = { needs: false, wants: false, savings: false };
 let fundPercentages = { needs: 30, wants: 25, savings: 45 };
+let emergencyBufferState = 'overflow'; // 'overflow' (default for high income) vs 'accumulating'
 let autoSweepSchedule = 'day_05';
+let allocRafId = null;
 
 function getRecommendedStrategyId(income) {
   if (income < 25000000) return 'starter_safety';
@@ -4410,7 +4537,7 @@ function simulateIncome(amount) {
   }
 }
 
-// BỘ ĐIỀU CHỈNH THANH TRƯỢT THÔNG MINH (INTERACTIVE SLIDERS + LOCKS)
+// BỘ ĐIỀU CHỈNH THANH TRƯỢT THÔNG MINH (INTERACTIVE SLIDERS + DUAL AUTO-SWEEP BALANCE)
 function handleFundSlider(changedKey, rawVal) {
   let val = parseInt(rawVal, 10);
   if (isNaN(val)) val = 5;
@@ -4419,8 +4546,10 @@ function handleFundSlider(changedKey, rawVal) {
   if (lockedFunds[changedKey]) return;
 
   // Tự động kích hoạt Custom Mode
-  currentAllocationStrategy = 'custom';
-  updateStrategyPillsUI();
+  if (currentAllocationStrategy !== 'custom') {
+    currentAllocationStrategy = 'custom';
+    updateStrategyPillsUI();
+  }
 
   const otherKeys = ['needs', 'wants', 'savings'].filter(k => k !== changedKey);
   const k1 = otherKeys[0];
@@ -4461,7 +4590,18 @@ function handleFundSlider(changedKey, rawVal) {
     fundPercentages[k2] = p2;
   }
 
-  applyAllocationCalculations();
+  // Đảm bảo tổng 3 quỹ luôn bằng đúng 100%
+  const sum = fundPercentages.needs + fundPercentages.wants + fundPercentages.savings;
+  if (sum !== 100) {
+    const diff = 100 - sum;
+    const dynamicKey = [k1, k2].find(k => !lockedFunds[k]) || changedKey;
+    fundPercentages[dynamicKey] += diff;
+  }
+
+  if (allocRafId) cancelAnimationFrame(allocRafId);
+  allocRafId = requestAnimationFrame(() => {
+    applyAllocationCalculations();
+  });
 }
 
 function startAmountEdit(fundKey) {
@@ -4494,21 +4634,374 @@ function toggleFundLock(fundKey) {
     return;
   }
   lockedFunds[fundKey] = !lockedFunds[fundKey];
+  const isLocked = lockedFunds[fundKey];
+  
+  const btn = document.getElementById(`fundLockBtn_${fundKey}`);
+  if (btn) {
+    btn.classList.toggle('locked', isLocked);
+    btn.innerHTML = isLocked
+      ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Đã khóa</span>'
+      : '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>';
+    btn.title = isLocked ? 'Đang khóa định mức - Nhấn để mở khóa' : 'Nhấn để khóa cố định định mức';
+  }
+  
+  const slider = document.getElementById(`fundSlider_${fundKey}`);
+  if (slider) slider.disabled = isLocked;
+
   const nameMap = { needs: 'Quỹ Vận hành', wants: 'Quỹ Nâng cấp', savings: 'Quỹ Tích sản' };
-  showToast(lockedFunds[fundKey] ? `Đã khóa cố định tỷ trọng ${nameMap[fundKey]}!` : `Đã mở khóa tỷ trọng ${nameMap[fundKey]}!`);
+  showToast(isLocked ? `Đã khóa cố định định mức ${nameMap[fundKey]}!` : `Đã mở khóa định mức ${nameMap[fundKey]}!`);
   applyAllocationCalculations();
+}
+
+function toggleEmergencyBuffer(newState) {
+  if (emergencyBufferState === newState) return;
+  emergencyBufferState = newState;
+
+  const btnAcc = document.getElementById('btnBufferAccumulating');
+  const btnOver = document.getElementById('btnBufferOverflow');
+  if (btnAcc) btnAcc.classList.toggle('active', newState === 'accumulating');
+  if (btnOver) btnOver.classList.toggle('active', newState === 'overflow');
+
+  renderSavingsSubBucketsStructure();
+  applyAllocationCalculations();
+
+  if (newState === 'overflow') {
+    showToast("Đã kích hoạt chế độ Van tràn Quỹ khẩn cấp: 100% dòng tiền chảy vào Đầu tư Sinh lời!");
+  } else {
+    showToast("Đã kích hoạt chế độ Đang tích lũy Quỹ khẩn cấp 6 tháng: 60% Dự phòng + 40% Đầu tư!");
+  }
 }
 
 function resetToRecommended() {
   lockedFunds = { needs: false, wants: false, savings: false };
+  ['needs', 'wants', 'savings'].forEach(k => {
+    const btn = document.getElementById(`fundLockBtn_${k}`);
+    if (btn) {
+      btn.classList.remove('locked');
+      btn.innerHTML = '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>';
+    }
+    const slider = document.getElementById(`fundSlider_${k}`);
+    if (slider) slider.disabled = false;
+  });
+
   const recId = getRecommendedStrategyId(currentEffectiveIncome);
   setAllocationStrategy(recId);
   showToast("Đã khôi phục về chiến lược chuẩn khuyến nghị cho mức thu nhập!");
   if (typeof playAudioSuccess === 'function') playAudioSuccess();
 }
 
-// CÔNG THỨC TÍNH TOÁN DÒNG TIỀN VÀ HIỂN THỊ CHI TIẾT
+// KHỞI TẠO CẤU TRÚC THẺ DOM 1 LẦN DUY NHẤT (ZERO LAYOUT JANK / 60FPS SMOOTHNESS)
+function buildAllocationCardsHTML(p = '') {
+  return `
+    <!-- 1. LỚP 1: QUỸ VẬN HÀNH ĐỜI SỐNG -->
+    <div class="rule-sub-box" style="border-color:rgba(16, 185, 129, 0.4);background:radial-gradient(ellipse at top left, rgba(16,185,129,0.08), transparent 70%), rgba(255,255,255,0.02)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;background:rgba(16,185,129,0.15);color:#10B981;padding:3px 9px;border-radius:99px;font-weight:700">Thiết yếu</span>
+          <small style="color:#10B981;font-weight:800;letter-spacing:0.04em">LỚP 1: QUỸ VẬN HÀNH ĐỜI SỐNG</small>
+        </div>
+        <button type="button" class="fund-lock-btn ${lockedFunds.needs ? 'locked' : ''}" id="${p}fundLockBtn_needs" onclick="toggleFundLock('needs')" title="Khóa định mức chi phí">
+          ${lockedFunds.needs 
+            ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Đã khóa</span>' 
+            : '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>'}
+        </button>
+      </div>
+
+      <!-- Amount Edit Area -->
+      <div style="margin: 6px 0 2px">
+        <div class="fund-amount-box" onclick="startAmountEdit('needs')" title="Bấm để chỉnh sửa số tiền định mức (Hard-Cap) trực tiếp">
+          <b id="${p}fundAmountDisplay_needs" style="color:#10B981;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">31.890.000₫</b>
+          <input type="text" class="fund-num-input" id="${p}fundAmountInput_needs" style="display:none" onblur="commitAmountEdit('needs', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('needs', this)">
+          <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </div>
+        <p style="font-weight:500;color:var(--text);font-size:12px;margin-top:2px">Chi phí Thiết yếu &amp; Thanh khoản (Nhà ở, Ăn uống, Hóa đơn, Y tế)</p>
+      </div>
+
+      <!-- Slider Control -->
+      <div class="fund-slider-box">
+        <div class="fund-slider-head">
+          <span>Tỷ trọng ngân sách: <strong id="${p}pctVal_needs" style="color:#10B981;font-size:12.5px">30%</strong></span>
+          <span style="font-size:10px;color:var(--muted)">Min 5% — Max 85%</span>
+        </div>
+        <input type="range" min="5" max="85" value="30" id="${p}fundSlider_needs" class="fund-slider fund-slider-needs" ${lockedFunds.needs ? 'disabled' : ''} oninput="handleFundSlider('needs', this.value)">
+      </div>
+
+      <!-- Banking Micro-Metrics: Daily Safe Spend & Overnight Yield -->
+      <div style="display:flex;flex-direction:column;gap:6px;margin:8px 0">
+        <div class="daily-safe-pill" title="Hạn mức chi tiêu sinh hoạt an toàn mỗi ngày sau khi khấu trừ chi phí nhà &amp; hóa đơn cố định">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#10B981" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>Định mức chi tiêu an toàn: ~<strong id="${p}dailySafe_needs" style="color:#10B981">531.500₫</strong>/ngày</span>
+        </div>
+        <div class="overnight-yield-card">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#10B981" stroke-width="2" style="flex:none"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span>Tích hợp Sinh lời tự động (Overnight Yield 3.8%/năm) trên số dư chờ chi tiêu: <strong id="${p}overnightYield_needs" style="color:#10B981">+50.500₫</strong>/tháng</span>
+        </div>
+      </div>
+
+      <!-- Sub-Buckets Breakdown -->
+      <div class="fund-sub-box">
+        <div class="fund-sub-head">
+          <span>PHÂN RÃ HẠNG MỤC CON THEO ĐỊNH MỨC</span>
+          <span>HẠN MỨC GỢI Ý</span>
+        </div>
+        <div class="sub-bucket-row" title="Tiền thuê/mua nhà, điện nước, internet sinh hoạt">
+          <div class="sub-bucket-meta">
+            <span class="sub-bucket-name">Nhà ở &amp; Hóa đơn <span class="sub-bucket-pct">(50%)</span></span>
+            <span class="sub-bucket-amount" id="${p}subAmt_needs_0" style="color:#10B981">15.945.000₫</span>
+          </div>
+          <div class="sub-bucket-track"><div class="sub-bucket-fill" id="${p}subFill_needs_0" style="width:50%;background:#10B981"></div></div>
+        </div>
+        <div class="sub-bucket-row" title="Ăn uống dinh dưỡng, siêu thị &amp; nhu yếu phẩm hàng ngày">
+          <div class="sub-bucket-meta">
+            <span class="sub-bucket-name">Ẩm thực &amp; Sinh hoạt <span class="sub-bucket-pct">(35%)</span></span>
+            <span class="sub-bucket-amount" id="${p}subAmt_needs_1" style="color:#10B981">11.161.500₫</span>
+          </div>
+          <div class="sub-bucket-track"><div class="sub-bucket-fill" id="${p}subFill_needs_1" style="width:35%;background:#10B981"></div></div>
+        </div>
+        <div class="sub-bucket-row" title="Bảo hiểm sức khỏe, khám định kỳ &amp; thuốc men">
+          <div class="sub-bucket-meta">
+            <span class="sub-bucket-name">Y tế &amp; Bảo hiểm <span class="sub-bucket-pct">(15%)</span></span>
+            <span class="sub-bucket-amount" id="${p}subAmt_needs_2" style="color:#10B981">4.783.500₫</span>
+          </div>
+          <div class="sub-bucket-track"><div class="sub-bucket-fill" id="${p}subFill_needs_2" style="width:15%;background:#10B981"></div></div>
+        </div>
+      </div>
+
+      <div style="font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#10B981" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <span style="color:rgba(255,255,255,0.85)">Giới hạn chi phí thiết yếu dưới tỷ trọng quy định để đảm bảo thanh khoản an toàn.</span>
+      </div>
+    </div>
+
+    <!-- 2. LỚP 2: QUỸ NÂNG CẤP & PHONG CÁCH SỐNG -->
+    <div class="rule-sub-box" style="border-color:rgba(99, 102, 241, 0.4);background:radial-gradient(ellipse at top left, rgba(99,102,241,0.08), transparent 70%), rgba(255,255,255,0.02)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;background:rgba(99,102,241,0.15);color:#818CF8;padding:3px 9px;border-radius:99px;font-weight:700">Linh hoạt</span>
+          <small style="color:#818CF8;font-weight:800;letter-spacing:0.04em">LỚP 2: QUỸ NÂNG CẤP &amp; PHONG CÁCH</small>
+        </div>
+        <button type="button" class="fund-lock-btn ${lockedFunds.wants ? 'locked' : ''}" id="${p}fundLockBtn_wants" onclick="toggleFundLock('wants')" title="Khóa định mức chi phí">
+          ${lockedFunds.wants 
+            ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Đã khóa</span>' 
+            : '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>'}
+        </button>
+      </div>
+
+      <!-- Amount Edit Area -->
+      <div style="margin: 6px 0 2px">
+        <div class="fund-amount-box" onclick="startAmountEdit('wants')" title="Bấm để chỉnh sửa số tiền định mức (Hard-Cap) trực tiếp">
+          <b id="${p}fundAmountDisplay_wants" style="color:#818CF8;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">26.575.000₫</b>
+          <input type="text" class="fund-num-input" id="${p}fundAmountInput_wants" style="display:none" onblur="commitAmountEdit('wants', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('wants', this)">
+          <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </div>
+        <p style="font-weight:500;color:var(--text);font-size:12px;margin-top:2px">Phát triển Bản thân &amp; Linh hoạt (Học tập, Networking, Trải nghiệm)</p>
+      </div>
+
+      <!-- Slider Control -->
+      <div class="fund-slider-box">
+        <div class="fund-slider-head">
+          <span>Tỷ trọng ngân sách: <strong id="${p}pctVal_wants" style="color:#818CF8;font-size:12.5px">25%</strong></span>
+          <span style="font-size:10px;color:var(--muted)">Min 5% — Max 85%</span>
+        </div>
+        <input type="range" min="5" max="85" value="25" id="${p}fundSlider_wants" class="fund-slider fund-slider-wants" ${lockedFunds.wants ? 'disabled' : ''} oninput="handleFundSlider('wants', this.value)">
+      </div>
+
+      <!-- Banking Micro-Metrics: Daily Safe Spend -->
+      <div style="margin:8px 0">
+        <div class="daily-safe-pill" title="Hạn mức chi tiêu linh hoạt, trải nghiệm và quan hệ mỗi ngày">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#818CF8" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>Định mức chi tiêu an toàn: ~<strong id="${p}dailySafe_wants" style="color:#818CF8">885.800₫</strong>/ngày</span>
+        </div>
+      </div>
+
+      <!-- Sub-Buckets Breakdown -->
+      <div class="fund-sub-box">
+        <div class="fund-sub-head">
+          <span>PHÂN RÃ HẠNG MỤC CON THEO ĐỊNH MỨC</span>
+          <span>HẠN MỨC GỢI Ý</span>
+        </div>
+        <div class="sub-bucket-row" title="Sách, khóa học nâng cao nghiệp vụ, chứng chỉ nghề">
+          <div class="sub-bucket-meta">
+            <span class="sub-bucket-name">Đào tạo &amp; Kỹ năng <span class="sub-bucket-pct">(35%)</span></span>
+            <span class="sub-bucket-amount" id="${p}subAmt_wants_0" style="color:#818CF8">9.301.250₫</span>
+          </div>
+          <div class="sub-bucket-track"><div class="sub-bucket-fill" id="${p}subFill_wants_0" style="width:35%;background:#818CF8"></div></div>
+        </div>
+        <div class="sub-bucket-row" title="Cafe đối tác, duy trì và phát triển mạng lưới công việc">
+          <div class="sub-bucket-meta">
+            <span class="sub-bucket-name">Networking &amp; Quan hệ <span class="sub-bucket-pct">(40%)</span></span>
+            <span class="sub-bucket-amount" id="${p}subAmt_wants_1" style="color:#818CF8">10.630.000₫</span>
+          </div>
+          <div class="sub-bucket-track"><div class="sub-bucket-fill" id="${p}subFill_wants_1" style="width:40%;background:#818CF8"></div></div>
+        </div>
+        <div class="sub-bucket-row" title="Du lịch, thể thao, tái tạo năng lượng sáng tạo">
+          <div class="sub-bucket-meta">
+            <span class="sub-bucket-name">Trải nghiệm &amp; Giải trí <span class="sub-bucket-pct">(25%)</span></span>
+            <span class="sub-bucket-amount" id="${p}subAmt_wants_2" style="color:#818CF8">6.643.750₫</span>
+          </div>
+          <div class="sub-bucket-track"><div class="sub-bucket-fill" id="${p}subFill_wants_2" style="width:25%;background:#818CF8"></div></div>
+        </div>
+      </div>
+
+      <div style="font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#818CF8" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
+        <span style="color:rgba(255,255,255,0.85)">Đầu tư vào kỹ năng chuyên môn và mở rộng networking mang lại lợi nhuận nghề nghiệp vượt trội.</span>
+      </div>
+    </div>
+
+    <!-- 3. LỚP 3: QUỸ TÍCH SẢN & TỰ DO TÀI CHÍNH -->
+    <div class="rule-sub-box" style="border-color:rgba(245, 158, 11, 0.4);background:radial-gradient(ellipse at top left, rgba(245,158,11,0.08), transparent 70%), rgba(255,255,255,0.02)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;background:rgba(245,158,11,0.15);color:#F59E0B;padding:3px 9px;border-radius:99px;font-weight:700">Tích lũy</span>
+          <small style="color:#F59E0B;font-weight:800;letter-spacing:0.04em">LỚP 3: QUỸ TÍCH SẢN &amp; TỰ DO TÀI CHÍNH</small>
+        </div>
+        <button type="button" class="fund-lock-btn ${lockedFunds.savings ? 'locked' : ''}" id="${p}fundLockBtn_savings" onclick="toggleFundLock('savings')" title="Khóa định mức chi phí">
+          ${lockedFunds.savings 
+            ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Đã khóa</span>' 
+            : '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>'}
+        </button>
+      </div>
+
+      <!-- Amount Edit Area -->
+      <div style="margin: 6px 0 2px">
+        <div class="fund-amount-box" onclick="startAmountEdit('savings')" title="Bấm để chỉnh sửa số tiền định mức (Hard-Cap) trực tiếp">
+          <b id="${p}fundAmountDisplay_savings" style="color:#F59E0B;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">47.835.000₫</b>
+          <input type="text" class="fund-num-input" id="${p}fundAmountInput_savings" style="display:none" onblur="commitAmountEdit('savings', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('savings', this)">
+          <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+        </div>
+        <p style="font-weight:500;color:var(--text);font-size:12px;margin-top:2px">Đầu tư Sinh lời &amp; Độc lập Tài chính (Quỹ khẩn cấp, Tích sản)</p>
+      </div>
+
+      <!-- Slider Control -->
+      <div class="fund-slider-box">
+        <div class="fund-slider-head">
+          <span>Tỷ trọng ngân sách: <strong id="${p}pctVal_savings" style="color:#F59E0B;font-size:12.5px">45%</strong></span>
+          <span style="font-size:10px;color:var(--muted)">Min 5% — Max 85%</span>
+        </div>
+        <input type="range" min="5" max="85" value="45" id="${p}fundSlider_savings" class="fund-slider fund-slider-savings" ${lockedFunds.savings ? 'disabled' : ''} oninput="handleFundSlider('savings', this.value)">
+      </div>
+
+      <!-- Emergency Buffer Overflow Gate Toggle Switch -->
+      <div class="emergency-buffer-box">
+        <div class="buffer-gate-head">
+          <span>VAN TRÀN QUỸ KHẨN CẤP (OVERFLOW GATE)</span>
+          <span class="badge-pill" style="background:rgba(245,158,11,0.15);color:var(--gold);font-size:9.5px">Revolut / UBS Way</span>
+        </div>
+        <div class="buffer-gate-toggle">
+          <button type="button" class="buffer-gate-btn ${emergencyBufferState === 'accumulating' ? 'active' : ''}" id="${p}btnBufferAccumulating" onclick="toggleEmergencyBuffer('accumulating')">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Đang tích lũy (Quỹ 6T)</span>
+          </button>
+          <button type="button" class="buffer-gate-btn ${emergencyBufferState === 'overflow' ? 'active' : ''}" id="${p}btnBufferOverflow" onclick="toggleEmergencyBuffer('overflow')">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
+            <span>✦ Đã hoàn thành (100% Overflow)</span>
+          </button>
+        </div>
+        <div class="buffer-gate-badge" id="${p}bufferGateBadge">
+          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#F59E0B" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          <span><strong>✦ Van tràn Kích hoạt (Overflow Sweep):</strong> 100% dòng tiền chuyển thẳng vào Danh mục Sinh lời.</span>
+        </div>
+      </div>
+
+      <!-- Sub-Buckets Breakdown (Savings) -->
+      <div class="fund-sub-box" id="${p}savingsSubsContainer">
+        <!-- Rendered by renderSavingsSubBucketsStructure() -->
+      </div>
+
+      <!-- Compound Interest Wealth Projection Box (1-Year & 5-Year) -->
+      <div class="compound-projection-box">
+        <div class="proj-head">
+          <span style="display:flex;align-items:center;gap:6px">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
+            DỰ BÁO TÍCH LŨY PRIVATE BANKING
+          </span>
+          <span class="proj-rate-badge">+10%/năm lãi kép</span>
+        </div>
+        <div class="proj-grid-2col">
+          <div class="proj-grid-cell">
+            <small>Dự kiến sau 1 năm</small>
+            <strong id="${p}projAmount1Y">605.900.000₫</strong>
+          </div>
+          <div class="proj-grid-cell">
+            <small>Dự kiến sau 5 năm</small>
+            <strong id="${p}projAmount5Y">3.705.500.000₫</strong>
+          </div>
+        </div>
+        <div class="proj-subtext">
+          Tính toán dựa trên cơ chế gửi góp đều đặn <strong id="${p}projMonthlySavings" style="color:var(--text)">47.835.000₫/tháng</strong> và tự động tái đầu tư sinh lời.
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderSavingsSubBucketsStructure(p = '') {
+  const container = document.getElementById(`${p}savingsSubsContainer`);
+  if (!container) return;
+  const isOverflow = emergencyBufferState === 'overflow';
+  if (isOverflow) {
+    container.innerHTML = `
+      <div class="fund-sub-head">
+        <span>DANH MỤC ĐẦU TƯ SINH LỜI (OVERFLOW SWEEP)</span>
+        <span>HẠN MỨC GỢI Ý</span>
+      </div>
+      <div class="sub-bucket-row" title="Tích sản chỉ số VN30/Diamond, cổ phiếu tăng trưởng (Chế độ Van tràn Overflow)">
+        <div class="sub-bucket-meta">
+          <span class="sub-bucket-name">Đầu tư Tăng trưởng ETF/Cổ phiếu <span class="sub-bucket-pct">(60%)</span></span>
+          <span class="sub-bucket-amount" id="${p}subAmt_savings_0" style="color:#F59E0B">28.701.000₫</span>
+        </div>
+        <div class="sub-bucket-track"><div class="sub-bucket-fill" id="${p}subFill_savings_0" style="width:60%;background:#F59E0B"></div></div>
+      </div>
+      <div class="sub-bucket-row" title="Vàng miếng SJC, trái phiếu tổ chức uy tín sinh lời ổn định">
+        <div class="sub-bucket-meta">
+          <span class="sub-bucket-name">Tài sản Phòng vệ Vàng &amp; Trái phiếu AAA <span class="sub-bucket-pct">(40%)</span></span>
+          <span class="sub-bucket-amount" id="${p}subAmt_savings_1" style="color:#F59E0B">19.134.000₫</span>
+        </div>
+        <div class="sub-bucket-track"><div class="sub-bucket-fill" id="${p}subFill_savings_1" style="width:40%;background:#F59E0B"></div></div>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <div class="fund-sub-head">
+        <span>TIẾN ĐỘ TÍCH LŨY QUỸ DỰ PHÒNG KHẨN CẤP</span>
+        <span>HẠN MỨC GỢI Ý</span>
+      </div>
+      <div class="sub-bucket-row" title="Quỹ khẩn cấp 6 tháng (Lãi suất 4.5%/năm, thanh khoản T+0)">
+        <div class="sub-bucket-meta">
+          <span class="sub-bucket-name">Tài khoản Dự phòng Thanh khoản cao <span class="sub-bucket-pct">(60%)</span></span>
+          <span class="sub-bucket-amount" id="${p}subAmt_savings_0" style="color:#F59E0B">28.701.000₫</span>
+        </div>
+        <div class="sub-bucket-track"><div class="sub-bucket-fill" id="${p}subFill_savings_0" style="width:60%;background:#F59E0B"></div></div>
+      </div>
+      <div class="sub-bucket-row" title="Tích sản chỉ số chứng khoán dài hạn">
+        <div class="sub-bucket-meta">
+          <span class="sub-bucket-name">Đầu tư Tăng trưởng ETF/Cổ phiếu <span class="sub-bucket-pct">(40%)</span></span>
+          <span class="sub-bucket-amount" id="${p}subAmt_savings_1" style="color:#F59E0B">19.134.000₫</span>
+        </div>
+        <div class="sub-bucket-track"><div class="sub-bucket-fill" id="${p}subFill_savings_1" style="width:40%;background:#F59E0B"></div></div>
+      </div>
+    `;
+  }
+}
+
+function ensureAllocationCardsMounted() {
+  const detailCards = document.getElementById('budgetDetailCards');
+  if (detailCards && !document.getElementById('fundSlider_needs')) {
+    detailCards.innerHTML = buildAllocationCardsHTML('');
+    renderSavingsSubBucketsStructure('');
+  }
+  const ruleCols = document.getElementById('ruleThreeCols');
+  if (ruleCols && !ruleCols.querySelector('.rule-sub-box')) {
+    ruleCols.innerHTML = buildAllocationCardsHTML('preview_');
+    renderSavingsSubBucketsStructure('preview_');
+  }
+}
+
+// CÔNG THỨC TÍNH TOÁN DÒNG TIỀN VÀ CẬP NHẬT TRỰC TIẾP (SURGICAL IN-PLACE DOM UPDATE)
 function applyAllocationCalculations() {
+  ensureAllocationCardsMounted();
+
   const income = currentEffectiveIncome;
   const needsPct = fundPercentages.needs;
   const wantsPct = fundPercentages.wants;
@@ -4517,6 +5010,20 @@ function applyAllocationCalculations() {
   const needsTarget = Math.round(income * (needsPct / 100));
   const wantsTarget = Math.round(income * (wantsPct / 100));
   const savingsTarget = Math.round(income * (savingsPct / 100));
+
+  // Micro-metrics calculations
+  const dailySafeNeeds = Math.round((needsTarget * 0.50) / 30);
+  const dailySafeWants = Math.round(wantsTarget / 30);
+  const monthlyOvernightInterest = Math.round((needsTarget * 0.50 * 0.038) / 12);
+
+  // Projections calculations (10%/yr compound monthly)
+  const rMo = 0.10 / 12;
+  const projectedSavings1Y = savingsTarget > 0
+    ? Math.round(savingsTarget * ((Math.pow(1 + rMo, 12) - 1) / rMo) * (1 + rMo))
+    : 0;
+  const projectedSavings5Y = savingsTarget > 0
+    ? Math.round(savingsTarget * ((Math.pow(1 + rMo, 60) - 1) / rMo) * (1 + rMo))
+    : 0;
 
   // 1. Cập nhật Tiêu đề & Mô tả chiến lược
   const titleEl = document.getElementById('allocStrategyTitle');
@@ -4555,203 +5062,79 @@ function applyAllocationCalculations() {
   if (legSavingsVal) legSavingsVal.textContent = fmt(savingsTarget) + "₫";
   if (legSavingsPct) legSavingsPct.textContent = savingsPct + "%";
 
-  // 4. Chỉ báo Sức khỏe Phân bổ & Cảnh báo Thông minh (Smart Financial Guardrails)
+  // 4. Cập nhật các trường trên thẻ Lớp 1 (Needs)
+  ['', 'preview_'].forEach(p => {
+    const sNeeds = document.getElementById(`${p}fundSlider_needs`);
+    if (sNeeds && document.activeElement !== sNeeds) sNeeds.value = needsPct;
+    const pNeeds = document.getElementById(`${p}pctVal_needs`);
+    if (pNeeds) pNeeds.textContent = needsPct + "%";
+    const aNeeds = document.getElementById(`${p}fundAmountDisplay_needs`);
+    if (aNeeds) aNeeds.textContent = fmt(needsTarget) + "₫";
+    const dSafeNeeds = document.getElementById(`${p}dailySafe_needs`);
+    if (dSafeNeeds) dSafeNeeds.textContent = fmt(dailySafeNeeds) + "₫";
+    const ovNeeds = document.getElementById(`${p}overnightYield_needs`);
+    if (ovNeeds) ovNeeds.textContent = "+" + fmt(monthlyOvernightInterest) + "₫";
+
+    const subAmtN0 = document.getElementById(`${p}subAmt_needs_0`);
+    const subAmtN1 = document.getElementById(`${p}subAmt_needs_1`);
+    const subAmtN2 = document.getElementById(`${p}subAmt_needs_2`);
+    if (subAmtN0) subAmtN0.textContent = fmt(Math.round(needsTarget * 0.50)) + "₫";
+    if (subAmtN1) subAmtN1.textContent = fmt(Math.round(needsTarget * 0.35)) + "₫";
+    if (subAmtN2) subAmtN2.textContent = fmt(Math.round(needsTarget * 0.15)) + "₫";
+
+    // 5. Cập nhật các trường trên thẻ Lớp 2 (Wants)
+    const sWants = document.getElementById(`${p}fundSlider_wants`);
+    if (sWants && document.activeElement !== sWants) sWants.value = wantsPct;
+    const pWants = document.getElementById(`${p}pctVal_wants`);
+    if (pWants) pWants.textContent = wantsPct + "%";
+    const aWants = document.getElementById(`${p}fundAmountDisplay_wants`);
+    if (aWants) aWants.textContent = fmt(wantsTarget) + "₫";
+    const dSafeWants = document.getElementById(`${p}dailySafe_wants`);
+    if (dSafeWants) dSafeWants.textContent = fmt(dailySafeWants) + "₫";
+
+    const subAmtW0 = document.getElementById(`${p}subAmt_wants_0`);
+    const subAmtW1 = document.getElementById(`${p}subAmt_wants_1`);
+    const subAmtW2 = document.getElementById(`${p}subAmt_wants_2`);
+    if (subAmtW0) subAmtW0.textContent = fmt(Math.round(wantsTarget * 0.35)) + "₫";
+    if (subAmtW1) subAmtW1.textContent = fmt(Math.round(wantsTarget * 0.40)) + "₫";
+    if (subAmtW2) subAmtW2.textContent = fmt(Math.round(wantsTarget * 0.25)) + "₫";
+
+    // 6. Cập nhật các trường trên thẻ Lớp 3 (Savings)
+    const sSavings = document.getElementById(`${p}fundSlider_savings`);
+    if (sSavings && document.activeElement !== sSavings) sSavings.value = savingsPct;
+    const pSavings = document.getElementById(`${p}pctVal_savings`);
+    if (pSavings) pSavings.textContent = savingsPct + "%";
+    const aSavings = document.getElementById(`${p}fundAmountDisplay_savings`);
+    if (aSavings) aSavings.textContent = fmt(savingsTarget) + "₫";
+
+    const isOverflow = emergencyBufferState === 'overflow';
+    const subAmtS0 = document.getElementById(`${p}subAmt_savings_0`);
+    const subAmtS1 = document.getElementById(`${p}subAmt_savings_1`);
+    if (subAmtS0) subAmtS0.textContent = fmt(Math.round(savingsTarget * 0.60)) + "₫";
+    if (subAmtS1) subAmtS1.textContent = fmt(Math.round(savingsTarget * 0.40)) + "₫";
+
+    const bufBadge = document.getElementById(`${p}bufferGateBadge`);
+    if (bufBadge) {
+      if (isOverflow) {
+        bufBadge.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#F59E0B" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> <span><strong>✦ Van tràn Kích hoạt (Overflow Sweep):</strong> 100% dòng tiền (${fmt(savingsTarget)}₫) chuyển thẳng vào Danh mục Sinh lời.</span>`;
+      } else {
+        bufBadge.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <span><strong>Đang tích lũy Quỹ khẩn cấp 6 tháng:</strong> 60% vào Quỹ dự phòng thanh khoản cao + 40% Đầu tư.</span>`;
+      }
+    }
+
+    // 7. Dự phóng Tích lũy Lãi kép 1 năm & 5 năm
+    const proj1Y = document.getElementById(`${p}projAmount1Y`);
+    const proj5Y = document.getElementById(`${p}projAmount5Y`);
+    const projMo = document.getElementById(`${p}projMonthlySavings`);
+    if (proj1Y) proj1Y.textContent = fmt(projectedSavings1Y) + "₫";
+    if (proj5Y) proj5Y.textContent = fmt(projectedSavings5Y) + "₫";
+    if (projMo) projMo.textContent = fmt(savingsTarget) + "₫/tháng";
+  });
+
+  // 8. Chỉ báo Sức khỏe Phân bổ & Cảnh báo Thông minh
   renderHealthGuardrail(needsPct, wantsPct, savingsPct, income);
 
-  // 5. Dự phóng Tích lũy Lãi kép 1 năm (10%/năm)
-  const rMo = 0.10 / 12;
-  const projectedSavings1Y = savingsTarget > 0
-    ? Math.round(savingsTarget * ((Math.pow(1 + rMo, 12) - 1) / rMo) * (1 + rMo))
-    : 0;
-
-  // 6. Phân rã Hạng mục con (Sub-Buckets)
-  const needsSubs = [
-    { name: 'Nhà ở & Hóa đơn', pct: 50, amount: Math.round(needsTarget * 0.50), desc: 'Tiền thuê/mua nhà, điện nước, internet sinh hoạt' },
-    { name: 'Ẩm thực & Sinh hoạt', pct: 35, amount: Math.round(needsTarget * 0.35), desc: 'Ăn uống dinh dưỡng, siêu thị & nhu yếu phẩm hàng ngày' },
-    { name: 'Y tế & Bảo hiểm', pct: 15, amount: Math.round(needsTarget * 0.15), desc: 'Bảo hiểm sức khỏe, khám định kỳ & thuốc men' }
-  ];
-  const wantsSubs = [
-    { name: 'Đào tạo & Kỹ năng', pct: 35, amount: Math.round(wantsTarget * 0.35), desc: 'Sách, khóa học nâng cao nghiệp vụ, chứng chỉ nghề' },
-    { name: 'Networking & Quan hệ', pct: 40, amount: Math.round(wantsTarget * 0.40), desc: 'Cafe đối tác, duy trì và phát triển mạng lưới công việc' },
-    { name: 'Trải nghiệm & Giải trí', pct: 25, amount: Math.round(wantsTarget * 0.25), desc: 'Du lịch, thể thao, tái tạo năng lượng sáng tạo' }
-  ];
-  const savingsSubs = [
-    { name: 'Dự phòng Sinh lời tự động', pct: 20, amount: Math.round(savingsTarget * 0.20), desc: 'Quỹ khẩn cấp 6 tháng (sinh lời qua đêm/Money Market)' },
-    { name: 'Đầu tư Tăng trưởng ETF/Cổ phiếu', pct: 50, amount: Math.round(savingsTarget * 0.50), desc: 'Tích sản chỉ số VN30/Diamond, cổ phiếu tăng trưởng' },
-    { name: 'Tài sản Phòng vệ Vàng/Trái phiếu', pct: 30, amount: Math.round(savingsTarget * 0.30), desc: 'Vàng miếng tích lũy, trái phiếu tổ chức uy tín' }
-  ];
-
-  // Helper render Sub-Buckets HTML
-  const renderSubsHtml = (subs, fundColor) => `
-    <div class="fund-sub-box">
-      <div class="fund-sub-head">
-        <span>PHÂN RÃ HẠNG MỤC CON THEO ĐỊNH MỨC</span>
-        <span>HẠN MỨC GỢI Ý</span>
-      </div>
-      ${subs.map(s => `
-        <div class="sub-bucket-row" title="${s.desc}">
-          <div class="sub-bucket-meta">
-            <span class="sub-bucket-name">
-              ${s.name} <span class="sub-bucket-pct">(${s.pct}%)</span>
-            </span>
-            <span class="sub-bucket-amount" style="color:${fundColor}">${fmt(s.amount)}₫</span>
-          </div>
-          <div class="sub-bucket-track">
-            <div class="sub-bucket-fill" style="width:${s.pct}%;background:${fundColor}"></div>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-  `;
-
-  // 7. Render 3 Thẻ Quỹ Chi Tiết (Fine-Tuning Studio)
-  const cardsHtml = `
-    <!-- 1. QUỸ VẬN HÀNH ĐỜI SỐNG -->
-    <div class="rule-sub-box" style="border-color:rgba(16, 185, 129, 0.4);background:radial-gradient(ellipse at top left, rgba(16,185,129,0.08), transparent 70%), rgba(255,255,255,0.02)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:11px;background:rgba(16,185,129,0.15);color:#10B981;padding:3px 9px;border-radius:99px;font-weight:700">Thiết yếu</span>
-          <small style="color:#10B981;font-weight:800;letter-spacing:0.04em">QUỸ VẬN HÀNH ĐỜI SỐNG</small>
-        </div>
-        <button type="button" class="fund-lock-btn ${lockedFunds.needs ? 'locked' : ''}" onclick="toggleFundLock('needs')" title="${lockedFunds.needs ? 'Đang khóa tỷ trọng - Nhấn để mở khóa' : 'Nhấn để khóa cố định tỷ trọng'}">
-          ${lockedFunds.needs 
-            ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Đã khóa</span>' 
-            : '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>'}
-        </button>
-      </div>
-
-      <!-- Amount Edit Area -->
-      <div style="margin: 6px 0 2px">
-        <div class="fund-amount-box" onclick="startAmountEdit('needs')" title="Bấm để chỉnh sửa số tiền trực tiếp">
-          <b id="fundAmountDisplay_needs" style="color:#10B981;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">${fmt(needsTarget)}₫</b>
-          <input type="text" class="fund-num-input" id="fundAmountInput_needs" style="display:none" onblur="commitAmountEdit('needs', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('needs', this)">
-          <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-        </div>
-        <p style="font-weight:500;color:var(--text);font-size:12px;margin-top:2px">Chi phí Thiết yếu (Nhà ở, Ăn uống, Điện nước, Y tế)</p>
-      </div>
-
-      <!-- Slider Control -->
-      <div class="fund-slider-box">
-        <div class="fund-slider-head">
-          <span>Tỷ trọng ngân sách: <strong style="color:#10B981;font-size:12.5px">${needsPct}%</strong></span>
-          <span style="font-size:10px;color:var(--muted)">Min 5% — Max 85%</span>
-        </div>
-        <input type="range" min="5" max="85" value="${needsPct}" class="fund-slider fund-slider-needs" ${lockedFunds.needs ? 'disabled' : ''} oninput="handleFundSlider('needs', this.value)">
-      </div>
-
-      <!-- Sub-Buckets Breakdown -->
-      ${renderSubsHtml(needsSubs, '#10B981')}
-
-      <div style="font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#10B981" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        <span style="color:rgba(255,255,255,0.85)">Giới hạn chi phí thiết yếu dưới tỷ trọng quy định để đảm bảo thanh khoản an toàn.</span>
-      </div>
-    </div>
-
-    <!-- 2. QUỸ NÂNG CẤP & PHONG CÁCH SỐNG -->
-    <div class="rule-sub-box" style="border-color:rgba(99, 102, 241, 0.4);background:radial-gradient(ellipse at top left, rgba(99,102,241,0.08), transparent 70%), rgba(255,255,255,0.02)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:11px;background:rgba(99,102,241,0.15);color:#818CF8;padding:3px 9px;border-radius:99px;font-weight:700">Linh hoạt</span>
-          <small style="color:#818CF8;font-weight:800;letter-spacing:0.04em">QUỸ NÂNG CẤP &amp; PHONG CÁCH</small>
-        </div>
-        <button type="button" class="fund-lock-btn ${lockedFunds.wants ? 'locked' : ''}" onclick="toggleFundLock('wants')" title="${lockedFunds.wants ? 'Đang khóa tỷ trọng - Nhấn để mở khóa' : 'Nhấn để khóa cố định tỷ trọng'}">
-          ${lockedFunds.wants 
-            ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Đã khóa</span>' 
-            : '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>'}
-        </button>
-      </div>
-
-      <!-- Amount Edit Area -->
-      <div style="margin: 6px 0 2px">
-        <div class="fund-amount-box" onclick="startAmountEdit('wants')" title="Bấm để chỉnh sửa số tiền trực tiếp">
-          <b id="fundAmountDisplay_wants" style="color:#818CF8;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">${fmt(wantsTarget)}₫</b>
-          <input type="text" class="fund-num-input" id="fundAmountInput_wants" style="display:none" onblur="commitAmountEdit('wants', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('wants', this)">
-          <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-        </div>
-        <p style="font-weight:500;color:var(--text);font-size:12px;margin-top:2px">Phát triển Bản thân &amp; Linh hoạt (Học tập, Networking, Trải nghiệm)</p>
-      </div>
-
-      <!-- Slider Control -->
-      <div class="fund-slider-box">
-        <div class="fund-slider-head">
-          <span>Tỷ trọng ngân sách: <strong style="color:#818CF8;font-size:12.5px">${wantsPct}%</strong></span>
-          <span style="font-size:10px;color:var(--muted)">Min 5% — Max 85%</span>
-        </div>
-        <input type="range" min="5" max="85" value="${wantsPct}" class="fund-slider fund-slider-wants" ${lockedFunds.wants ? 'disabled' : ''} oninput="handleFundSlider('wants', this.value)">
-      </div>
-
-      <!-- Sub-Buckets Breakdown -->
-      ${renderSubsHtml(wantsSubs, '#818CF8')}
-
-      <div style="font-size:11.5px;color:var(--muted);margin-top:12px;padding-top:10px;border-top:1px dashed rgba(255,255,255,0.08);line-height:1.5;display:flex;align-items:flex-start;gap:6px">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#818CF8" stroke-width="2" style="flex:none;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/><circle cx="12" cy="12" r="4"/></svg>
-        <span style="color:rgba(255,255,255,0.85)">Đầu tư vào kỹ năng chuyên môn và mở rộng networking mang lại lợi nhuận nghề nghiệp vượt trội.</span>
-      </div>
-    </div>
-
-    <!-- 3. QUỸ TÍCH SẢN & TỰ DO TÀI CHÍNH -->
-    <div class="rule-sub-box" style="border-color:rgba(245, 158, 11, 0.4);background:radial-gradient(ellipse at top left, rgba(245,158,11,0.08), transparent 70%), rgba(255,255,255,0.02)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:11px;background:rgba(245,158,11,0.15);color:#F59E0B;padding:3px 9px;border-radius:99px;font-weight:700">Tích lũy</span>
-          <small style="color:#F59E0B;font-weight:800;letter-spacing:0.04em">QUỸ TÍCH SẢN &amp; TỰ DO TÀI CHÍNH</small>
-        </div>
-        <button type="button" class="fund-lock-btn ${lockedFunds.savings ? 'locked' : ''}" onclick="toggleFundLock('savings')" title="${lockedFunds.savings ? 'Đang khóa tỷ trọng - Nhấn để mở khóa' : 'Nhấn để khóa cố định tỷ trọng'}">
-          ${lockedFunds.savings 
-            ? '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><span>Đã khóa</span>' 
-            : '<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg><span>Khóa</span>'}
-        </button>
-      </div>
-
-      <!-- Amount Edit Area -->
-      <div style="margin: 6px 0 2px">
-        <div class="fund-amount-box" onclick="startAmountEdit('savings')" title="Bấm để chỉnh sửa số tiền trực tiếp">
-          <b id="fundAmountDisplay_savings" style="color:#F59E0B;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">${fmt(savingsTarget)}₫</b>
-          <input type="text" class="fund-num-input" id="fundAmountInput_savings" style="display:none" onblur="commitAmountEdit('savings', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('savings', this)">
-          <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
-        </div>
-        <p style="font-weight:500;color:var(--text);font-size:12px;margin-top:2px">Đầu tư Sinh lời &amp; Dự phòng (Quỹ khẩn cấp 6 tháng, Tích lũy)</p>
-      </div>
-
-      <!-- Slider Control -->
-      <div class="fund-slider-box">
-        <div class="fund-slider-head">
-          <span>Tỷ trọng ngân sách: <strong style="color:#F59E0B;font-size:12.5px">${savingsPct}%</strong></span>
-          <span style="font-size:10px;color:var(--muted)">Min 5% — Max 85%</span>
-        </div>
-        <input type="range" min="5" max="85" value="${savingsPct}" class="fund-slider fund-slider-savings" ${lockedFunds.savings ? 'disabled' : ''} oninput="handleFundSlider('savings', this.value)">
-      </div>
-
-      <!-- Sub-Buckets Breakdown -->
-      ${renderSubsHtml(savingsSubs, '#F59E0B')}
-
-      <!-- Compound Interest Wealth Projection Box -->
-      <div class="compound-projection-box">
-        <div class="proj-head">
-          <span style="display:flex;align-items:center;gap:6px">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="m22 7-8.5 8.5-5-5L2 17"/><path d="M16 7h6v6"/></svg>
-            DỰ BÁO TÍCH LŨY PRIVATE BANKING
-          </span>
-          <span class="proj-rate-badge">+10%/năm lãi kép</span>
-        </div>
-        <div class="proj-value-row">
-          <span style="font-size:12px;color:var(--muted)">Dự kiến tích lũy sau 1 năm:</span>
-          <span class="proj-amount">${fmt(projectedSavings1Y)}₫</span>
-        </div>
-        <div class="proj-subtext">
-          Tính toán dựa trên cơ chế gửi góp đều đặn <strong>${fmt(savingsTarget)}₫/tháng</strong> và tự động tái đầu tư sinh lời.
-        </div>
-      </div>
-    </div>
-  `;
-
-  const detailCards = document.getElementById('budgetDetailCards');
-  if (detailCards) detailCards.innerHTML = cardsHtml;
-  const ruleCols = document.getElementById('ruleThreeCols');
-  if (ruleCols) ruleCols.innerHTML = cardsHtml;
-
-  // 8. Cập nhật Đối chiếu Dòng tiền Thực tế
+  // 9. Cập nhật Đối chiếu Dòng tiền Thực tế
   renderRealityCheck(needsTarget, wantsTarget, needsPct, wantsPct);
 }
 
@@ -4761,20 +5144,24 @@ function renderHealthGuardrail(needsPct, wantsPct, savingsPct, income) {
   if (!banner) return;
 
   let status = 'optimal';
-  let title = 'Cấu trúc dòng tiền tối ưu: Đạt chuẩn tích sản bền vững Private Banking.';
-  let desc = 'Tỷ lệ phân bổ phản ánh chính xác cấu trúc tài chính lành mạnh, đẩy mạnh dòng tiền tích lũy và bảo vệ chất lượng sống.';
+  let title = 'Cấu trúc dòng tiền tối ưu: Đạt chuẩn tích sản bền vững Private Banking (Tích sản ≥ 35%).';
+  let desc = 'Tỷ lệ phân bổ phản ánh chính xác cấu trúc tài chính lành mạnh, đẩy mạnh dòng tiền tích lũy và bảo vệ chất lượng sống dài hạn.';
   let iconSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>`;
 
-  if (needsPct > 50 && income >= 50000000) {
-    status = 'warning';
-    title = 'Lưu ý: Chi phí vận hành đang vượt ngưỡng khuyến nghị (35.000.000đ/tháng) đối với phân khúc thu nhập cao.';
-    desc = 'Bạn có thể tối ưu thêm dòng tiền sang Quỹ Tích sản để gia tăng tốc độ gia tăng tài sản ròng theo Định luật Engel.';
-    iconSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
-  } else if (savingsPct < 20) {
+  if (savingsPct < 20) {
     status = 'danger';
-    title = 'Cảnh báo: Tỷ lệ tích sản dưới ngưỡng an toàn 20%, làm chậm tiến độ xây dựng Quỹ dự phòng 6 tháng.';
-    desc = 'Nên duy trì tỷ lệ tích sản tối thiểu 20-25% để đảm bảo an toàn tài chính trước các biến động không lường trước.';
+    title = `Cảnh báo: Tỷ lệ tích sản (${savingsPct}%) dưới ngưỡng an toàn 20%, làm chậm tiến độ xây dựng Quỹ dự phòng 6 tháng.`;
+    desc = 'Nên duy trì tỷ lệ tích sản tối thiểu 20% - 25% để đảm bảo an toàn tài chính trước các biến động không lường trước.';
     iconSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+  } else if (needsPct > 45 && income >= 50000000) {
+    status = 'warning';
+    title = `Lưu ý: Tỷ trọng sinh hoạt (${needsPct}%) vượt ngưỡng khuyến nghị 45% ở phân khúc thu nhập cao.`;
+    desc = 'Theo Định luật Engel, thu nhập càng cao thì tỷ trọng chi tiêu thiết yếu nên giảm (khuyến nghị ≤ 30-40%) để nhường dòng tiền cho Quỹ Tích sản nhân bản tài sản.';
+    iconSvg = `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>`;
+  } else if (savingsPct < 35) {
+    status = 'optimal';
+    title = 'Cấu trúc phân bổ cân bằng và ổn định.';
+    desc = 'Dòng tiền được cân đối hài hòa giữa vận hành đời sống, phát triển trải nghiệm và tích lũy dự phòng.';
   }
 
   banner.className = `alloc-health-banner ${status}`;
@@ -4842,6 +5229,7 @@ async function loadWealthAllocation(strategy = currentAllocationStrategy, simInc
     const params = new URLSearchParams();
     if (strategy) params.set('strategy', strategy);
     if (simIncome) params.set('income', simIncome);
+    if (emergencyBufferState) params.set('emergencyBufferState', emergencyBufferState);
     if (strategy === 'custom') {
       params.set('needs', fundPercentages.needs);
       params.set('wants', fundPercentages.wants);
@@ -4871,6 +5259,14 @@ async function loadWealthAllocation(strategy = currentAllocationStrategy, simInc
       fundPercentages.savings = alloc.savings.percentage;
       if (alloc.strategy && alloc.strategy.id) {
         currentAllocationStrategy = alloc.strategy.id;
+      }
+      if (alloc.emergencyBufferState) {
+        emergencyBufferState = alloc.emergencyBufferState;
+        const btnAcc = document.getElementById('btnBufferAccumulating');
+        const btnOver = document.getElementById('btnBufferOverflow');
+        if (btnAcc) btnAcc.classList.toggle('active', emergencyBufferState === 'accumulating');
+        if (btnOver) btnOver.classList.toggle('active', emergencyBufferState === 'overflow');
+        renderSavingsSubBucketsStructure('');
       }
     }
 
@@ -5149,6 +5545,11 @@ function switchTab(tabId) {
   const targetNav = document.querySelector(`.nav-item[data-tab="${tabId}"]`);
   if (targetSec) targetSec.classList.add('active');
   if (targetNav) targetNav.classList.add('active');
+
+  if (tabId === 'budget') {
+    ensureAllocationCardsMounted();
+    applyAllocationCalculations();
+  }
 
   document.getElementById('sidebar').classList.remove('mobile-open');
   window.scrollTo({ top: 0, behavior: 'smooth' });

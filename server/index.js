@@ -299,13 +299,14 @@ app.get('/api/analytics/cashflow', authMiddleware, async (req, res) => {
 // GET /api/budget/allocation & /api/budget/rule-50-30-20 (Chiến lược phân bổ tài chính thông minh thực tế)
 const budgetHandler = async (req, res) => {
   try {
-    const { strategy, income, needs, wants, savings } = req.query;
+    const { strategy, income, needs, wants, savings, emergencyBufferState, bufferState } = req.query;
     const ruleData = await db.getWealthAllocation(req.user.id, {
       strategy: strategy || null,
       customIncome: income ? parseFloat(income) : null,
       customNeeds: needs ? parseFloat(needs) : null,
       customWants: wants ? parseFloat(wants) : null,
-      customSavings: savings ? parseFloat(savings) : null
+      customSavings: savings ? parseFloat(savings) : null,
+      emergencyBufferState: emergencyBufferState || bufferState || 'overflow'
     });
     res.json({ success: true, rule: ruleData, allocation: ruleData });
   } catch (err) {

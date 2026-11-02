@@ -800,14 +800,15 @@ async function getWealthAllocation(userId, {
   customIncome = null,
   customNeeds = null,
   customWants = null,
-  customSavings = null
+  customSavings = null,
+  emergencyBufferState = 'overflow'
 } = {}) {
   const summary = await getSummary(userId);
   const income = (customIncome !== null && customIncome !== undefined)
     ? Number(customIncome)
     : (summary.totalIncome > 0 ? summary.totalIncome : 106300000);
 
-  // Danh mục 4 Chiến lược Chuẩn thị trường & Private Banking
+  // Danh mục 4 Chiến lược Chuẩn thị trường & Private Banking (Định luật Engel)
   const strategies = {
     starter_safety: {
       id: 'starter_safety',
@@ -817,26 +818,26 @@ async function getWealthAllocation(userId, {
       needsPct: 60,
       wantsPct: 20,
       savingsPct: 20,
-      recommendedRange: '15 Triệu - 25 Triệu',
+      recommendedRange: 'Thu nhập 15 Triệu - 25 Triệu',
       minIncome: 0,
       maxIncome: 25000000
     },
     urban_realistic: {
       id: 'urban_realistic',
-      name: 'Chiến lược Thực tế Đô thị (50 / 25 / 25)',
-      shortName: 'Thực tế Đô thị (50 / 25 / 25)',
+      name: 'Chiến lược Cân bằng Đô thị (50 / 25 / 25)',
+      shortName: 'Cân bằng Đô thị (50 / 25 / 25)',
       description: 'Mô hình cân bằng chuẩn đô thị: Đảm bảo chất lượng sống, phát triển bản thân và tích lũy bền vững.',
       needsPct: 50,
       wantsPct: 25,
       savingsPct: 25,
-      recommendedRange: '25 Triệu - 45 Triệu',
+      recommendedRange: 'Thu nhập 25 Triệu - 45 Triệu',
       minIncome: 25000000,
       maxIncome: 50000000
     },
     wealth_acceleration: {
       id: 'wealth_acceleration',
-      name: 'Chiến lược Tăng tốc Thịnh vượng - Private Wealth (30 / 25 / 45)',
-      shortName: 'Tăng tốc Thịnh vượng (30 / 25 / 45)',
+      name: 'Chiến lược Chuẩn Private Wealth (30 / 25 / 45)',
+      shortName: 'Chuẩn Private Wealth (30 / 25 / 45)',
       description: 'Chuẩn phân bổ Priority Banking theo Định luật Engel: Tối ưu hóa chi phí sinh hoạt, đẩy mạnh dòng tiền vào nhân bản tài sản.',
       needsPct: 30,
       wantsPct: 25,
@@ -847,8 +848,8 @@ async function getWealthAllocation(userId, {
     },
     fire_max: {
       id: 'fire_max',
-      name: 'Chiến lược Tối đa Tích sản FIRE (25 / 15 / 60)',
-      shortName: 'Tối đa Tích sản FIRE (25 / 15 / 60)',
+      name: 'Chiến lược Tăng tốc Độc lập Tài chính FIRE (25 / 15 / 60)',
+      shortName: 'Tăng tốc FIRE (25 / 15 / 60)',
       description: 'Chiến lược nén chi phí sinh hoạt xuống mức tối giản để tối đa hóa tốc độ nghỉ hưu sớm và tự do tài chính.',
       needsPct: 25,
       wantsPct: 15,
@@ -859,7 +860,7 @@ async function getWealthAllocation(userId, {
     }
   };
 
-  // Cơ chế Đề xuất Tự động (Auto-Recommendation) theo ngưỡng thu nhập
+  // Cơ chế Đề xuất Tự động (Adaptive Tiered Presets) theo ngưỡng thu nhập
   let recommendedStrategyId = 'wealth_acceleration';
   if (income < 25000000) {
     recommendedStrategyId = 'starter_safety';
@@ -871,7 +872,9 @@ async function getWealthAllocation(userId, {
 
   // Xác định chiến lược được áp dụng
   let activeKey = strategy;
-  if (!activeKey || activeKey === 'auto') {
+  if ((!activeKey || activeKey === 'auto') && (customNeeds !== null || customWants !== null || customSavings !== null)) {
+    activeKey = 'custom';
+  } else if (!activeKey || activeKey === 'auto') {
     activeKey = recommendedStrategyId;
   }
 
@@ -907,35 +910,63 @@ async function getWealthAllocation(userId, {
   const wantsTarget = Math.round(income * (stratConfig.wantsPct / 100));
   const savingsTarget = Math.round(income * (stratConfig.savingsPct / 100));
 
-  // Dự phóng Tích lũy Lãi kép 1 năm (Lãi suất 10%/năm, góp đều đặn hàng tháng vào đầu kỳ)
+  // Dự phóng Tích lũy Lãi kép 1 năm & 5 năm (Lãi suất 10%/năm, góp đều đặn hàng tháng)
   const rMo = 0.10 / 12;
   const projectedSavings1Y = savingsTarget > 0
     ? Math.round(savingsTarget * ((Math.pow(1 + rMo, 12) - 1) / rMo) * (1 + rMo))
     : 0;
+  const projectedSavings5Y = savingsTarget > 0
+    ? Math.round(savingsTarget * ((Math.pow(1 + rMo, 60) - 1) / rMo) * (1 + rMo))
+    : 0;
+
+  // Banking Micro-Metrics:
+  // 1. Hạn mức chi tiêu an toàn mỗi ngày (sau khi trừ chi phí cố định)
+  const dailySafeSpendNeeds = Math.round((needsTarget * 0.50) / 30);
+  const dailySafeSpendWants = Math.round((wantsTarget * 0.65) / 30);
+
+  // 2. Lợi suất dòng tiền nhàn rỗi qua đêm (Overnight Yield 3.8%/năm)
+  const monthlyOvernightInterest = Math.round((needsTarget * 0.5 * 0.038) / 12);
 
   // Chỉ báo Sức khỏe Phân bổ & Cảnh báo Thông minh (Smart Financial Guardrails)
   let healthGuardrail = {
     status: 'optimal',
     badge: 'Đạt chuẩn Private Banking',
-    title: 'Cấu trúc dòng tiền tối ưu: Đạt chuẩn tích sản bền vững Private Banking.',
-    message: 'Tỷ lệ phân bổ phản ánh chính xác cấu trúc tài chính lành mạnh, đẩy mạnh dòng tiền tích lũy và bảo vệ chất lượng sống.'
+    title: `Cấu trúc dòng tiền tối ưu: Đạt chuẩn Private Banking & High Wealth Accumulation (${stratConfig.savingsPct}%).`,
+    message: 'Dòng tiền tích sản vượt trội (≥ 35%) tạo lực đẩy lãi kép mạnh mẽ theo chuẩn các gia tộc tài phiệt và Private Wealth.'
   };
 
-  if (stratConfig.needsPct > 50 && income >= 50000000) {
-    healthGuardrail = {
-      status: 'warning',
-      badge: 'Cảnh báo Vượt ngưỡng Chi phí',
-      title: 'Lưu ý: Chi phí vận hành đang vượt ngưỡng khuyến nghị (35.000.000đ/tháng) đối với phân khúc thu nhập cao.',
-      message: 'Bạn có thể tối ưu thêm dòng tiền sang Quỹ Tích sản để gia tăng tốc độ gia tăng tài sản ròng theo Định luật Engel.'
-    };
-  } else if (stratConfig.savingsPct < 20) {
+  if (stratConfig.savingsPct < 20) {
     healthGuardrail = {
       status: 'danger',
-      badge: 'Cảnh báo Thiếu hụt Tích sản',
-      title: 'Cảnh báo: Tỷ lệ tích sản dưới ngưỡng an toàn 20%, làm chậm tiến độ xây dựng Quỹ dự phòng 6 tháng.',
-      message: 'Nên duy trì tỷ lệ tích sản tối thiểu 20-25% để đảm bảo an toàn tài chính trước các biến động không lường trước.'
+      badge: 'Cảnh báo Dưới Ngưỡng An Toàn',
+      title: `Cảnh báo: Tỷ lệ tích sản dưới ngưỡng an toàn tài chính 20% (${stratConfig.savingsPct}%).`,
+      message: 'Tỷ lệ tích lũy quá thấp làm chậm tiến độ đạt Quỹ khẩn cấp 6 tháng và suy giảm tốc độ gia tăng tài sản ròng.'
+    };
+  } else if (stratConfig.needsPct > 45 && income >= 50000000) {
+    healthGuardrail = {
+      status: 'warning',
+      badge: 'Cảnh báo Chi phí Lấn át',
+      title: `Lưu ý: Chi phí vận hành đang lấn át hiệu suất tích sản (${stratConfig.needsPct}% > 45%).`,
+      message: 'Đối với phân khúc thu nhập cao, tỷ trọng sinh hoạt nên kiểm soát dưới 40% để giải phóng dòng tiền sang Lớp Tích sản & Tự do tài chính.'
+    };
+  } else if (stratConfig.savingsPct < 35) {
+    healthGuardrail = {
+      status: 'optimal',
+      badge: 'Cân bằng Chuẩn Đô thị',
+      title: 'Cấu trúc dòng tiền cân bằng: Đạt chuẩn quản lý tài chính đô thị lành mạnh.',
+      message: 'Tỷ lệ phân bổ hài hòa giữa sinh hoạt thiết yếu, nâng tầm phong cách sống và tích lũy bền vững.'
     };
   }
+
+  // Cấu hình Sub-Buckets cho Quỹ Tích sản theo Van tràn Quỹ Khẩn cấp (Emergency Buffer Overflow Gate)
+  const isOverflow = emergencyBufferState === 'overflow';
+  const savingsSubs = isOverflow ? [
+    { name: "Đầu tư Tăng trưởng ETF/Cổ phiếu", percentage: 60, amount: Math.round(savingsTarget * 0.60), desc: "Tích sản chỉ số VN30/Diamond, cổ phiếu tăng trưởng (Chế độ Van tràn Overflow)" },
+    { name: "Tài sản Phòng vệ Vàng & Trái phiếu AAA", percentage: 40, amount: Math.round(savingsTarget * 0.40), desc: "Vàng miếng SJC, trái phiếu tổ chức uy tín sinh lời ổn định" }
+  ] : [
+    { name: "Tài khoản Dự phòng Thanh khoản cao", percentage: 60, amount: Math.round(savingsTarget * 0.60), desc: "Quỹ khẩn cấp 6 tháng (Lãi suất 4.5%/năm, thanh khoản T+0)" },
+    { name: "Đầu tư Tăng trưởng ETF/Cổ phiếu", percentage: 40, amount: Math.round(savingsTarget * 0.40), desc: "Tích sản chỉ số chứng khoán dài hạn" }
+  ];
 
   return {
     totalIncome: income,
@@ -944,13 +975,20 @@ async function getWealthAllocation(userId, {
     strategiesList: Object.values(strategies),
     guardrail: healthGuardrail,
     projectedSavings1Y,
+    projectedSavings5Y,
+    dailySafeSpendNeeds,
+    dailySafeSpendWants,
+    monthlyOvernightInterest,
+    emergencyBufferState,
     needs: {
       percentage: stratConfig.needsPct,
-      name: "Quỹ Vận hành Đời sống",
-      label: "Chi phí Thiết yếu (Nhà ở, Ăn uống, Điện nước, Y tế)",
-      advice: "Giới hạn tiền thuê nhà hoặc chi tiêu thiết yếu dưới tỷ trọng quy định để đảm bảo an toàn tài chính.",
+      name: "Lớp 1: Quỹ Vận hành Đời sống (Liquidity)",
+      label: "Chi phí Thiết yếu & Thanh khoản (Nhà ở, Ăn uống, Hóa đơn, Y tế)",
+      advice: "Giới hạn chi phí thiết yếu dưới ngưỡng quy định để đảm bảo thanh khoản an toàn.",
       target: needsTarget,
       color: "#10B981",
+      dailySafeSpend: dailySafeSpendNeeds,
+      monthlyOvernightYield: monthlyOvernightInterest,
       subBuckets: [
         { name: "Nhà ở & Hóa đơn", percentage: 50, amount: Math.round(needsTarget * 0.50), desc: "Tiền thuê/mua nhà, điện nước, internet sinh hoạt" },
         { name: "Ẩm thực & Sinh hoạt", percentage: 35, amount: Math.round(needsTarget * 0.35), desc: "Ăn uống dinh dưỡng, siêu thị & nhu yếu phẩm hàng ngày" },
@@ -959,11 +997,12 @@ async function getWealthAllocation(userId, {
     },
     wants: {
       percentage: stratConfig.wantsPct,
-      name: "Quỹ Nâng cấp & Phong cách sống",
+      name: "Lớp 2: Quỹ Nâng cấp & Phong cách sống (Longevity & Lifestyle)",
       label: "Phát triển Bản thân & Linh hoạt (Học tập, Networking, Trải nghiệm)",
       advice: "Đầu tư vào kỹ năng chuyên môn và các mối quan hệ tạo ra cơ hội nghề nghiệp tương lai.",
       target: wantsTarget,
       color: "#6366F1",
+      dailySafeSpend: dailySafeSpendWants,
       subBuckets: [
         { name: "Đào tạo & Kỹ năng", percentage: 35, amount: Math.round(wantsTarget * 0.35), desc: "Sách, khóa học nâng cao nghiệp vụ, chứng chỉ nghề" },
         { name: "Networking & Quan hệ", percentage: 40, amount: Math.round(wantsTarget * 0.40), desc: "Cafe đối tác, duy trì và phát triển mạng lưới công việc" },
@@ -972,16 +1011,14 @@ async function getWealthAllocation(userId, {
     },
     savings: {
       percentage: stratConfig.savingsPct,
-      name: "Quỹ Tích sản & Tự do Tài chính",
-      label: "Đầu tư Sinh lời & Dự phòng (Quỹ khẩn cấp 6 tháng, Tích lũy)",
+      name: "Lớp 3: Quỹ Tích sản & Tự do Tài chính (Wealth & Alpha)",
+      label: "Đầu tư Sinh lời & Độc lập Tài chính (Quỹ khẩn cấp, Tích sản)",
       advice: "Hoàn thiện Quỹ dự phòng khẩn cấp trước khi giải ngân vào các kênh đầu tư sinh lời.",
       target: savingsTarget,
       color: "#F59E0B",
-      subBuckets: [
-        { name: "Dự phòng Sinh lời tự động", percentage: 20, amount: Math.round(savingsTarget * 0.20), desc: "Quỹ khẩn cấp 6 tháng (sinh lời qua đêm/Money Market)" },
-        { name: "Đầu tư Tăng trưởng ETF/Cổ phiếu", percentage: 50, amount: Math.round(savingsTarget * 0.50), desc: "Tích sản chỉ số VN30/Diamond, cổ phiếu tăng trưởng" },
-        { name: "Tài sản Phòng vệ Vàng/Trái phiếu", percentage: 30, amount: Math.round(savingsTarget * 0.30), desc: "Vàng miếng tích lũy, trái phiếu tổ chức uy tín" }
-      ]
+      projected1Y: projectedSavings1Y,
+      projected5Y: projectedSavings5Y,
+      subBuckets: savingsSubs
     }
   };
 }
