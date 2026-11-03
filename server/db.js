@@ -1727,7 +1727,9 @@ async function getGamificationProfile(userId) {
     }
     streakHistory7d.push({
       date: dayDateStr,
+      day_label: dayLabel,
       dayLabel,
+      is_today: isToday,
       isToday,
       checked
     });

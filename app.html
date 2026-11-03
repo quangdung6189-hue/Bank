@@ -2002,19 +2002,33 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
 .type-btn.active.expense { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255, 92, 92, 0.35); }
 .type-btn.active.income { background: var(--mint-dim); color: var(--mint); border: 1px solid rgba(0, 209, 143, 0.35); }
 
-/* ============ MODAL SYSTEM ============ */
+/* ============ MODAL SYSTEM (ANTI-LEAK SCROLL & VIEWPORT ADAPTIVE) ============ */
+body.modal-open {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(4, 6, 12, 0.85);
+  background: rgba(4, 6, 12, 0.88);
   backdrop-filter: blur(14px);
-  z-index: 150;
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 999;
   display: none;
-  place-items: center;
-  padding: 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding: 30px 16px;
+  box-sizing: border-box;
 }
-.modal-overlay.open { display: grid; animation: fadeInModal 0.25s ease; }
-@keyframes fadeInModal { from { opacity: 0; } to { opacity: 1; } }
+.modal-overlay.open {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeInModal 0.25s ease;
+}
+@keyframes fadeInModal { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
 .modal-box {
   background: #0B111E;
@@ -2022,20 +2036,72 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   border-radius: 24px;
   max-width: 480px;
   width: 100%;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
   padding: 30px;
   position: relative;
-  box-shadow: 0 30px 80px -20px rgba(0,0,0,0.9);
+  box-shadow: 0 30px 80px -20px rgba(0,0,0,0.95);
+  margin: auto;
 }
 .modal-box.modal-lg { max-width: 600px; }
+
+/* Custom Sleek Scrollbar for Modal Box */
+.modal-box::-webkit-scrollbar,
+.modal-overlay::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-box::-webkit-scrollbar-track,
+.modal-overlay::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+}
+.modal-box::-webkit-scrollbar-thumb,
+.modal-overlay::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+}
+.modal-box::-webkit-scrollbar-thumb:hover,
+.modal-overlay::-webkit-scrollbar-thumb:hover {
+  background: #10B981;
+}
+
 .modal-close {
   position: absolute;
   top: 20px;
   right: 20px;
-  font-size: 20px;
+  font-size: 24px;
+  line-height: 1;
   color: var(--muted);
   cursor: pointer;
+  z-index: 20;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
-.modal-close:hover { color: var(--text); }
+.modal-close:hover {
+  color: var(--text);
+  transform: scale(1.15);
+}
+
+.tree-modal-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.tree-modal-tab-btn:hover {
+  color: #F8FAFC;
+  background: rgba(255, 255, 255, 0.06);
+}
+.tree-modal-tab-btn.active {
+  background: rgba(16, 185, 129, 0.2) !important;
+  color: #10B981 !important;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
 
 /* STATUS PILL INTERACTIVITY */
 .status-pill.clickable {
@@ -2384,39 +2450,60 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
 /* ============ STREAK TIMELINE & CREATIVE WATERING ============ */
 .tree-streak-timeline {
   display: flex;
-  gap: 8px;
+  gap: 5px;
   align-items: center;
-  margin: 10px 0 6px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 .streak-day-dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 10.5px;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--muted);
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  user-select: none;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding: 1px 0;
+}
+.streak-day-dot .dot-day {
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.2px;
+  opacity: 0.85;
+  margin-bottom: 1px;
+}
+.streak-day-dot .dot-status {
+  font-size: 10.5px;
+  line-height: 1;
+  font-weight: 700;
 }
 .streak-day-dot.checked {
-  background: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.18);
   border-color: #10B981;
   color: #10B981;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.35);
+}
+.streak-day-dot.checked .dot-day {
+  color: #34D399;
 }
 .streak-day-dot.today {
   border-color: #F59E0B;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+  background: rgba(245, 158, 11, 0.12);
+  color: #F59E0B;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
 }
 .streak-day-dot.today.checked {
   border-color: #10B981;
+  background: rgba(16, 185, 129, 0.22);
+  color: #10B981;
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
 }
 .tree-water-extra-btn {
@@ -3007,30 +3094,38 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
                   <span id="treeLevelBadge" class="badge-pill" style="font-size:10px;padding:2px 8px;background:rgba(16,185,129,0.2);color:#10B981">Cấp 2</span>
                 </div>
                 <p id="treeDesc" style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.4">Đã hình thành thói quen ghi chép và phân bổ</p>
-
-                <!-- 7-DAY STREAK TIMELINE -->
-                <div class="tree-streak-timeline" id="tree7dTimeline" title="Lịch sử chuỗi 7 ngày trực tuyến">
-                  <!-- Rendered by JS -->
+                <div style="display:flex;gap:6px;margin-top:6px">
+                  <span class="badge-pill" style="font-size:10px;padding:2px 8px;background:rgba(16,185,129,0.12);color:#34D399;font-weight:600">✨ Chăm sóc đều đặn</span>
                 </div>
               </div>
             </div>
 
-            <!-- Center: Exp bar & badges -->
+            <!-- Center: Exp bar, 7-Day Timeline & Badges -->
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">
                 <span style="color:var(--muted)">Kinh nghiệm tài chính:</span>
-                <span style="font-weight:700"><span id="treeCurrentExp" style="font-family:var(--font-num);color:#34D399">340</span> / <span id="treeTargetExp" style="font-family:var(--font-num);color:var(--muted)">500</span> EXP (<span id="treePercent">68%</span>)</span>
+                <span style="font-weight:700"><span id="treeCurrentExp" style="font-family:var(--font-num);color:#34D399">340</span> / <span id="treeTargetExp" style="font-family:var(--font-num);color:var(--muted)">500</span> EXP (<span id="treePercent" style="color:#F59E0B">68%</span>)</span>
               </div>
-              <div class="tree-exp-track">
+              <div class="tree-exp-track" style="margin:7px 0 5px">
                 <div class="tree-exp-bar" id="treeExpBar" style="width: 68%;"></div>
               </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted)">
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-bottom:10px">
                 <span>Cần thêm <strong id="treeExpToNext" style="color:#F59E0B">160 EXP</strong> để thăng hạng</span>
                 <span style="color:rgba(255,255,255,0.4)">Tưới cây + Tích hũ + Đóng phí = Tăng EXP</span>
               </div>
-              <div class="tree-badges-strip" id="treeBadgesList">
-                <span class="tree-badge-pill"><span>✦</span> <b>Nhà hoạch định</b></span>
-                <span class="tree-badge-pill"><span>🔥</span> <b>Chuỗi 3 ngày</b></span>
+
+              <!-- 7-DAY STREAK TIMELINE & BADGES STRIP -->
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:8px">
+                  <span style="font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px">Chuỗi 7 ngày:</span>
+                  <div class="tree-streak-timeline" id="tree7dTimeline" title="Lịch sử chuỗi 7 ngày trực tuyến">
+                    <!-- Rendered by JS -->
+                  </div>
+                </div>
+                <div class="tree-badges-strip" id="treeBadgesList" style="margin-top:0">
+                  <span class="tree-badge-pill"><span>✦</span> <b>Nhà hoạch định</b></span>
+                  <span class="tree-badge-pill"><span>🔥</span> <b>Chuỗi 3 ngày</b></span>
+                </div>
               </div>
             </div>
 
@@ -3042,8 +3137,8 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
                 <small id="btnWaterExpTag" style="font-size:10.5px;opacity:0.85">+50 EXP mỗi ngày</small>
               </button>
 
-              <!-- Extra Care Button (Active when checked in today) -->
-              <button type="button" class="tree-water-extra-btn" id="btnWaterExtra" style="display:none" onclick="handleWaterExtraCare()">
+              <!-- Extra Care Button (Active when checked in today or whenever user cares) -->
+              <button type="button" class="tree-water-extra-btn" id="btnWaterExtra" onclick="handleWaterExtraCare()" title="Tưới thêm nước dinh dưỡng bất cứ lúc nào">
                 <span>🧪</span> <span>Tưới nước dinh dưỡng (+10 EXP)</span>
               </button>
             </div>
@@ -4027,16 +4122,29 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
 
 <!-- ================= MODAL VƯỜN THỊNH VƯỢNG STUDIO & THỬ NGHIỆM CHUỖI ================= -->
 <div class="modal-overlay" id="treeCustomModal">
-  <div class="modal-box" style="max-width:540px">
+  <div class="modal-box" style="max-width:560px; max-height:min(88vh, 760px); overflow-y:auto; overscroll-behavior:contain;">
     <span class="modal-close" onclick="closeModal('treeCustomModal')">&times;</span>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
       <span class="badge-pill" style="background:rgba(16,185,129,0.15);color:#10B981;font-size:11px">✦ WEALTH TREE STUDIO</span>
     </div>
     <h3 style="margin-bottom:4px;font-size:18px;font-weight:800">Quản trị Vườn Thịnh Vượng &amp; Kỷ luật Chuỗi</h3>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Tùy biến diện mạo cây, theo dõi chuỗi trực tuyến và thử nghiệm kịch bản</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Tùy biến diện mạo cây, theo dõi chuỗi trực tuyến và thử nghiệm kịch bản</p>
+
+    <!-- SEGMENTED TABS CHO MODAL ĐỂ CHUYỂN NHANH HOẶC CUỘN -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;background:rgba(255,255,255,0.04);padding:4px;border-radius:12px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.08)">
+      <button type="button" class="btn btn-xs tree-modal-tab-btn active" id="tabBtnTreeSkin" onclick="switchTreeModalTab('skin')" style="justify-content:center;font-size:11.5px;padding:8px 4px;font-weight:700">
+        🎨 Tùy biến Cây
+      </button>
+      <button type="button" class="btn btn-xs tree-modal-tab-btn" id="tabBtnTreeRule" onclick="switchTreeModalTab('rule')" style="justify-content:center;font-size:11.5px;padding:8px 4px;font-weight:700">
+        ⚡ Cơ chế 24h
+      </button>
+      <button type="button" class="btn btn-xs tree-modal-tab-btn" id="tabBtnTreeSandbox" onclick="switchTreeModalTab('sandbox')" style="justify-content:center;font-size:11.5px;padding:8px 4px;font-weight:700">
+        🧪 Sandbox
+      </button>
+    </div>
 
     <!-- TAB 1: TÙY BIẾN DIỆN MẠO -->
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:16px">
+    <div id="treeModalSectionSkin" style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:14px">
       <h4 style="font-size:13.5px;font-weight:700;margin:0 0 12px;color:#F8FAFC;display:flex;align-items:center;gap:6px">
         <span>🎨</span> <span>Tùy biến Tên Vườn &amp; Loài Cây (Skin)</span>
       </h4>
@@ -4078,7 +4186,7 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
     </div>
 
     <!-- TAB 2: QUY TẮC CHUỖI & THỜI GIAN THỰC -->
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:16px">
+    <div id="treeModalSectionRule" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:14px">
       <h4 style="font-size:13.5px;font-weight:700;margin:0 0 8px;color:#F8FAFC;display:flex;align-items:center;gap:6px">
         <span>⚡</span> <span>Cơ chế Chuỗi Trực tuyến (Online Streak Logic)</span>
       </h4>
@@ -4092,7 +4200,7 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
     </div>
 
     <!-- TAB 3: SANDBOX MÔ PHỎNG THỬ NGHIỆM -->
-    <div style="background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.25);border-radius:14px;padding:16px">
+    <div id="treeModalSectionSandbox" style="display:none;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.25);border-radius:14px;padding:16px">
       <h4 style="font-size:13.5px;font-weight:700;margin:0 0 6px;color:#F59E0B;display:flex;align-items:center;gap:6px">
         <span>🧪</span> <span>Khu vực Thử nghiệm (Simulation Sandbox)</span>
       </h4>
@@ -6640,12 +6748,17 @@ async function loadGamification() {
     // 7-day Streak Timeline
     const timelineEl = document.getElementById('tree7dTimeline');
     if (timelineEl && Array.isArray(p.streak_history_7d)) {
-      timelineEl.innerHTML = p.streak_history_7d.map(item => `
-        <div class="streak-day-dot ${item.checked ? 'checked' : ''} ${item.is_today ? 'today' : ''}" title="${item.date}: ${item.checked ? 'Đã tưới nước' : (item.is_today ? 'Hôm nay (Cần tưới)' : 'Chưa tưới')}">
-          <span style="font-size:9px">${item.day_label}</span>
-          <span style="font-size:11px;line-height:1">${item.checked ? '✓' : (item.is_today ? '💧' : '·')}</span>
-        </div>
-      `).join('');
+      timelineEl.innerHTML = p.streak_history_7d.map(item => {
+        const dayText = item.day_label || item.dayLabel || 'T2';
+        const isToday = item.is_today !== undefined ? item.is_today : item.isToday;
+        const checked = !!item.checked;
+        return `
+          <div class="streak-day-dot ${checked ? 'checked' : ''} ${isToday ? 'today' : ''}" title="${item.date}: ${checked ? 'Đã tưới nước' : (isToday ? 'Hôm nay (Cần tưới)' : 'Chưa tưới')}">
+            <span class="dot-day">${escapeHtml(dayText)}</span>
+            <span class="dot-status">${checked ? '✓' : (isToday ? '💧' : '·')}</span>
+          </div>
+        `;
+      }).join('');
     }
 
     // Render Badges
@@ -6765,14 +6878,45 @@ async function handleWaterExtraCare() {
 function openTreeCustomModal() {
   const m = document.getElementById('treeCustomModal');
   if (!m) return;
-  m.classList.add('open');
+  openModal('treeCustomModal');
+
+  switchTreeModalTab('skin');
 
   const nameInput = document.getElementById('customTreeNameInput');
   if (nameInput && currentGamificationProfile) {
-    nameInput.value = currentGamificationProfile.tree_name || 'Vườn Thịnh Vượng';
+    nameInput.value = currentGamificationProfile.tree_name || 'Vườn Thịnh Vượng Đặng Quang Dũng';
   }
   if (currentGamificationProfile && currentGamificationProfile.plant_skin) {
     selectTreeSkin(currentGamificationProfile.plant_skin);
+  }
+}
+
+function switchTreeModalTab(tabKey) {
+  const secSkin = document.getElementById('treeModalSectionSkin');
+  const secRule = document.getElementById('treeModalSectionRule');
+  const secSandbox = document.getElementById('treeModalSectionSandbox');
+  const btnSkin = document.getElementById('tabBtnTreeSkin');
+  const btnRule = document.getElementById('tabBtnTreeRule');
+  const btnSandbox = document.getElementById('tabBtnTreeSandbox');
+
+  const allSecs = [secSkin, secRule, secSandbox];
+  const allBtns = [btnSkin, btnRule, btnSandbox];
+
+  allBtns.forEach(b => {
+    if (b) b.classList.remove('active');
+  });
+
+  allSecs.forEach(s => { if (s) s.style.display = 'none'; });
+
+  if (tabKey === 'skin') {
+    if (secSkin) secSkin.style.display = 'block';
+    if (btnSkin) btnSkin.classList.add('active');
+  } else if (tabKey === 'rule') {
+    if (secRule) secRule.style.display = 'block';
+    if (btnRule) btnRule.classList.add('active');
+  } else if (tabKey === 'sandbox') {
+    if (secSandbox) secSandbox.style.display = 'block';
+    if (btnSandbox) btnSandbox.classList.add('active');
   }
 }
 
@@ -7632,11 +7776,51 @@ function initAppTheme() {
   }
 }
 
-// Modal Helpers
+// Modal Helpers (with Body Scroll Lock & Anti-Leak)
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.add('open');
+    document.body.classList.add('modal-open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
 function closeModal(id) {
   const el = document.getElementById(id);
   if (el) el.classList.remove('open');
+  const activeModals = document.querySelectorAll('.modal-overlay.open');
+  if (!activeModals || activeModals.length === 0) {
+    document.body.classList.remove('modal-open');
+    document.body.style.overflow = '';
+  }
 }
+
+// Global modal backdrop click & mutation observer for scroll isolation
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        closeModal(overlay.id);
+      }
+    });
+  });
+
+  const modalObserver = new MutationObserver(() => {
+    const hasOpenModal = document.querySelector('.modal-overlay.open');
+    if (hasOpenModal) {
+      document.body.classList.add('modal-open');
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+    }
+  });
+
+  document.querySelectorAll('.modal-overlay').forEach(m => {
+    modalObserver.observe(m, { attributes: true, attributeFilter: ['class'] });
+  });
+});
 
 // Audio effects via Web Audio API
 let audioCtx = null;
