@@ -355,6 +355,165 @@ app.get('/api/jars', authMiddleware, async (req, res) => {
   }
 });
 
+// POST /api/jars (Tạo mới hũ mục tiêu tiết kiệm)
+app.post('/api/jars', authMiddleware, async (req, res) => {
+  try {
+    const { name, target_amount, current_amount, deadline, category, color, icon } = req.body;
+    if (!name || !target_amount) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập tên hũ và số tiền mục tiêu' });
+    }
+    const jar = await db.createGoalJar(req.user.id, { name, target_amount, current_amount, deadline, category, color, icon });
+    res.status(201).json({ success: true, message: 'Đã tạo hũ tiết kiệm mới thành công!', jar });
+  } catch (err) {
+    console.error('Create jar error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi tạo hũ tiết kiệm: ' + err.message });
+  }
+});
+
+// POST /api/jars/:id/deposit (Tích lũy / Nạp tiền vào hũ)
+app.post('/api/jars/:id/deposit', authMiddleware, async (req, res) => {
+  try {
+    const { amount, note } = req.body;
+    if (!amount || Number(amount) <= 0) {
+      return res.status(400).json({ success: false, message: 'Số tiền tích lũy phải lớn hơn 0' });
+    }
+    const result = await db.depositGoalJar(req.user.id, req.params.id, amount, note);
+    const user = await db.findUserById(req.user.id);
+    res.json({
+      success: true,
+      message: `Đã tích lũy ${Number(amount).toLocaleString('vi-VN')}₫ vào "${result.jar.name}" thành công!`,
+      jar: result.jar,
+      newBalance: user ? user.balance : undefined,
+      expGain: result.expGain,
+      gamification: result.gameRes
+    });
+  } catch (err) {
+    console.error('Deposit jar error:', err);
+    res.status(400).json({ success: false, message: err.message || 'Lỗi nạp tiền vào hũ' });
+  }
+});
+
+// POST /api/jars/:id/withdraw (Rút tiền từ hũ về tài khoản chính)
+app.post('/api/jars/:id/withdraw', authMiddleware, async (req, res) => {
+  try {
+    const { amount, note } = req.body;
+    if (!amount || Number(amount) <= 0) {
+      return res.status(400).json({ success: false, message: 'Số tiền rút phải lớn hơn 0' });
+    }
+    const result = await db.withdrawGoalJar(req.user.id, req.params.id, amount, note);
+    const user = await db.findUserById(req.user.id);
+    res.json({
+      success: true,
+      message: `Đã rút ${Number(amount).toLocaleString('vi-VN')}₫ từ "${result.jar.name}" về tài khoản chính!`,
+      jar: result.jar,
+      newBalance: user ? user.balance : undefined
+    });
+  } catch (err) {
+    console.error('Withdraw jar error:', err);
+    res.status(400).json({ success: false, message: err.message || 'Lỗi rút tiền từ hũ' });
+  }
+});
+
+// DELETE /api/jars/:id (Xóa hũ và hoàn trả số dư về tài khoản chính)
+app.delete('/api/jars/:id', authMiddleware, async (req, res) => {
+  try {
+    const result = await db.deleteGoalJar(req.user.id, req.params.id);
+    const user = await db.findUserById(req.user.id);
+    res.json({
+      success: true,
+      message: result.refunded > 0
+        ? `Đã xóa hũ và hoàn trả ${result.refunded.toLocaleString('vi-VN')}₫ về tài khoản chính!`
+        : 'Đã xóa hũ tiết kiệm thành công!',
+      newBalance: user ? user.balance : undefined
+    });
+  } catch (err) {
+    console.error('Delete jar error:', err);
+    res.status(400).json({ success: false, message: err.message || 'Lỗi xóa hũ tiết kiệm' });
+  }
+});
+
+// ==================== HÓA ĐƠN & PHÍ CỐ ĐỊNH (RECURRING BILLS) ====================
+
+// GET /api/bills (Danh sách hóa đơn định kỳ & countdown)
+app.get('/api/bills', authMiddleware, async (req, res) => {
+  try {
+    const bills = await db.getRecurringBills(req.user.id);
+    res.json({ success: true, bills });
+  } catch (err) {
+    console.error('Get bills error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi tải danh sách hóa đơn: ' + err.message });
+  }
+});
+
+// POST /api/bills (Tạo mới khoản phí cố định)
+app.post('/api/bills', authMiddleware, async (req, res) => {
+  try {
+    const { title, category, amount, billing_day, frequency, auto_create_tx } = req.body;
+    if (!title || !amount || !billing_day) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập tên phí, số tiền và ngày đến hạn hàng tháng' });
+    }
+    const bill = await db.addRecurringBill(req.user.id, { title, category, amount, billing_day, frequency, auto_create_tx });
+    res.status(201).json({ success: true, message: 'Đã thiết lập lịch nhắc phí cố định thành công!', bill });
+  } catch (err) {
+    console.error('Create bill error:', err);
+    res.status(400).json({ success: false, message: err.message || 'Lỗi thêm hóa đơn' });
+  }
+});
+
+// POST /api/bills/:id/pay (Thanh toán hóa đơn ngay & ghi nhận chi phí + EXP)
+app.post('/api/bills/:id/pay', authMiddleware, async (req, res) => {
+  try {
+    const result = await db.payRecurringBill(req.user.id, req.params.id);
+    const user = await db.findUserById(req.user.id);
+    res.json({
+      success: true,
+      message: `Đã thanh toán thành công hóa đơn "${result.bill.title}"! (+50 EXP)`,
+      bill: result.bill,
+      transaction: result.transaction,
+      gamification: result.gamification,
+      newBalance: user ? user.balance : undefined
+    });
+  } catch (err) {
+    console.error('Pay bill error:', err);
+    res.status(400).json({ success: false, message: err.message || 'Lỗi thanh toán hóa đơn' });
+  }
+});
+
+// DELETE /api/bills/:id (Hủy lịch nhắc hóa đơn)
+app.delete('/api/bills/:id', authMiddleware, async (req, res) => {
+  try {
+    await db.deleteRecurringBill(req.user.id, req.params.id);
+    res.json({ success: true, message: 'Đã hủy lịch nhắc phí cố định thành công!' });
+  } catch (err) {
+    console.error('Delete bill error:', err);
+    res.status(400).json({ success: false, message: err.message || 'Lỗi xóa hóa đơn' });
+  }
+});
+
+// ==================== GAME HÓA TÀI CHÍNH (GAMIFICATION - WEALTH TREE) ====================
+
+// GET /api/gamification (Hồ sơ Vườn Thịnh Vượng & Streaks)
+app.get('/api/gamification', authMiddleware, async (req, res) => {
+  try {
+    const profile = await db.getGamificationProfile(req.user.id);
+    res.json({ success: true, profile });
+  } catch (err) {
+    console.error('Get gamification error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi tải hồ sơ Vườn Thịnh Vượng' });
+  }
+});
+
+// POST /api/gamification/checkin (Tưới nước điểm danh hàng ngày)
+app.post('/api/gamification/checkin', authMiddleware, async (req, res) => {
+  try {
+    const result = await db.checkinGamification(req.user.id);
+    res.json(result);
+  } catch (err) {
+    console.error('Checkin gamification error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi điểm danh: ' + err.message });
+  }
+});
+
 // ==================== DATABASE MANAGEMENT ROUTES ====================
 
 // GET /api/system/db-status (Trạng thái kết nối cơ sở dữ liệu hiện tại)

@@ -2121,6 +2121,274 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
 .toast-msg.err .ic { color: var(--red); }
 @keyframes slideToast { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
+/* ============ FINTECH GAMIFICATION (WEALTH TREE & STREAKS) ============ */
+.wealth-tree-card {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(10, 16, 28, 0.85) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 20px;
+  padding: 22px 26px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(12px);
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+.wealth-tree-card:hover {
+  border-color: rgba(16, 185, 129, 0.45);
+}
+.wealth-tree-card::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 240px;
+  height: 240px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15), transparent 70%);
+  pointer-events: none;
+}
+.wealth-tree-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.wealth-tree-body {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+}
+@media (max-width: 900px) {
+  .wealth-tree-body {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+}
+.tree-avatar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.tree-circle-glow {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.05) 70%);
+  border: 2px solid rgba(16, 185, 129, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+  animation: treePulse 3s ease-in-out infinite alternate;
+  flex-shrink: 0;
+}
+@keyframes treePulse {
+  0% { transform: scale(1); box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+  100% { transform: scale(1.06); box-shadow: 0 0 28px rgba(16, 185, 129, 0.45); }
+}
+.tree-exp-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 10px 0 8px;
+  position: relative;
+}
+.tree-exp-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981 0%, #34D399 50%, #F59E0B 100%);
+  border-radius: 999px;
+  transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+.tree-badges-strip {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.tree-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  color: #E2E8F0;
+  transition: all 0.2s ease;
+}
+.tree-badge-pill:hover {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.35);
+  transform: translateY(-2px);
+}
+.tree-water-btn {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 14px;
+  padding: 14px 22px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 170px;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+  transition: all 0.25s ease;
+}
+.tree-water-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(16, 185, 129, 0.5);
+  filter: brightness(1.1);
+}
+.tree-water-btn:disabled {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #10B981;
+  cursor: default;
+  box-shadow: none;
+}
+
+/* ============ GOAL JARS (SMART POCKETS) ============ */
+.jars-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+.jar-card {
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.6) 0%, rgba(10, 15, 29, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.jar-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.35);
+}
+.jar-card.completed {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.jar-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.jar-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.jar-progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 12px 0 8px;
+}
+.jar-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.jar-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+/* ============ RECURRING BILLS ============ */
+.bills-container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 20px;
+}
+.bill-item-card {
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.6) 0%, rgba(10, 15, 29, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  transition: all 0.2s ease;
+}
+.bill-item-card:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
+}
+.bill-item-card.urgent {
+  border-color: rgba(245, 158, 11, 0.45);
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.05) 0%, rgba(10, 15, 29, 0.9) 100%);
+}
+.bill-item-card.paid {
+  opacity: 0.8;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+.bill-icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  flex-shrink: 0;
+}
+.bill-info {
+  flex: 1;
+  min-width: 200px;
+}
+.bill-due-badge {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.bills-urgent-banner {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(239, 68, 68, 0.1) 100%);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #FEF3C7;
+}
+
 /* ============ RESPONSIVE ============ */
 @media (max-width: 1024px) {
   .summary-cards-grid { grid-template-columns: repeat(2, 1fr); }
@@ -2315,6 +2583,15 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
       <div class="nav-item" onclick="openNewTxModal()">
         <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8"/><path d="M8 12h8"/></svg>
         <span>Ghi chép giao dịch</span>
+      </div>
+      <div class="nav-item" data-tab="jars">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m14 0V9a2 2 0 0 0-2-2M5 11V9a2 2 0 0 1 2-2m0 0V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2M7 7h10"/></svg>
+        <span>Hũ tiết kiệm &amp; Mục tiêu</span>
+      </div>
+      <div class="nav-item" data-tab="bills">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M16 2v4M8 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M12 14v4M10 16h4"/></svg>
+        <span>Hóa đơn &amp; Phí cố định</span>
+        <span class="badge-mini" id="billsDueBadge" style="display:none;margin-left:auto;background:var(--red);color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;font-weight:700">0</span>
       </div>
 
       <span class="sb-group-title">Quản trị &amp; Phân tích</span>
@@ -2547,6 +2824,65 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
                   <span>Khóa thẻ</span>
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= VƯỜN THỊNH VƯỢNG & CHUỖI KỶ LUẬT (FINTECH GAMIFICATION) ================= -->
+        <div class="wealth-tree-card" id="wealthTreeWidget">
+          <div class="wealth-tree-header">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span class="badge-pill" style="background:rgba(16,185,129,0.15);color:#10B981;font-weight:700">✦ VƯỜN THỊNH VƯỢNG</span>
+              <span style="font-size:14px;font-weight:700;color:#F8FAFC">Game hóa Kỷ luật Tài chính</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="badge-pill" style="background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.3);font-weight:700">
+                🔥 Chuỗi <span id="treeStreakDays" style="font-family:var(--font-num);margin:0 2px">5</span> ngày kỷ luật
+              </span>
+            </div>
+          </div>
+
+          <div class="wealth-tree-body">
+            <!-- Left: Tree avatar & level badge -->
+            <div class="tree-avatar-wrap">
+              <div class="tree-circle-glow" id="treeIconContainer">
+                <span id="treeLevelIcon">🌿</span>
+              </div>
+              <div>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <h4 id="treeTitle" style="font-size:16px;font-weight:800;color:#10B981;margin:0">Mầm xanh Thịnh vượng</h4>
+                  <span id="treeLevelBadge" class="badge-pill" style="font-size:10px;padding:2px 8px;background:rgba(16,185,129,0.2);color:#10B981">Cấp 2</span>
+                </div>
+                <p id="treeDesc" style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.4">Đã hình thành thói quen ghi chép và phân bổ</p>
+              </div>
+            </div>
+
+            <!-- Center: Exp bar & badges -->
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">
+                <span style="color:var(--muted)">Kinh nghiệm tài chính:</span>
+                <span style="font-weight:700"><span id="treeCurrentExp" style="font-family:var(--font-num);color:#34D399">340</span> / <span id="treeTargetExp" style="font-family:var(--font-num);color:var(--muted)">500</span> EXP (<span id="treePercent">68%</span>)</span>
+              </div>
+              <div class="tree-exp-track">
+                <div class="tree-exp-bar" id="treeExpBar" style="width: 68%;"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted)">
+                <span>Cần thêm <strong id="treeExpToNext" style="color:#F59E0B">160 EXP</strong> để thăng hạng</span>
+                <span style="color:rgba(255,255,255,0.4)">Tưới cây + Tích hũ + Đóng phí đúng hạn = Tăng EXP</span>
+              </div>
+              <div class="tree-badges-strip" id="treeBadgesList">
+                <span class="tree-badge-pill"><span>✦</span> <b>Nhà hoạch định</b></span>
+                <span class="tree-badge-pill"><span>🔥</span> <b>Chuỗi 3 ngày</b></span>
+              </div>
+            </div>
+
+            <!-- Right: Water / Checkin CTA button -->
+            <div>
+              <button type="button" class="tree-water-btn" id="btnWaterTree" onclick="handleWaterCheckin()">
+                <span style="font-size:24px;line-height:1" id="btnWaterIcon">💧</span>
+                <span id="btnWaterTitle" style="font-weight:700;font-size:13px">Tưới nước ngay</span>
+                <small id="btnWaterExpTag" style="font-size:10.5px;opacity:0.85">+50 EXP mỗi ngày</small>
+              </button>
             </div>
           </div>
         </div>
@@ -2949,6 +3285,168 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
         </div>
       </section>
 
+      <!-- ================= 5. TAB: HŨ TIẾT KIỆM MỤC TIÊU (SMART POCKETS & GOAL JARS) ================= -->
+      <section id="view-jars" class="view-section">
+        <div class="sec-title">
+          <div>
+            <h1>Quản lý Hũ tiết kiệm Mục tiêu (Smart Pockets)</h1>
+            <p>Chia nhỏ dòng tiền độc lập để tích lũy an toàn cho các mục tiêu trọng điểm: Quỹ khẩn cấp, Mua sắm lớn và Trải nghiệm.</p>
+          </div>
+          <button class="btn btn-mint btn-sm" onclick="openNewJarModal()">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            Tạo Hũ mục tiêu mới
+          </button>
+        </div>
+
+        <!-- Metric summary cards -->
+        <div class="ux u228" style="margin-bottom: 24px;">
+          <div class="u228-gd" role="list">
+            <div class="u228-c" role="listitem">
+              <div class="u228-in">
+                <div class="u228-top">
+                  <small style="color:var(--ux-mint)">TỔNG TIỀN ĐÃ TÍCH LŨY</small>
+                  <div class="metric-icon-box mint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                </div>
+                <b id="jarsSummaryAccumulated" style="color:var(--ux-mint)">0₫</b>
+                <span class="sub-tag">Tổng số dư trong các hũ mục tiêu</span>
+              </div>
+            </div>
+            <div class="u228-c" role="listitem">
+              <div class="u228-in">
+                <div class="u228-top">
+                  <small style="color:var(--ux-gold)">TỔNG MỤC TIÊU TOÀN BỘ HŨ</small>
+                  <div class="metric-icon-box gold">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                  </div>
+                </div>
+                <b id="jarsSummaryTarget" style="color:var(--ux-gold)">0₫</b>
+                <span class="sub-tag">Kế hoạch tài chính cần đạt</span>
+              </div>
+            </div>
+            <div class="u228-c" role="listitem">
+              <div class="u228-in">
+                <div class="u228-top">
+                  <small style="color:#818CF8">TIẾN ĐỘ HOÀN THÀNH CHUNG</small>
+                  <div class="metric-icon-box violet">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                  </div>
+                </div>
+                <b id="jarsSummaryProgress" style="color:#A5B4FC">0%</b>
+                <span class="sub-tag"><span id="jarsSummaryCount">0</span> hũ đang hoạt động</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Jars Grid -->
+        <div class="panel-card" style="padding: 24px;">
+          <div class="panel-head" style="margin-bottom: 8px;">
+            <div>
+              <h3>Danh sách Hũ tài chính Độc lập</h3>
+              <small style="color:var(--muted)">Tiền trong hũ được tách biệt khỏi số dư chi tiêu thường nhật để bảo vệ kỷ luật</small>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="loadGoalJars()">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              Làm mới
+            </button>
+          </div>
+          <div class="jars-grid" id="jarsContainer">
+            <!-- Jars rendered by JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= 6. TAB: HÓA ĐƠN & PHÍ CỐ ĐỊNH (RECURRING BILLS) ================= -->
+      <section id="view-bills" class="view-section">
+        <div class="sec-title">
+          <div>
+            <h1>Hóa đơn &amp; Phí cố định (Recurring Bills)</h1>
+            <p>Tự động hóa theo dõi các khoản chi chu kỳ: Tiền thuê nhà, internet, bảo hiểm sức khỏe, gói tập gym và tiện ích sinh hoạt.</p>
+          </div>
+          <button class="btn btn-mint btn-sm" onclick="openNewBillModal()">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+            Thêm lịch nhắc phí mới
+          </button>
+        </div>
+
+        <!-- Urgent Bills Alert Banner (Dynamic) -->
+        <div class="bills-urgent-banner" id="billsDueAlertBanner" style="display:none">
+          <span style="font-size:24px">⚠️</span>
+          <div style="flex:1">
+            <strong>Cảnh báo kỳ thanh toán:</strong> Có <strong id="billsDueCount">0</strong> khoản phí cố định sắp đến hạn trong vòng 3 ngày tới! Tổng tiền: <strong id="billsDueTotalAmount" style="font-family:var(--font-num);color:#FBBF24">0₫</strong>.
+          </div>
+          <button class="btn btn-sm btn-outline" style="border-color:rgba(245,158,11,0.5);color:#FEF3C7" onclick="filterBills('urgent')">Xem ngay</button>
+        </div>
+
+        <!-- Metric summary cards -->
+        <div class="ux u228" style="margin-bottom: 24px;">
+          <div class="u228-gd" role="list">
+            <div class="u228-c" role="listitem">
+              <div class="u228-in">
+                <div class="u228-top">
+                  <small style="color:var(--ux-danger)">TỔNG PHÍ CỐ ĐỊNH / THÁNG</small>
+                  <div class="metric-icon-box danger">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  </div>
+                </div>
+                <b id="billsSummaryTotalMonthly" style="color:var(--ux-danger)">0₫</b>
+                <span class="sub-tag">Định mức chi tiêu bắt buộc hàng tháng</span>
+              </div>
+            </div>
+            <div class="u228-c" role="listitem">
+              <div class="u228-in">
+                <div class="u228-top">
+                  <small style="color:var(--ux-mint)">ĐÃ THANH TOÁN THÁNG NÀY</small>
+                  <div class="metric-icon-box mint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                  </div>
+                </div>
+                <b id="billsSummaryPaidThisMonth" style="color:var(--ux-mint)">0₫</b>
+                <span class="sub-tag"><span id="billsSummaryPaidCount">0</span> khoản đã hoàn tất</span>
+              </div>
+            </div>
+            <div class="u228-c" role="listitem">
+              <div class="u228-in">
+                <div class="u228-top">
+                  <small style="color:var(--ux-gold)">CẦN THANH TOÁN TIẾP</small>
+                  <div class="metric-icon-box gold">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  </div>
+                </div>
+                <b id="billsSummaryRemaining" style="color:var(--ux-gold)">0₫</b>
+                <span class="sub-tag"><span id="billsSummaryPendingCount">0</span> khoản đang chờ đến hạn</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bills List Panel -->
+        <div class="panel-card" style="padding: 24px;">
+          <div class="panel-head" style="margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h3>Danh sách Các Khoản phí Định kỳ</h3>
+              <small style="color:var(--muted)">Bấm "Thanh toán ngay" để tự động ghi sổ chi tiêu và nhận +50 EXP tích lũy</small>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="tx-filter-pills" id="billsFilterPills">
+                <button class="pill active" onclick="filterBills('all', this)">Tất cả</button>
+                <button class="pill" onclick="filterBills('urgent', this)">Sắp đến hạn</button>
+                <button class="pill" onclick="filterBills('pending', this)">Chưa thanh toán</button>
+                <button class="pill" onclick="filterBills('paid', this)">Đã thanh toán</button>
+              </div>
+              <button class="btn btn-outline btn-sm" onclick="loadRecurringBills()">
+                <svg class="ic" viewBox="0 0 24 24"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="bills-container" id="billsContainer">
+            <!-- Bills rendered by JS -->
+          </div>
+        </div>
+      </section>
+
     </main>
   </div>
 </div>
@@ -3110,6 +3608,209 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
 </div>
 
 
+
+<!-- ================= MODAL TẠO HŨ MỤC TIÊU MỚI ================= -->
+<div class="modal-overlay" id="newJarModal">
+  <div class="modal-box" style="max-width:500px">
+    <span class="modal-close" onclick="closeModal('newJarModal')">&times;</span>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span class="badge-pill" style="background:rgba(16,185,129,0.15);color:#10B981;font-size:11px">✦ SMART POCKETS</span>
+    </div>
+    <h3 style="margin-bottom:6px;font-size:18px;font-weight:800">Tạo Hũ mục tiêu tiết kiệm mới</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:18px">Tách riêng tiền vào hũ độc lập, bảo toàn kỷ luật tài chính</p>
+
+    <form id="formNewJar" onsubmit="handleCreateJar(event)">
+      <div class="form-group">
+        <label class="form-label">TÊN MỤC TIÊU / HŨ *</label>
+        <div class="form-input-wrap">
+          <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+          <input type="text" id="jarName" placeholder="Ví dụ: Quỹ dự phòng khẩn cấp, Mua xe mới, Du lịch..." required>
+        </div>
+      </div>
+
+      <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">SỐ TIỀN MỤC TIÊU *</label>
+          <div class="form-input-wrap">
+            <input type="number" id="jarTargetAmount" placeholder="Số tiền cần đạt" min="100000" step="50000" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">NẠP BAN ĐẦU (TÙY CHỌN)</label>
+          <div class="form-input-wrap">
+            <input type="number" id="jarInitialAmount" placeholder="0₫" min="0" step="50000" value="0">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">DANH MỤC</label>
+          <div class="form-input-wrap">
+            <select id="jarCategory" style="background:transparent;border:none;color:inherit;width:100%;font-size:13px;outline:none">
+              <option value="Dự phòng">Dự phòng khẩn cấp</option>
+              <option value="Mua sắm">Mua sắm lớn / Thiết bị</option>
+              <option value="Trải nghiệm">Du lịch & Trải nghiệm</option>
+              <option value="Đầu tư">Đầu tư tăng trưởng</option>
+              <option value="Học tập">Phát triển bản thân</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">HẠN CHÓT DỰ KIẾN</label>
+          <div class="form-input-wrap">
+            <input type="date" id="jarDeadline">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">MÀU SẮC ĐẠI DIỆN</label>
+        <div style="display:flex;gap:10px;margin-top:6px" id="jarColorPresets">
+          <label style="cursor:pointer"><input type="radio" name="jarColor" value="#10B981" checked style="display:none"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#10B981;border:2px solid #fff"></span></label>
+          <label style="cursor:pointer"><input type="radio" name="jarColor" value="#F59E0B" style="display:none"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#F59E0B"></span></label>
+          <label style="cursor:pointer"><input type="radio" name="jarColor" value="#6366F1" style="display:none"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#6366F1"></span></label>
+          <label style="cursor:pointer"><input type="radio" name="jarColor" value="#06B6D4" style="display:none"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#06B6D4"></span></label>
+          <label style="cursor:pointer"><input type="radio" name="jarColor" value="#EC4899" style="display:none"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#EC4899"></span></label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-mint" style="width:100%;justify-content:center;padding:12px;font-size:14px;margin-top:10px">
+        Tạo Hũ mục tiêu (+40 EXP)
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL TÍCH LŨY VÀO HŨ ================= -->
+<div class="modal-overlay" id="jarDepositModal">
+  <div class="modal-box" style="max-width:440px">
+    <span class="modal-close" onclick="closeModal('jarDepositModal')">&times;</span>
+    <h3 style="margin-bottom:6px;font-size:18px;font-weight:800">Tích lũy vào hũ</h3>
+    <p id="depositJarSubtitle" style="font-size:12px;color:var(--muted);margin-bottom:16px">Nạp thêm tiền từ tài khoản chính</p>
+
+    <form id="formJarDeposit" onsubmit="handleJarDepositSubmit(event)">
+      <input type="hidden" id="depositJarId">
+      <div class="form-group">
+        <label class="form-label">SỐ TIỀN TÍCH LŨY *</label>
+        <div class="form-input-wrap">
+          <input type="number" id="depositAmount" placeholder="Nhập số tiền..." min="10000" step="10000" required>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+          <button type="button" class="btn btn-outline btn-xs" onclick="setDepositAmountPreset(1000000)">+1 Tr</button>
+          <button type="button" class="btn btn-outline btn-xs" onclick="setDepositAmountPreset(5000000)">+5 Tr</button>
+          <button type="button" class="btn btn-outline btn-xs" onclick="setDepositAmountPreset(10000000)">+10 Tr</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">GHI CHÚ (TÙY CHỌN)</label>
+        <div class="form-input-wrap">
+          <input type="text" id="depositNote" placeholder="Ví dụ: Thưởng dự án, Tiền tiết kiệm tháng này...">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-mint" style="width:100%;justify-content:center;padding:12px;font-size:14px;margin-top:8px">
+        Xác nhận Tích lũy (+50 EXP)
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL RÚT TIỀN TỪ HŨ ================= -->
+<div class="modal-overlay" id="jarWithdrawModal">
+  <div class="modal-box" style="max-width:440px">
+    <span class="modal-close" onclick="closeModal('jarWithdrawModal')">&times;</span>
+    <h3 style="margin-bottom:6px;font-size:18px;font-weight:800">Rút tiền từ hũ về tài khoản</h3>
+    <p id="withdrawJarSubtitle" style="font-size:12px;color:var(--muted);margin-bottom:16px">Số dư hũ hiện có: <strong id="withdrawJarMaxBalance">0₫</strong></p>
+
+    <form id="formJarWithdraw" onsubmit="handleJarWithdrawSubmit(event)">
+      <input type="hidden" id="withdrawJarId">
+      <div class="form-group">
+        <label class="form-label">SỐ TIỀN MUỐN RÚT *</label>
+        <div class="form-input-wrap">
+          <input type="number" id="withdrawAmount" placeholder="Nhập số tiền..." min="10000" step="10000" required>
+        </div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button type="button" class="btn btn-outline btn-xs" onclick="setWithdrawPercentPreset(0.25)">25%</button>
+          <button type="button" class="btn btn-outline btn-xs" onclick="setWithdrawPercentPreset(0.50)">50%</button>
+          <button type="button" class="btn btn-outline btn-xs" onclick="setWithdrawPercentPreset(1.00)">Toàn bộ 100%</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">LÝ DO RÚT TIỀN</label>
+        <div class="form-input-wrap">
+          <input type="text" id="withdrawNote" placeholder="Ví dụ: Dùng cho việc gấp, Thực hiện mua sắm...">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-outline" style="width:100%;justify-content:center;padding:12px;font-size:14px;margin-top:8px;border-color:var(--gold);color:var(--gold)">
+        Rút về Tài khoản chính
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ================= MODAL THÊM LỊCH NHẮC PHÍ CỐ ĐỊNH MỚI ================= -->
+<div class="modal-overlay" id="newBillModal">
+  <div class="modal-box" style="max-width:480px">
+    <span class="modal-close" onclick="closeModal('newBillModal')">&times;</span>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span class="badge-pill" style="background:rgba(239,68,68,0.15);color:#EF4444;font-size:11px">✦ RECURRING BILLS</span>
+    </div>
+    <h3 style="margin-bottom:6px;font-size:18px;font-weight:800">Thêm lịch nhắc phí cố định</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:18px">Tự động tính ngày đếm ngược và nhắc nhở kỳ thanh toán</p>
+
+    <form id="formNewBill" onsubmit="handleCreateBill(event)">
+      <div class="form-group">
+        <label class="form-label">TÊN KHOẢN PHÍ *</label>
+        <div class="form-input-wrap">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M16 2v4M8 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>
+          <input type="text" id="billTitle" placeholder="Ví dụ: Tiền nhà, Internet FPT, Hội viên Gym, Bảo hiểm..." required>
+        </div>
+      </div>
+
+      <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group">
+          <label class="form-label">SỐ TIỀN MỖI KỲ *</label>
+          <div class="form-input-wrap">
+            <input type="number" id="billAmount" placeholder="Số tiền..." min="10000" step="10000" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">NGÀY ĐẾN HẠN HÀNG THÁNG *</label>
+          <div class="form-input-wrap">
+            <input type="number" id="billDay" placeholder="Từ ngày 1 - 31" min="1" max="31" value="5" required>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">DANH MỤC PHÍ</label>
+        <div class="form-input-wrap">
+          <select id="billCategory" style="background:transparent;border:none;color:inherit;width:100%;font-size:13px;outline:none">
+            <option value="Nhà ở">Nhà ở & Tiền thuê</option>
+            <option value="Hóa đơn">Hóa đơn điện, nước, internet</option>
+            <option value="Sức khỏe">Sức khỏe, Gym, Thể thao</option>
+            <option value="Y tế & Bảo hiểm">Y tế & Bảo hiểm nhân thọ</option>
+            <option value="Giáo dục">Học phí & Khóa học</option>
+            <option value="Khác">Khoản phí định kỳ khác</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;margin:14px 0;background:rgba(255,255,255,0.03);padding:10px 14px;border-radius:10px">
+        <input type="checkbox" id="billAutoTx" checked style="cursor:pointer;width:16px;height:16px;accent-color:var(--mint)">
+        <label for="billAutoTx" style="font-size:12px;color:var(--text);cursor:pointer">Tự động ghi vào lịch sử chi tiêu khi bấm thanh toán</label>
+      </div>
+
+      <button type="submit" class="btn btn-mint" style="width:100%;justify-content:center;padding:12px;font-size:14px">
+        Lưu lịch nhắc phí (+30 EXP)
+      </button>
+    </form>
+  </div>
+</div>
 
 <!-- TOAST CONTAINER -->
 <div id="toastBox"></div>
@@ -3411,7 +4112,10 @@ async function loadAllData() {
     loadCategoryAnalytics(),
     loadCashflowTrend(),
     loadWealthAllocation(),
-    loadDbStatus()
+    loadDbStatus(),
+    loadGamification(),
+    loadGoalJars(),
+    loadRecurringBills()
   ]);
 }
 
@@ -3687,6 +4391,15 @@ async function loadCategoryAnalytics(params = {}) {
     renderDonutChart(data.totalExpense, data.categories || []);
   } catch (err) {
     console.error("loadCategoryAnalytics error:", err);
+  }
+}
+
+async function loadAllAnalyticsCharts() {
+  try {
+    await Promise.all([loadCategoryAnalytics(), loadCashflowTrend()]);
+    showToast("Đã làm mới dữ liệu biểu đồ phân tích thành công!");
+  } catch (err) {
+    showToast("Lỗi làm mới biểu đồ: " + err.message, "err");
   }
 }
 
@@ -5549,10 +6262,706 @@ function switchTab(tabId) {
   if (tabId === 'budget') {
     ensureAllocationCardsMounted();
     applyAllocationCalculations();
+  } else if (tabId === 'jars') {
+    loadGoalJars();
+  } else if (tabId === 'bills') {
+    loadRecurringBills();
+  } else if (tabId === 'dashboard') {
+    loadGamification();
   }
 
   document.getElementById('sidebar').classList.remove('mobile-open');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ==================== GAMIFICATION (VƯỜN THỊNH VƯỢNG) ====================
+let currentGamificationProfile = null;
+
+async function loadGamification() {
+  if (!authToken) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/gamification`, {
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    });
+    const data = await res.json();
+    if (!data.success || !data.profile) return;
+    const p = data.profile;
+    currentGamificationProfile = p;
+
+    // Render tree info
+    const levelIconEl = document.getElementById('treeLevelIcon');
+    const titleEl = document.getElementById('treeTitle');
+    const badgeEl = document.getElementById('treeLevelBadge');
+    const descEl = document.getElementById('treeDesc');
+    const streakEl = document.getElementById('treeStreakDays');
+    const currentExpEl = document.getElementById('treeCurrentExp');
+    const targetExpEl = document.getElementById('treeTargetExp');
+    const percentEl = document.getElementById('treePercent');
+    const expBarEl = document.getElementById('treeExpBar');
+    const expToNextEl = document.getElementById('treeExpToNext');
+    const badgesListEl = document.getElementById('treeBadgesList');
+    const waterBtn = document.getElementById('btnWaterTree');
+
+    if (levelIconEl) levelIconEl.textContent = p.tree_icon || '🌿';
+    if (titleEl) titleEl.textContent = p.tree_title || 'Mầm xanh Thịnh vượng';
+    if (badgeEl) badgeEl.textContent = `Cấp ${p.tree_level || 1}`;
+    if (descEl) descEl.textContent = p.tree_description || '';
+    if (streakEl) streakEl.textContent = p.streak_days || 1;
+    if (currentExpEl) currentExpEl.textContent = fmt(p.current_exp || 0);
+    if (targetExpEl) targetExpEl.textContent = fmt(p.next_level_target || 500);
+    if (percentEl) percentEl.textContent = `${p.progress_percent || 0}%`;
+    if (expBarEl) expBarEl.style.width = `${p.progress_percent || 0}%`;
+    if (expToNextEl) expToNextEl.textContent = `${fmt(p.exp_to_next || 0)} EXP`;
+
+    // Render Badges
+    if (badgesListEl && Array.isArray(p.achievements)) {
+      badgesListEl.innerHTML = p.achievements.map(a => `
+        <span class="tree-badge-pill" title="${escapeHtml(a.name)}">
+          <span>${a.icon || '✦'}</span> <b>${escapeHtml(a.name)}</b>
+        </span>
+      `).join('');
+    }
+
+    // Water Button State
+    if (waterBtn) {
+      const btnTitle = document.getElementById('btnWaterTitle');
+      const btnExpTag = document.getElementById('btnWaterExpTag');
+      const btnIcon = document.getElementById('btnWaterIcon');
+      if (p.checked_in_today) {
+        waterBtn.disabled = true;
+        if (btnTitle) btnTitle.textContent = "Đã tưới nước hôm nay";
+        if (btnExpTag) btnExpTag.textContent = "Hẹn gặp lại ngày mai";
+        if (btnIcon) btnIcon.textContent = "✅";
+      } else {
+        waterBtn.disabled = false;
+        if (btnTitle) btnTitle.textContent = "Tưới nước ngay";
+        if (btnExpTag) btnExpTag.textContent = "+50 EXP mỗi ngày";
+        if (btnIcon) btnIcon.textContent = "💧";
+      }
+    }
+  } catch (err) {
+    console.warn("Lỗi tải thông tin Vườn Thịnh Vượng:", err);
+  }
+}
+
+async function handleWaterCheckin() {
+  if (!authToken) {
+    showToast("Vui lòng đăng nhập để điểm danh", "err");
+    return;
+  }
+  const waterBtn = document.getElementById('btnWaterTree');
+  if (waterBtn) waterBtn.disabled = true;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/gamification/checkin`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Tưới nước thành công! +50 EXP 🌱");
+      playAudioSuccess();
+      await loadGamification();
+    } else {
+      showToast(data.message || "Hôm nay bạn đã điểm danh rồi!", "err");
+      if (data.profile) await loadGamification();
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi điểm danh", "err");
+    if (waterBtn) waterBtn.disabled = false;
+  }
+}
+
+// ==================== GOAL JARS CONTROLLER ====================
+let allGoalJars = [];
+
+async function loadGoalJars() {
+  if (!authToken) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/jars`, {
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    });
+    const data = await res.json();
+    if (!data.success) return;
+    allGoalJars = data.jars || [];
+
+    // Calculate metrics
+    let totalAcc = 0;
+    let totalTgt = 0;
+    let activeCount = allGoalJars.length;
+    allGoalJars.forEach(j => {
+      totalAcc += Number(j.current_amount || 0);
+      totalTgt += Number(j.target_amount || 0);
+    });
+    const avgProgress = totalTgt > 0 ? Math.min(100, Math.round((totalAcc / totalTgt) * 100)) : 0;
+
+    const accEl = document.getElementById('jarsSummaryAccumulated');
+    const tgtEl = document.getElementById('jarsSummaryTarget');
+    const prgEl = document.getElementById('jarsSummaryProgress');
+    const cntEl = document.getElementById('jarsSummaryCount');
+
+    if (accEl) accEl.textContent = fmt(totalAcc) + "₫";
+    if (tgtEl) tgtEl.textContent = fmt(totalTgt) + "₫";
+    if (prgEl) prgEl.textContent = avgProgress + "%";
+    if (cntEl) cntEl.textContent = activeCount;
+
+    // Render jars
+    const container = document.getElementById('jarsContainer');
+    if (!container) return;
+
+    if (allGoalJars.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;padding:40px 20px;color:var(--muted)">
+          <div style="font-size:36px;margin-bottom:10px">🎯</div>
+          <h4>Chưa có hũ mục tiêu nào</h4>
+          <p style="font-size:12px;margin:6px 0 16px">Hãy tạo hũ đầu tiên để tách riêng tiền quỹ và hiện thực hóa mục tiêu tài chính của bạn!</p>
+          <button class="btn btn-mint btn-sm" onclick="openNewJarModal()">+ Tạo Hũ mục tiêu mới</button>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = allGoalJars.map(j => {
+      const current = Number(j.current_amount || 0);
+      const target = Number(j.target_amount || 0);
+      const percent = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
+      const isCompleted = percent >= 100;
+      const color = j.color || '#10B981';
+
+      // Deadline countdown
+      let deadlineText = 'Không thời hạn';
+      if (j.deadline) {
+        const d = new Date(j.deadline);
+        const today = new Date();
+        const diffDays = Math.ceil((d - today) / (1000 * 60 * 60 * 24));
+        if (diffDays > 0) deadlineText = `Hạn: ${d.toLocaleDateString('vi-VN')} (Còn ${diffDays} ngày)`;
+        else if (diffDays === 0) deadlineText = `Hạn: Hôm nay!`;
+        else deadlineText = `Đã qua hạn (${Math.abs(diffDays)} ngày)`;
+      }
+
+      return `
+        <div class="jar-card ${isCompleted ? 'completed' : ''}" style="border-top: 3px solid ${color};">
+          <div>
+            <div class="jar-top">
+              <span class="badge-pill" style="font-size:11px;background:rgba(255,255,255,0.06);color:#E2E8F0">
+                ${escapeHtml(j.category || 'Mục tiêu')}
+              </span>
+              <span class="badge-pill" style="font-size:10.5px;background:${isCompleted ? 'rgba(16,185,129,0.15)' : 'rgba(245,158,11,0.15)'};color:${isCompleted ? '#10B981' : '#F59E0B'}">
+                ${isCompleted ? '✓ Hoàn thành 100%' : `Tiến độ ${percent}%`}
+              </span>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+              <div class="jar-icon-wrap" style="background:${color}15;color:${color};border-color:${color}30">
+                ${isCompleted ? '🏆' : (j.icon === 'plane' ? '✈️' : (j.icon === 'laptop' ? '💻' : '🛡️'))}
+              </div>
+              <div style="flex:1">
+                <h4 style="font-size:15px;font-weight:700;margin:0;color:#F8FAFC">${escapeHtml(j.name)}</h4>
+                <small style="font-size:11.5px;color:var(--muted)">${deadlineText}</small>
+              </div>
+            </div>
+
+            <div style="margin: 14px 0 6px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline">
+                <b style="font-family:var(--font-num);font-size:18px;color:${color}">${fmt(current)}₫</b>
+                <span style="font-family:var(--font-num);font-size:12px;color:var(--muted)">/ ${fmt(target)}₫</span>
+              </div>
+              <div class="jar-progress-track">
+                <div class="jar-progress-fill" style="width:${percent}%;background:linear-gradient(90deg, ${color}, ${color}dd);"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="jar-actions">
+            <button class="btn btn-mint btn-sm" style="flex:1;justify-content:center;font-size:12px" onclick="openJarDepositModal('${j.id}')">
+              + Tích lũy
+            </button>
+            <button class="btn btn-outline btn-sm" style="flex:1;justify-content:center;font-size:12px" onclick="openJarWithdrawModal('${j.id}')" ${current <= 0 ? 'disabled' : ''}>
+              Rút tiền
+            </button>
+            <button class="btn btn-outline btn-sm" style="padding:0 8px;color:var(--red);border-color:rgba(239,68,68,0.3)" onclick="deleteGoalJarPrompt('${j.id}', '${escapeHtml(j.name)}')" title="Xóa hũ này">
+              &times;
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    console.error("Lỗi tải danh sách hũ mục tiêu:", err);
+  }
+}
+
+function openNewJarModal() {
+  const m = document.getElementById('newJarModal');
+  if (m) m.classList.add('open');
+}
+
+async function handleCreateJar(e) {
+  e.preventDefault();
+  if (!authToken) return;
+
+  const name = document.getElementById('jarName').value.trim();
+  const target_amount = parseFloat(document.getElementById('jarTargetAmount').value) || 0;
+  const current_amount = parseFloat(document.getElementById('jarInitialAmount').value) || 0;
+  const category = document.getElementById('jarCategory').value;
+  const deadline = document.getElementById('jarDeadline').value || null;
+  const colorChecked = document.querySelector('input[name="jarColor"]:checked');
+  const color = colorChecked ? colorChecked.value : '#10B981';
+
+  let icon = 'shield';
+  if (category === 'Mua sắm') icon = 'laptop';
+  else if (category === 'Trải nghiệm') icon = 'plane';
+  else if (category === 'Đầu tư') icon = 'trending-up';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/jars`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, target_amount, current_amount, category, deadline, color, icon })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Đã tạo hũ tiết kiệm mới thành công!");
+      playAudioSuccess();
+      closeModal('newJarModal');
+      document.getElementById('formNewJar').reset();
+      await loadGoalJars();
+      await loadGamification();
+      await fetchCurrentUser();
+    } else {
+      showToast(data.message || "Lỗi tạo hũ tiết kiệm", "err");
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi tạo hũ", "err");
+  }
+}
+
+function openJarDepositModal(jarId) {
+  const jar = allGoalJars.find(j => j.id === jarId);
+  if (!jar) return;
+  document.getElementById('depositJarId').value = jar.id;
+  const sub = document.getElementById('depositJarSubtitle');
+  if (sub) sub.innerHTML = `Tích lũy vào: <strong>${escapeHtml(jar.name)}</strong> (Hiện có: ${fmt(jar.current_amount)}₫)`;
+  document.getElementById('depositAmount').value = '';
+  document.getElementById('depositNote').value = '';
+  const m = document.getElementById('jarDepositModal');
+  if (m) m.classList.add('open');
+}
+
+function setDepositAmountPreset(amt) {
+  const inp = document.getElementById('depositAmount');
+  if (inp) inp.value = amt;
+}
+
+async function handleJarDepositSubmit(e) {
+  e.preventDefault();
+  if (!authToken) return;
+
+  const jarId = document.getElementById('depositJarId').value;
+  const amount = parseFloat(document.getElementById('depositAmount').value);
+  const note = document.getElementById('depositNote').value.trim();
+
+  if (!amount || amount <= 0) {
+    showToast("Vui lòng nhập số tiền hợp lệ", "err");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/jars/${jarId}/deposit`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ amount, note })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Tích lũy thành công! (+50 EXP)");
+      playAudioSuccess();
+      closeModal('jarDepositModal');
+      await Promise.all([
+        loadGoalJars(),
+        loadGamification(),
+        loadTransactions(),
+        loadSummaryData(),
+        fetchCurrentUser()
+      ]);
+    } else {
+      showToast(data.message || "Lỗi nạp tiền vào hũ", "err");
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi nạp tiền vào hũ", "err");
+  }
+}
+
+function openJarWithdrawModal(jarId) {
+  const jar = allGoalJars.find(j => j.id === jarId);
+  if (!jar) return;
+  document.getElementById('withdrawJarId').value = jar.id;
+  const maxEl = document.getElementById('withdrawJarMaxBalance');
+  if (maxEl) maxEl.textContent = fmt(jar.current_amount) + "₫";
+  document.getElementById('withdrawAmount').value = '';
+  document.getElementById('withdrawNote').value = '';
+  const m = document.getElementById('jarWithdrawModal');
+  if (m) m.classList.add('open');
+}
+
+function setWithdrawPercentPreset(pct) {
+  const jarId = document.getElementById('withdrawJarId').value;
+  const jar = allGoalJars.find(j => j.id === jarId);
+  if (!jar) return;
+  const amt = Math.floor(Number(jar.current_amount || 0) * pct);
+  const inp = document.getElementById('withdrawAmount');
+  if (inp) inp.value = amt;
+}
+
+async function handleJarWithdrawSubmit(e) {
+  e.preventDefault();
+  if (!authToken) return;
+
+  const jarId = document.getElementById('withdrawJarId').value;
+  const amount = parseFloat(document.getElementById('withdrawAmount').value);
+  const note = document.getElementById('withdrawNote').value.trim();
+
+  if (!amount || amount <= 0) {
+    showToast("Vui lòng nhập số tiền muốn rút", "err");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/jars/${jarId}/withdraw`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ amount, note })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Đã rút tiền về tài khoản chính thành công!");
+      playAudioSuccess();
+      closeModal('jarWithdrawModal');
+      await Promise.all([
+        loadGoalJars(),
+        loadTransactions(),
+        loadSummaryData(),
+        fetchCurrentUser()
+      ]);
+    } else {
+      showToast(data.message || "Lỗi rút tiền", "err");
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi rút tiền", "err");
+  }
+}
+
+async function deleteGoalJarPrompt(jarId, jarName) {
+  if (!confirm(`Bạn có chắc chắn muốn xóa hũ "${jarName}"?\nSố dư hiện có trong hũ sẽ được hoàn trả đầy đủ về tài khoản chính.`)) return;
+  if (!authToken) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/jars/${jarId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Đã xóa hũ thành công!");
+      playAudioSuccess();
+      await Promise.all([
+        loadGoalJars(),
+        fetchCurrentUser()
+      ]);
+    } else {
+      showToast(data.message || "Lỗi xóa hũ", "err");
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi xóa hũ", "err");
+  }
+}
+
+// ==================== RECURRING BILLS CONTROLLER ====================
+let allRecurringBills = [];
+let currentBillsFilter = 'all';
+
+async function loadRecurringBills() {
+  if (!authToken) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/bills`, {
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    });
+    const data = await res.json();
+    if (!data.success) return;
+    allRecurringBills = data.bills || [];
+
+    // Calculate metrics
+    let totalMonthly = 0;
+    let paidThisMonth = 0;
+    let remainingAmount = 0;
+    let paidCount = 0;
+    let pendingCount = 0;
+    let urgentCount = 0;
+    let urgentTotal = 0;
+
+    allRecurringBills.forEach(b => {
+      const amt = Number(b.amount || 0);
+      totalMonthly += amt;
+      if (b.is_paid_this_month) {
+        paidThisMonth += amt;
+        paidCount++;
+      } else {
+        remainingAmount += amt;
+        pendingCount++;
+        if (b.is_due_soon || b.is_today) {
+          urgentCount++;
+          urgentTotal += amt;
+        }
+      }
+    });
+
+    const totEl = document.getElementById('billsSummaryTotalMonthly');
+    const pdEl = document.getElementById('billsSummaryPaidThisMonth');
+    const pdCntEl = document.getElementById('billsSummaryPaidCount');
+    const remEl = document.getElementById('billsSummaryRemaining');
+    const remCntEl = document.getElementById('billsSummaryPendingCount');
+
+    if (totEl) totEl.textContent = fmt(totalMonthly) + "₫";
+    if (pdEl) pdEl.textContent = fmt(paidThisMonth) + "₫";
+    if (pdCntEl) pdCntEl.textContent = paidCount;
+    if (remEl) remEl.textContent = fmt(remainingAmount) + "₫";
+    if (remCntEl) remCntEl.textContent = pendingCount;
+
+    // Alert Banner & Sidebar Badge
+    const alertBanner = document.getElementById('billsDueAlertBanner');
+    const sidebarBadge = document.getElementById('billsDueBadge');
+    const alertCountEl = document.getElementById('billsDueCount');
+    const alertTotalEl = document.getElementById('billsDueTotalAmount');
+
+    if (urgentCount > 0) {
+      if (alertBanner) alertBanner.style.display = 'flex';
+      if (alertCountEl) alertCountEl.textContent = urgentCount;
+      if (alertTotalEl) alertTotalEl.textContent = fmt(urgentTotal) + "₫";
+      if (sidebarBadge) {
+        sidebarBadge.textContent = urgentCount;
+        sidebarBadge.style.display = 'inline-block';
+      }
+    } else {
+      if (alertBanner) alertBanner.style.display = 'none';
+      if (sidebarBadge) sidebarBadge.style.display = 'none';
+    }
+
+    renderBillsList();
+  } catch (err) {
+    console.error("Lỗi tải danh sách hóa đơn:", err);
+  }
+}
+
+function filterBills(type, btnEl) {
+  currentBillsFilter = type;
+  if (btnEl) {
+    document.querySelectorAll('#billsFilterPills .pill').forEach(p => p.classList.remove('active'));
+    btnEl.classList.add('active');
+  }
+  renderBillsList();
+}
+
+function renderBillsList() {
+  const container = document.getElementById('billsContainer');
+  if (!container) return;
+
+  let filtered = allRecurringBills;
+  if (currentBillsFilter === 'urgent') {
+    filtered = allRecurringBills.filter(b => !b.is_paid_this_month && (b.is_due_soon || b.is_today));
+  } else if (currentBillsFilter === 'pending') {
+    filtered = allRecurringBills.filter(b => !b.is_paid_this_month);
+  } else if (currentBillsFilter === 'paid') {
+    filtered = allRecurringBills.filter(b => b.is_paid_this_month);
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="text-align:center;padding:36px 20px;color:var(--muted)">
+        <div style="font-size:32px;margin-bottom:8px">📝</div>
+        <p>Không có khoản phí nào phù hợp với bộ lọc này.</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(b => {
+    const isPaid = b.is_paid_this_month;
+    const isToday = b.is_today && !isPaid;
+    const isDueSoon = b.is_due_soon && !isPaid;
+    const amt = Number(b.amount || 0);
+
+    // Icon based on category
+    let icon = '📄';
+    if (b.category === 'Nhà ở') icon = '🏠';
+    else if (b.category === 'Hóa đơn') icon = '⚡';
+    else if (b.category === 'Sức khỏe') icon = '🏋️';
+    else if (b.category === 'Y tế & Bảo hiểm') icon = '🩺';
+    else if (b.category === 'Giáo dục') icon = '🎓';
+
+    // Due badge
+    let dueBadgeHtml = '';
+    if (isPaid) {
+      dueBadgeHtml = `<span class="bill-due-badge" style="background:rgba(16,185,129,0.15);color:#10B981">✓ Đã thanh toán kỳ này</span>`;
+    } else if (isToday) {
+      dueBadgeHtml = `<span class="bill-due-badge" style="background:rgba(239,68,68,0.25);color:#EF4444;border:1px solid #EF4444">🚨 HÔM NAY ĐẾN HẠN</span>`;
+    } else if (isDueSoon) {
+      dueBadgeHtml = `<span class="bill-due-badge" style="background:rgba(245,158,11,0.2);color:#F59E0B">⚠️ Còn ${b.days_remaining} ngày nữa</span>`;
+    } else {
+      dueBadgeHtml = `<span class="bill-due-badge" style="background:rgba(255,255,255,0.06);color:var(--muted)">Còn ${b.days_remaining} ngày (Ngày ${b.billing_day})</span>`;
+    }
+
+    return `
+      <div class="bill-item-card ${isDueSoon || isToday ? 'urgent' : ''} ${isPaid ? 'paid' : ''}">
+        <div style="display:flex;align-items:center;gap:14px;flex:1;min-width:240px">
+          <div class="bill-icon-box">
+            <span>${icon}</span>
+          </div>
+          <div class="bill-info">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <strong style="font-size:15px;color:#F8FAFC">${escapeHtml(b.title)}</strong>
+              <span class="badge-pill" style="font-size:10.5px;background:rgba(255,255,255,0.06);color:var(--muted)">${escapeHtml(b.category)}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:4px">
+              <small style="font-size:11.5px;color:var(--muted)">Ngày ${b.billing_day} hàng tháng</small>
+              ${dueBadgeHtml}
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:16px">
+          <div style="text-align:right">
+            <b style="font-family:var(--font-num);font-size:16px;color:#F8FAFC">${fmt(amt)}₫</b>
+            <small style="display:block;font-size:10.5px;color:var(--muted)">Hàng tháng</small>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px">
+            ${isPaid ? `
+              <button class="btn btn-outline btn-sm" disabled style="opacity:0.65;border-color:rgba(16,185,129,0.3);color:#10B981">
+                ✓ Đã đóng
+              </button>
+            ` : `
+              <button class="btn btn-mint btn-sm" onclick="payBillPrompt('${b.id}', '${escapeHtml(b.title)}', ${amt})">
+                Thanh toán (+50 EXP)
+              </button>
+            `}
+            <button class="btn btn-outline btn-sm" style="padding:0 8px;color:var(--muted);border-color:rgba(255,255,255,0.1)" onclick="deleteBillPrompt('${b.id}', '${escapeHtml(b.title)}')" title="Hủy lịch nhắc này">
+              &times;
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openNewBillModal() {
+  const m = document.getElementById('newBillModal');
+  if (m) m.classList.add('open');
+}
+
+async function handleCreateBill(e) {
+  e.preventDefault();
+  if (!authToken) return;
+
+  const title = document.getElementById('billTitle').value.trim();
+  const amount = parseFloat(document.getElementById('billAmount').value);
+  const billing_day = parseInt(document.getElementById('billDay').value, 10);
+  const category = document.getElementById('billCategory').value;
+  const auto_create_tx = document.getElementById('billAutoTx').checked;
+
+  if (!title || !amount || !billing_day) {
+    showToast("Vui lòng điền đầy đủ thông tin", "err");
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/bills`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ title, amount, billing_day, category, auto_create_tx })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Đã thêm lịch nhắc phí cố định thành công!");
+      playAudioSuccess();
+      closeModal('newBillModal');
+      document.getElementById('formNewBill').reset();
+      await loadRecurringBills();
+      await loadGamification();
+    } else {
+      showToast(data.message || "Lỗi thêm lịch nhắc phí", "err");
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi thêm lịch nhắc phí", "err");
+  }
+}
+
+async function payBillPrompt(billId, billTitle, amount) {
+  if (!confirm(`Xác nhận thanh toán "${billTitle}" với số tiền ${fmt(amount)}₫?\nGiao dịch sẽ được tự động ghi vào sổ chi tiêu và bạn nhận được +50 EXP vào Vườn Thịnh Vượng!`)) return;
+  if (!authToken) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/bills/${billId}/pay`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Thanh toán thành công! (+50 EXP)");
+      playAudioSuccess();
+      await Promise.all([
+        loadRecurringBills(),
+        loadGamification(),
+        loadTransactions(),
+        loadSummaryData(),
+        fetchCurrentUser()
+      ]);
+    } else {
+      showToast(data.message || "Lỗi thanh toán hóa đơn", "err");
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi thanh toán hóa đơn", "err");
+  }
+}
+
+async function deleteBillPrompt(billId, billTitle) {
+  if (!confirm(`Bạn có chắc chắn muốn hủy lịch nhắc phí "${billTitle}"?`)) return;
+  if (!authToken) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/bills/${billId}`, {
+      method: 'DELETE',
+      headers: { 'Authorization': `Bearer ${authToken}` }
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Đã hủy lịch nhắc phí!");
+      playAudioSuccess();
+      await loadRecurringBills();
+    } else {
+      showToast(data.message || "Lỗi hủy lịch nhắc", "err");
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi xóa lịch nhắc", "err");
+  }
 }
 
 document.querySelectorAll('.nav-item').forEach(item => {
