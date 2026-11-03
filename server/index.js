@@ -503,14 +503,39 @@ app.get('/api/gamification', authMiddleware, async (req, res) => {
   }
 });
 
-// POST /api/gamification/checkin (Tưới nước điểm danh hàng ngày)
+// POST /api/gamification/checkin (Tưới nước điểm danh hàng ngày hoặc tưới nước dinh dưỡng)
 app.post('/api/gamification/checkin', authMiddleware, async (req, res) => {
   try {
-    const result = await db.checkinGamification(req.user.id);
+    const { extraCare } = req.body || {};
+    const result = await db.checkinGamification(req.user.id, { extraCare: Boolean(extraCare) });
     res.json(result);
   } catch (err) {
     console.error('Checkin gamification error:', err);
     res.status(500).json({ success: false, message: 'Lỗi điểm danh: ' + err.message });
+  }
+});
+
+// POST /api/gamification/customize (Đổi tên vườn và loài cây skin)
+app.post('/api/gamification/customize', authMiddleware, async (req, res) => {
+  try {
+    const { tree_name, plant_skin } = req.body || {};
+    const profile = await db.customizeGamification(req.user.id, { tree_name, plant_skin });
+    res.json({ success: true, message: 'Đã lưu tùy biến Vườn Thịnh Vượng thành công!', profile });
+  } catch (err) {
+    console.error('Customize gamification error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi lưu tùy biến: ' + err.message });
+  }
+});
+
+// POST /api/gamification/simulate-streak (Mô phỏng thử nghiệm chuỗi kỷ luật & mất chuỗi)
+app.post('/api/gamification/simulate-streak', authMiddleware, async (req, res) => {
+  try {
+    const { action } = req.body || {};
+    const result = await db.simulateGamificationStreak(req.user.id, action);
+    res.json(result);
+  } catch (err) {
+    console.error('Simulate streak error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi mô phỏng chuỗi: ' + err.message });
   }
 });
 

@@ -2321,6 +2321,133 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   margin-top: 18px;
 }
 
+/* ============ INTERACTIVE COLOR & ICON STUDIO FOR JARS ============ */
+.jar-color-swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid transparent;
+}
+.jar-color-swatch:hover {
+  transform: scale(1.15);
+}
+.jar-color-swatch.active {
+  transform: scale(1.18);
+  border-color: #FFFFFF !important;
+  box-shadow: 0 0 16px rgba(255, 255, 255, 0.4);
+}
+.jar-color-swatch.active::after {
+  content: "✓";
+  color: #FFFFFF;
+  font-size: 13px;
+  font-weight: 800;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+.jar-icon-chip {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.jar-icon-chip:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+.jar-icon-chip.active {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10B981;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
+  transform: translateY(-2px) scale(1.08);
+}
+.jar-live-preview {
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.8) 0%, rgba(10, 15, 29, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 18px;
+  transition: all 0.3s ease;
+}
+
+/* ============ STREAK TIMELINE & CREATIVE WATERING ============ */
+.tree-streak-timeline {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin: 10px 0 6px;
+  flex-wrap: wrap;
+}
+.streak-day-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--muted);
+  transition: all 0.2s ease;
+  position: relative;
+}
+.streak-day-dot.checked {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10B981;
+  color: #10B981;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+}
+.streak-day-dot.today {
+  border-color: #F59E0B;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+}
+.streak-day-dot.today.checked {
+  border-color: #10B981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+.tree-water-extra-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #10B981;
+  border-radius: 12px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  margin-top: 6px;
+}
+.tree-water-extra-btn:hover {
+  background: rgba(16, 185, 129, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
+}
+.water-spray-anim {
+  animation: sprayDrop 0.6s ease-out forwards;
+}
+@keyframes sprayDrop {
+  0% { transform: translateY(-10px) scale(0.6); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(12px) scale(1.3); opacity: 0; }
+}
+
 /* ============ RECURRING BILLS ============ */
 .bills-container {
   display: flex;
@@ -2830,22 +2957,48 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
 
         <!-- ================= VƯỜN THỊNH VƯỢNG & CHUỖI KỶ LUẬT (FINTECH GAMIFICATION) ================= -->
         <div class="wealth-tree-card" id="wealthTreeWidget">
-          <div class="wealth-tree-header">
-            <div style="display:flex;align-items:center;gap:10px">
-              <span class="badge-pill" style="background:rgba(16,185,129,0.15);color:#10B981;font-weight:700">✦ VƯỜN THỊNH VƯỢNG</span>
-              <span style="font-size:14px;font-weight:700;color:#F8FAFC">Game hóa Kỷ luật Tài chính</span>
+          <!-- BROKEN STREAK WARNING BANNER -->
+          <div id="treeBrokenAlert" style="display:none;background:linear-gradient(135deg, rgba(239,68,68,0.18) 0%, rgba(245,158,11,0.12) 100%);border:1px solid rgba(239,68,68,0.45);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#FCA5A5;align-items:center;gap:10px">
+            <span style="font-size:22px">💔</span>
+            <div style="flex:1">
+              <strong style="color:#FFF">Chuỗi kỷ luật đã bị đứt!</strong> Do bạn không vào ứng dụng trong ngày hôm qua, chuỗi đã bị ngắt. Hãy <strong>Tưới nước ngay</strong> để gieo mầm lại từ ngày 1!
             </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span class="badge-pill" style="background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.3);font-weight:700">
-                🔥 Chuỗi <span id="treeStreakDays" style="font-family:var(--font-num);margin:0 2px">5</span> ngày kỷ luật
+            <button type="button" class="btn btn-outline btn-xs" style="border-color:#EF4444;color:#FCA5A5" onclick="handleWaterCheckin()">Tưới lại ngay</button>
+          </div>
+
+          <!-- AT RISK WARNING BANNER -->
+          <div id="treeAtRiskAlert" style="display:none;background:linear-gradient(135deg, rgba(245,158,11,0.18) 0%, rgba(239,68,68,0.1) 100%);border:1px solid rgba(245,158,11,0.45);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:12.5px;color:#FEF3C7;align-items:center;gap:10px">
+            <span style="font-size:20px">⏳</span>
+            <div style="flex:1">
+              <strong>Chuỗi đang gặp nguy cơ!</strong> Hôm nay bạn chưa tưới nước điểm danh. Bạn còn <strong id="treeAtRiskCountdown" style="color:#FBBF24">--:--</strong> trước khi hết ngày để giữ vững chuỗi kỷ luật!
+            </div>
+          </div>
+
+          <div class="wealth-tree-header">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <span class="badge-pill" style="background:rgba(16,185,129,0.15);color:#10B981;font-weight:700">✦ VƯỜN THỊNH VƯỢNG</span>
+              <span id="treeCustomNameHeader" style="font-size:14px;font-weight:700;color:#F8FAFC">Vườn Thịnh Vượng Đặng Quang Dũng</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span class="badge-pill" id="treeOnlineStatusBadge" style="background:rgba(16,185,129,0.15);color:#10B981;font-weight:700">
+                🟢 Trực tuyến
               </span>
+              <span class="badge-pill" id="treeStreakBadge" style="background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.3);font-weight:700">
+                🔥 Chuỗi <span id="treeStreakDays" style="font-family:var(--font-num);margin:0 2px">5</span> ngày
+              </span>
+              <span class="badge-pill" id="treeCountdownBadge" style="background:rgba(255,255,255,0.06);color:var(--muted);font-size:11px" title="Thời gian còn lại trong ngày để duy trì chuỗi">
+                ⏳ <span id="treeCountdownText">15:04:22</span>
+              </span>
+              <button type="button" class="btn btn-outline btn-xs" onclick="openTreeCustomModal()" style="font-size:11px;padding:4px 10px;border-color:rgba(16,185,129,0.35);color:#10B981;display:flex;align-items:center;gap:4px">
+                ⚙️ <span>Chỉnh sửa &amp; Sandbox</span>
+              </button>
             </div>
           </div>
 
           <div class="wealth-tree-body">
             <!-- Left: Tree avatar & level badge -->
             <div class="tree-avatar-wrap">
-              <div class="tree-circle-glow" id="treeIconContainer">
+              <div class="tree-circle-glow" id="treeIconContainer" onclick="openTreeCustomModal()" title="Nhấn để tùy biến cây" style="cursor:pointer">
                 <span id="treeLevelIcon">🌿</span>
               </div>
               <div>
@@ -2854,6 +3007,11 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
                   <span id="treeLevelBadge" class="badge-pill" style="font-size:10px;padding:2px 8px;background:rgba(16,185,129,0.2);color:#10B981">Cấp 2</span>
                 </div>
                 <p id="treeDesc" style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.4">Đã hình thành thói quen ghi chép và phân bổ</p>
+
+                <!-- 7-DAY STREAK TIMELINE -->
+                <div class="tree-streak-timeline" id="tree7dTimeline" title="Lịch sử chuỗi 7 ngày trực tuyến">
+                  <!-- Rendered by JS -->
+                </div>
               </div>
             </div>
 
@@ -2868,7 +3026,7 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
               </div>
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:11.5px;color:var(--muted)">
                 <span>Cần thêm <strong id="treeExpToNext" style="color:#F59E0B">160 EXP</strong> để thăng hạng</span>
-                <span style="color:rgba(255,255,255,0.4)">Tưới cây + Tích hũ + Đóng phí đúng hạn = Tăng EXP</span>
+                <span style="color:rgba(255,255,255,0.4)">Tưới cây + Tích hũ + Đóng phí = Tăng EXP</span>
               </div>
               <div class="tree-badges-strip" id="treeBadgesList">
                 <span class="tree-badge-pill"><span>✦</span> <b>Nhà hoạch định</b></span>
@@ -2876,12 +3034,17 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
               </div>
             </div>
 
-            <!-- Right: Water / Checkin CTA button -->
-            <div>
+            <!-- Right: Water / Checkin CTA button & Extra care -->
+            <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px">
               <button type="button" class="tree-water-btn" id="btnWaterTree" onclick="handleWaterCheckin()">
                 <span style="font-size:24px;line-height:1" id="btnWaterIcon">💧</span>
                 <span id="btnWaterTitle" style="font-weight:700;font-size:13px">Tưới nước ngay</span>
                 <small id="btnWaterExpTag" style="font-size:10.5px;opacity:0.85">+50 EXP mỗi ngày</small>
+              </button>
+
+              <!-- Extra Care Button (Active when checked in today) -->
+              <button type="button" class="tree-water-extra-btn" id="btnWaterExtra" style="display:none" onclick="handleWaterExtraCare()">
+                <span>🧪</span> <span>Tưới nước dinh dưỡng (+10 EXP)</span>
               </button>
             </div>
           </div>
@@ -3611,20 +3774,46 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
 
 <!-- ================= MODAL TẠO HŨ MỤC TIÊU MỚI ================= -->
 <div class="modal-overlay" id="newJarModal">
-  <div class="modal-box" style="max-width:500px">
+  <div class="modal-box" style="max-width:540px">
     <span class="modal-close" onclick="closeModal('newJarModal')">&times;</span>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
       <span class="badge-pill" style="background:rgba(16,185,129,0.15);color:#10B981;font-size:11px">✦ SMART POCKETS</span>
     </div>
-    <h3 style="margin-bottom:6px;font-size:18px;font-weight:800">Tạo Hũ mục tiêu tiết kiệm mới</h3>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:18px">Tách riêng tiền vào hũ độc lập, bảo toàn kỷ luật tài chính</p>
+    <h3 style="margin-bottom:4px;font-size:18px;font-weight:800">Tạo Hũ mục tiêu tiết kiệm mới</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Tách riêng tiền vào hũ độc lập, bảo toàn kỷ luật tài chính</p>
+
+    <!-- LIVE INTERACTIVE CARD PREVIEW -->
+    <div class="jar-live-preview" id="jarModalPreviewCard" style="border-top: 3px solid #10B981;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span class="badge-pill" id="previewJarCat" style="font-size:10.5px;background:rgba(255,255,255,0.06);color:#E2E8F0">Dự phòng khẩn cấp</span>
+        <span class="badge-pill" id="previewJarStatus" style="font-size:10px;background:rgba(16,185,129,0.15);color:#10B981">Xem trước trực quan</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="jar-icon-wrap" id="previewJarIconBox" style="width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;background:rgba(16,185,129,0.15);color:#10B981;border:1px solid rgba(16,185,129,0.3);margin-bottom:0">
+          <span id="previewJarIcon">🛡️</span>
+        </div>
+        <div style="flex:1">
+          <h4 id="previewJarTitle" style="font-size:15px;font-weight:700;margin:0;color:#F8FAFC">Tên hũ mục tiêu của bạn</h4>
+          <small id="previewJarDeadline" style="font-size:11px;color:var(--muted)">Chưa đặt hạn chót</small>
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;align-items:baseline">
+          <b id="previewJarAmount" style="color:#10B981;font-family:var(--font-num);font-size:16px">0₫</b>
+          <span id="previewJarTarget" style="color:var(--muted);font-family:var(--font-num);font-size:12px">/ 10.000.000₫</span>
+        </div>
+        <div class="jar-progress-track" style="margin:6px 0 2px">
+          <div class="jar-progress-fill" id="previewJarBar" style="width:0%;background:#10B981"></div>
+        </div>
+      </div>
+    </div>
 
     <form id="formNewJar" onsubmit="handleCreateJar(event)">
       <div class="form-group">
         <label class="form-label">TÊN MỤC TIÊU / HŨ *</label>
         <div class="form-input-wrap">
           <svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-          <input type="text" id="jarName" placeholder="Ví dụ: Quỹ dự phòng khẩn cấp, Mua xe mới, Du lịch..." required>
+          <input type="text" id="jarName" placeholder="Ví dụ: Quỹ dự phòng 6 tháng, Mua MacBook, Du lịch..." oninput="updateJarPreview()" required>
         </div>
       </div>
 
@@ -3632,13 +3821,13 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
         <div class="form-group">
           <label class="form-label">SỐ TIỀN MỤC TIÊU *</label>
           <div class="form-input-wrap">
-            <input type="number" id="jarTargetAmount" placeholder="Số tiền cần đạt" min="100000" step="50000" required>
+            <input type="number" id="jarTargetAmount" placeholder="Số tiền cần đạt" min="100000" step="50000" oninput="updateJarPreview()" required>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">NẠP BAN ĐẦU (TÙY CHỌN)</label>
           <div class="form-input-wrap">
-            <input type="number" id="jarInitialAmount" placeholder="0₫" min="0" step="50000" value="0">
+            <input type="number" id="jarInitialAmount" placeholder="0₫" min="0" step="50000" value="0" oninput="updateJarPreview()">
           </div>
         </div>
       </div>
@@ -3647,7 +3836,7 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
         <div class="form-group">
           <label class="form-label">DANH MỤC</label>
           <div class="form-input-wrap">
-            <select id="jarCategory" style="background:transparent;border:none;color:inherit;width:100%;font-size:13px;outline:none">
+            <select id="jarCategory" onchange="updateJarPreview()" style="background:transparent;border:none;color:inherit;width:100%;font-size:13px;outline:none">
               <option value="Dự phòng">Dự phòng khẩn cấp</option>
               <option value="Mua sắm">Mua sắm lớn / Thiết bị</option>
               <option value="Trải nghiệm">Du lịch & Trải nghiệm</option>
@@ -3659,23 +3848,47 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
         <div class="form-group">
           <label class="form-label">HẠN CHÓT DỰ KIẾN</label>
           <div class="form-input-wrap">
-            <input type="date" id="jarDeadline">
+            <input type="date" id="jarDeadline" onchange="updateJarPreview()">
           </div>
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="form-label">MÀU SẮC ĐẠI DIỆN</label>
-        <div style="display:flex;gap:10px;margin-top:6px" id="jarColorPresets">
-          <label style="cursor:pointer"><input type="radio" name="jarColor" value="#10B981" checked style="display:none"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#10B981;border:2px solid #fff"></span></label>
-          <label style="cursor:pointer"><input type="radio" name="jarColor" value="#F59E0B" style="display:none"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#F59E0B"></span></label>
-          <label style="cursor:pointer"><input type="radio" name="jarColor" value="#6366F1" style="display:none"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#6366F1"></span></label>
-          <label style="cursor:pointer"><input type="radio" name="jarColor" value="#06B6D4" style="display:none"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#06B6D4"></span></label>
-          <label style="cursor:pointer"><input type="radio" name="jarColor" value="#EC4899" style="display:none"><span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#EC4899"></span></label>
+      <!-- INTERACTIVE COLOR PALETTE -->
+      <div class="form-group" style="margin-top:4px">
+        <label class="form-label" style="display:flex;justify-content:space-between;align-items:center">
+          <span>MÀU SẮC ĐẠI DIỆN *</span>
+          <span id="jarColorNameLabel" style="color:#10B981;font-size:11px;font-weight:700">Emerald Green</span>
+        </label>
+        <input type="hidden" id="jarSelectedColor" value="#10B981">
+        <div class="jar-color-palette" style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap">
+          <div class="jar-color-swatch active" data-color="#10B981" data-name="Emerald Green" style="background:#10B981" onclick="selectJarColor('#10B981', 'Emerald Green', this)" title="Emerald Green - Tăng trưởng"></div>
+          <div class="jar-color-swatch" data-color="#F59E0B" data-name="Amber Gold" style="background:#F59E0B" onclick="selectJarColor('#F59E0B', 'Amber Gold', this)" title="Amber Gold - Thịnh vượng"></div>
+          <div class="jar-color-swatch" data-color="#6366F1" data-name="Royal Indigo" style="background:#6366F1" onclick="selectJarColor('#6366F1', 'Royal Indigo', this)" title="Royal Indigo - Phong cách"></div>
+          <div class="jar-color-swatch" data-color="#06B6D4" data-name="Cyber Cyan" style="background:#06B6D4" onclick="selectJarColor('#06B6D4', 'Cyber Cyan', this)" title="Cyber Cyan - Đột phá"></div>
+          <div class="jar-color-swatch" data-color="#EC4899" data-name="Rose Pink" style="background:#EC4899" onclick="selectJarColor('#EC4899', 'Rose Pink', this)" title="Rose Pink - Trải nghiệm"></div>
+          <div class="jar-color-swatch" data-color="#EF4444" data-name="Ruby Red" style="background:#EF4444" onclick="selectJarColor('#EF4444', 'Ruby Red', this)" title="Ruby Red - Khẩn cấp"></div>
+          <div class="jar-color-swatch" data-color="#3B82F6" data-name="Ocean Blue" style="background:#3B82F6" onclick="selectJarColor('#3B82F6', 'Ocean Blue', this)" title="Ocean Blue - Du lịch"></div>
+          <div class="jar-color-swatch" data-color="#8B5CF6" data-name="Amethyst Violet" style="background:#8B5CF6" onclick="selectJarColor('#8B5CF6', 'Amethyst Violet', this)" title="Amethyst Violet - Sang trọng"></div>
         </div>
       </div>
 
-      <button type="submit" class="btn btn-mint" style="width:100%;justify-content:center;padding:12px;font-size:14px;margin-top:10px">
+      <!-- INTERACTIVE ICON SELECTOR -->
+      <div class="form-group" style="margin-top:6px">
+        <label class="form-label">BIỂU TƯỢNG HŨ (ICON) *</label>
+        <input type="hidden" id="jarSelectedIcon" value="shield">
+        <div class="jar-icon-grid" style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+          <div class="jar-icon-chip active" data-icon="shield" data-emoji="🛡️" onclick="selectJarIcon('shield', '🛡️', this)">🛡️</div>
+          <div class="jar-icon-chip" data-icon="plane" data-emoji="✈️" onclick="selectJarIcon('plane', '✈️', this)">✈️</div>
+          <div class="jar-icon-chip" data-icon="laptop" data-emoji="💻" onclick="selectJarIcon('laptop', '💻', this)">💻</div>
+          <div class="jar-icon-chip" data-icon="home" data-emoji="🏠" onclick="selectJarIcon('home', '🏠', this)">🏠</div>
+          <div class="jar-icon-chip" data-icon="car" data-emoji="🚗" onclick="selectJarIcon('car', '🚗', this)">🚗</div>
+          <div class="jar-icon-chip" data-icon="gem" data-emoji="💎" onclick="selectJarIcon('gem', '💎', this)">💎</div>
+          <div class="jar-icon-chip" data-icon="health" data-emoji="🩺" onclick="selectJarIcon('health', '🩺', this)">🩺</div>
+          <div class="jar-icon-chip" data-icon="growth" data-emoji="📈" onclick="selectJarIcon('growth', '📈', this)">📈</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-mint" style="width:100%;justify-content:center;padding:12px;font-size:14px;margin-top:14px">
         Tạo Hũ mục tiêu (+40 EXP)
       </button>
     </form>
@@ -3809,6 +4022,95 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
         Lưu lịch nhắc phí (+30 EXP)
       </button>
     </form>
+  </div>
+</div>
+
+<!-- ================= MODAL VƯỜN THỊNH VƯỢNG STUDIO & THỬ NGHIỆM CHUỖI ================= -->
+<div class="modal-overlay" id="treeCustomModal">
+  <div class="modal-box" style="max-width:540px">
+    <span class="modal-close" onclick="closeModal('treeCustomModal')">&times;</span>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+      <span class="badge-pill" style="background:rgba(16,185,129,0.15);color:#10B981;font-size:11px">✦ WEALTH TREE STUDIO</span>
+    </div>
+    <h3 style="margin-bottom:4px;font-size:18px;font-weight:800">Quản trị Vườn Thịnh Vượng &amp; Kỷ luật Chuỗi</h3>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:16px">Tùy biến diện mạo cây, theo dõi chuỗi trực tuyến và thử nghiệm kịch bản</p>
+
+    <!-- TAB 1: TÙY BIẾN DIỆN MẠO -->
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:16px">
+      <h4 style="font-size:13.5px;font-weight:700;margin:0 0 12px;color:#F8FAFC;display:flex;align-items:center;gap:6px">
+        <span>🎨</span> <span>Tùy biến Tên Vườn &amp; Loài Cây (Skin)</span>
+      </h4>
+
+      <div class="form-group">
+        <label class="form-label">TÊN VƯỜN / CÂY TÀI CHÍNH</label>
+        <div class="form-input-wrap">
+          <input type="text" id="customTreeNameInput" placeholder="Ví dụ: Vườn Thịnh Vượng Đặng Quang Dũng..." value="Vườn Thịnh Vượng Đặng Quang Dũng">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:12px">
+        <label class="form-label">CHỌN LOÀI CÂY PHONG THỦY (SKIN)</label>
+        <div style="display:grid;grid-template-columns:repeat(3, 1fr);gap:8px;margin-top:6px" id="treeSkinOptions">
+          <div class="jar-icon-chip active" data-skin="🌿" onclick="selectTreeSkin('🌿', this)" style="width:100%;height:46px;gap:6px;font-size:12px;justify-content:center">
+            <span style="font-size:20px">🌿</span> <span>Kim Ngân</span>
+          </div>
+          <div class="jar-icon-chip" data-skin="🪴" onclick="selectTreeSkin('🪴', this)" style="width:100%;height:46px;gap:6px;font-size:12px;justify-content:center">
+            <span style="font-size:20px">🪴</span> <span>Phát Tài</span>
+          </div>
+          <div class="jar-icon-chip" data-skin="🌳" onclick="selectTreeSkin('🌳', this)" style="width:100%;height:46px;gap:6px;font-size:12px;justify-content:center">
+            <span style="font-size:20px">🌳</span> <span>Đại Thụ</span>
+          </div>
+          <div class="jar-icon-chip" data-skin="🎋" onclick="selectTreeSkin('🎋', this)" style="width:100%;height:46px;gap:6px;font-size:12px;justify-content:center">
+            <span style="font-size:20px">🎋</span> <span>Trúc Quý</span>
+          </div>
+          <div class="jar-icon-chip" data-skin="🌸" onclick="selectTreeSkin('🌸', this)" style="width:100%;height:46px;gap:6px;font-size:12px;justify-content:center">
+            <span style="font-size:20px">🌸</span> <span>Sen Vàng</span>
+          </div>
+          <div class="jar-icon-chip" data-skin="🌵" onclick="selectTreeSkin('🌵', this)" style="width:100%;height:46px;gap:6px;font-size:12px;justify-content:center">
+            <span style="font-size:20px">🌵</span> <span>Xương Rồng</span>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="btn btn-mint btn-sm" style="width:100%;justify-content:center" onclick="submitTreeCustomization()">
+        Lưu Tùy biến Vườn
+      </button>
+    </div>
+
+    <!-- TAB 2: QUY TẮC CHUỖI & THỜI GIAN THỰC -->
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;margin-bottom:16px">
+      <h4 style="font-size:13.5px;font-weight:700;margin:0 0 8px;color:#F8FAFC;display:flex;align-items:center;gap:6px">
+        <span>⚡</span> <span>Cơ chế Chuỗi Trực tuyến (Online Streak Logic)</span>
+      </h4>
+      <p style="font-size:12px;color:var(--muted);line-height:1.5;margin:0 0 10px">
+        Hệ thống kiểm tra mỗi ngày theo múi giờ Việt Nam (GMT+7). Nếu bạn <strong>không truy cập và tưới nước trong vòng 1 ngày (trước 23:59 đêm nay)</strong>, chuỗi kỷ luật sẽ bị đứt và quay về <strong>0 ngày</strong>!
+      </p>
+      <div style="display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.25);padding:10px 14px;border-radius:10px;font-size:12px">
+        <span>Thời gian còn lại trong ngày:</span>
+        <b id="modalLiveCountdown" style="color:#F59E0B;font-family:var(--font-num);font-size:14px">15h 04m</b>
+      </div>
+    </div>
+
+    <!-- TAB 3: SANDBOX MÔ PHỎNG THỬ NGHIỆM -->
+    <div style="background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.25);border-radius:14px;padding:16px">
+      <h4 style="font-size:13.5px;font-weight:700;margin:0 0 6px;color:#F59E0B;display:flex;align-items:center;gap:6px">
+        <span>🧪</span> <span>Khu vực Thử nghiệm (Simulation Sandbox)</span>
+      </h4>
+      <p style="font-size:11.5px;color:var(--muted);margin:0 0 12px">
+        Cho phép bạn kiểm tra trực tiếp phản ứng của hệ thống khi tưới nước lại, hoặc mô phỏng mất chuỗi khi bỏ lỡ ngày:
+      </p>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button type="button" class="btn btn-outline btn-sm" style="justify-content:center;color:#10B981;border-color:rgba(16,185,129,0.3)" onclick="handleSimulateStreak('reset_today')">
+          🔄 Khôi phục "Chưa tưới hôm nay" (Để test lại nút tưới +50 EXP)
+        </button>
+        <button type="button" class="btn btn-outline btn-sm" style="justify-content:center;color:#EF4444;border-color:rgba(239,68,68,0.3)" onclick="handleSimulateStreak('simulate_miss_day')">
+          💔 Mô phỏng bỏ lỡ 1 ngày (Để test trạng thái mất chuỗi về 0 ngày)
+        </button>
+        <button type="button" class="btn btn-outline btn-sm" style="justify-content:center;color:#F59E0B;border-color:rgba(245,158,11,0.3)" onclick="handleSimulateStreak('advance_streak')">
+          🔥 Cộng dồn +1 ngày chuỗi (Test mốc chuỗi 3 ngày, 7 ngày)
+        </button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -6275,7 +6577,9 @@ function switchTab(tabId) {
 }
 
 // ==================== GAMIFICATION (VƯỜN THỊNH VƯỢNG) ====================
+// ==================== GAMIFICATION (VƯỜN THỊNH VƯỢNG) ====================
 let currentGamificationProfile = null;
+let selectedTreeSkin = '🌿';
 
 async function loadGamification() {
   if (!authToken) return;
@@ -6287,6 +6591,11 @@ async function loadGamification() {
     if (!data.success || !data.profile) return;
     const p = data.profile;
     currentGamificationProfile = p;
+    selectedTreeSkin = p.plant_skin || '🌿';
+
+    // Header & tree custom name
+    const treeCustomHeader = document.getElementById('treeCustomNameHeader');
+    if (treeCustomHeader) treeCustomHeader.textContent = p.tree_name || 'Vườn Thịnh Vượng';
 
     // Render tree info
     const levelIconEl = document.getElementById('treeLevelIcon');
@@ -6301,17 +6610,43 @@ async function loadGamification() {
     const expToNextEl = document.getElementById('treeExpToNext');
     const badgesListEl = document.getElementById('treeBadgesList');
     const waterBtn = document.getElementById('btnWaterTree');
+    const countdownEl = document.getElementById('treeCountdownText');
+    const modalCountdownEl = document.getElementById('modalLiveCountdown');
+    const brokenAlertEl = document.getElementById('treeBrokenAlert');
+    const atRiskAlertEl = document.getElementById('treeAtRiskAlert');
 
-    if (levelIconEl) levelIconEl.textContent = p.tree_icon || '🌿';
+    if (levelIconEl) levelIconEl.textContent = p.tree_icon || p.plant_skin || '🌿';
     if (titleEl) titleEl.textContent = p.tree_title || 'Mầm xanh Thịnh vượng';
     if (badgeEl) badgeEl.textContent = `Cấp ${p.tree_level || 1}`;
     if (descEl) descEl.textContent = p.tree_description || '';
-    if (streakEl) streakEl.textContent = p.streak_days || 1;
+    if (streakEl) streakEl.textContent = p.streak_days || 0;
     if (currentExpEl) currentExpEl.textContent = fmt(p.current_exp || 0);
     if (targetExpEl) targetExpEl.textContent = fmt(p.next_level_target || 500);
     if (percentEl) percentEl.textContent = `${p.progress_percent || 0}%`;
     if (expBarEl) expBarEl.style.width = `${p.progress_percent || 0}%`;
     if (expToNextEl) expToNextEl.textContent = `${fmt(p.exp_to_next || 0)} EXP`;
+
+    if (countdownEl && p.countdown_text) countdownEl.textContent = p.countdown_text;
+    if (modalCountdownEl && p.countdown_text) modalCountdownEl.textContent = p.countdown_text;
+
+    // Streak Alerts
+    if (brokenAlertEl) {
+      brokenAlertEl.style.display = p.is_streak_broken ? 'block' : 'none';
+    }
+    if (atRiskAlertEl) {
+      atRiskAlertEl.style.display = (!p.checked_in_today && p.is_streak_at_risk) ? 'block' : 'none';
+    }
+
+    // 7-day Streak Timeline
+    const timelineEl = document.getElementById('tree7dTimeline');
+    if (timelineEl && Array.isArray(p.streak_history_7d)) {
+      timelineEl.innerHTML = p.streak_history_7d.map(item => `
+        <div class="streak-day-dot ${item.checked ? 'checked' : ''} ${item.is_today ? 'today' : ''}" title="${item.date}: ${item.checked ? 'Đã tưới nước' : (item.is_today ? 'Hôm nay (Cần tưới)' : 'Chưa tưới')}">
+          <span style="font-size:9px">${item.day_label}</span>
+          <span style="font-size:11px;line-height:1">${item.checked ? '✓' : (item.is_today ? '💧' : '·')}</span>
+        </div>
+      `).join('');
+    }
 
     // Render Badges
     if (badgesListEl && Array.isArray(p.achievements)) {
@@ -6329,11 +6664,13 @@ async function loadGamification() {
       const btnIcon = document.getElementById('btnWaterIcon');
       if (p.checked_in_today) {
         waterBtn.disabled = true;
+        waterBtn.style.opacity = '0.75';
         if (btnTitle) btnTitle.textContent = "Đã tưới nước hôm nay";
         if (btnExpTag) btnExpTag.textContent = "Hẹn gặp lại ngày mai";
         if (btnIcon) btnIcon.textContent = "✅";
       } else {
         waterBtn.disabled = false;
+        waterBtn.style.opacity = '1';
         if (btnTitle) btnTitle.textContent = "Tưới nước ngay";
         if (btnExpTag) btnExpTag.textContent = "+50 EXP mỗi ngày";
         if (btnIcon) btnIcon.textContent = "💧";
@@ -6341,6 +6678,25 @@ async function loadGamification() {
     }
   } catch (err) {
     console.warn("Lỗi tải thông tin Vườn Thịnh Vượng:", err);
+  }
+}
+
+// Droplet animation effect
+function triggerWaterDropletsAnim() {
+  const iconContainer = document.getElementById('treeIconContainer') || document.getElementById('treeLevelIcon');
+  if (!iconContainer) return;
+  for (let i = 0; i < 6; i++) {
+    const drop = document.createElement('span');
+    drop.className = 'water-spray-anim';
+    drop.textContent = '💧';
+    drop.style.position = 'absolute';
+    drop.style.left = `${20 + Math.random() * 60}%`;
+    drop.style.top = `${10 + Math.random() * 50}%`;
+    drop.style.fontSize = `${14 + Math.random() * 10}px`;
+    drop.style.pointerEvents = 'none';
+    drop.style.zIndex = '99';
+    iconContainer.appendChild(drop);
+    setTimeout(() => drop.remove(), 700);
   }
 }
 
@@ -6362,6 +6718,7 @@ async function handleWaterCheckin() {
     });
     const data = await res.json();
     if (data.success) {
+      triggerWaterDropletsAnim();
       showToast(data.message || "Tưới nước thành công! +50 EXP 🌱");
       playAudioSuccess();
       await loadGamification();
@@ -6375,8 +6732,222 @@ async function handleWaterCheckin() {
   }
 }
 
+// Extra Care Water (Always interactive +10 EXP)
+async function handleWaterExtraCare() {
+  if (!authToken) {
+    showToast("Vui lòng đăng nhập để chăm sóc cây", "err");
+    return;
+  }
+  try {
+    const res = await fetch(`${API_BASE}/api/gamification/checkin`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ extraCare: true })
+    });
+    const data = await res.json();
+    if (data.success) {
+      triggerWaterDropletsAnim();
+      showToast(data.message || "Đã tưới nước dinh dưỡng! +10 EXP 🌱");
+      playAudioSuccess();
+      await loadGamification();
+    } else {
+      showToast(data.message || "Chưa thể tưới thêm nước lúc này", "err");
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi tưới nước dinh dưỡng", "err");
+  }
+}
+
+// Tree Customization & Sandbox Modal
+function openTreeCustomModal() {
+  const m = document.getElementById('treeCustomModal');
+  if (!m) return;
+  m.classList.add('open');
+
+  const nameInput = document.getElementById('customTreeNameInput');
+  if (nameInput && currentGamificationProfile) {
+    nameInput.value = currentGamificationProfile.tree_name || 'Vườn Thịnh Vượng';
+  }
+  if (currentGamificationProfile && currentGamificationProfile.plant_skin) {
+    selectTreeSkin(currentGamificationProfile.plant_skin);
+  }
+}
+
+function selectTreeSkin(skin, el) {
+  selectedTreeSkin = skin;
+  const chips = document.querySelectorAll('#treeSkinOptions .jar-icon-chip');
+  chips.forEach(c => {
+    if (c.getAttribute('data-skin') === skin) c.classList.add('active');
+    else c.classList.remove('active');
+  });
+}
+
+async function submitTreeCustomization() {
+  if (!authToken) return;
+  const nameInput = document.getElementById('customTreeNameInput');
+  const tree_name = nameInput ? nameInput.value.trim() : 'Vườn Thịnh Vượng';
+
+  try {
+    const res = await fetch(`${API_BASE}/api/gamification/customize`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ tree_name, plant_skin: selectedTreeSkin })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Đã lưu tùy biến Vườn Thịnh Vượng thành công!");
+      playAudioSuccess();
+      closeModal('treeCustomModal');
+      await loadGamification();
+    } else {
+      showToast(data.message || "Lỗi cập nhật tùy biến", "err");
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi tùy biến vườn", "err");
+  }
+}
+
+async function handleSimulateStreak(action) {
+  if (!authToken) return;
+  try {
+    const res = await fetch(`${API_BASE}/api/gamification/simulate-streak`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ action })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast(data.message || "Đã áp dụng kịch bản mô phỏng!");
+      playAudioSuccess();
+      await loadGamification();
+    } else {
+      showToast(data.message || "Lỗi mô phỏng chuỗi", "err");
+    }
+  } catch (err) {
+    showToast("Lỗi kết nối khi chạy sandbox", "err");
+  }
+}
+
 // ==================== GOAL JARS CONTROLLER ====================
 let allGoalJars = [];
+
+function getJarEmoji(icon) {
+  switch (icon) {
+    case 'plane': return '✈️';
+    case 'laptop': return '💻';
+    case 'home': return '🏠';
+    case 'car': return '🚗';
+    case 'gem': return '💎';
+    case 'health': return '🩺';
+    case 'growth': return '📈';
+    case 'shield':
+    default:
+      return '🛡️';
+  }
+}
+
+function selectJarColor(hex, name, el) {
+  const hiddenInput = document.getElementById('jarSelectedColor');
+  if (hiddenInput) hiddenInput.value = hex;
+
+  const label = document.getElementById('jarColorNameLabel');
+  if (label) {
+    label.textContent = name;
+    label.style.color = hex;
+  }
+
+  const allSwatches = document.querySelectorAll('.jar-color-swatch');
+  allSwatches.forEach(s => s.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  updateJarPreview();
+}
+
+function selectJarIcon(icon, emoji, el) {
+  const hiddenInput = document.getElementById('jarSelectedIcon');
+  if (hiddenInput) hiddenInput.value = icon;
+
+  const chips = document.querySelectorAll('#newJarModal .jar-icon-chip');
+  chips.forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  updateJarPreview();
+}
+
+function updateJarPreview() {
+  const name = (document.getElementById('jarName')?.value || '').trim();
+  const tgtAmt = parseFloat(document.getElementById('jarTargetAmount')?.value) || 0;
+  const currAmt = parseFloat(document.getElementById('jarInitialAmount')?.value) || 0;
+  const category = document.getElementById('jarCategory')?.value || 'Dự phòng';
+  const deadline = document.getElementById('jarDeadline')?.value || null;
+  const color = document.getElementById('jarSelectedColor')?.value || '#10B981';
+  const icon = document.getElementById('jarSelectedIcon')?.value || 'shield';
+
+  const previewCard = document.getElementById('jarModalPreviewCard');
+  const previewCat = document.getElementById('previewJarCat');
+  const previewIcon = document.getElementById('previewJarIcon');
+  const previewIconBox = document.getElementById('previewJarIconBox');
+  const previewTitle = document.getElementById('previewJarTitle');
+  const previewDeadline = document.getElementById('previewJarDeadline');
+  const previewAmount = document.getElementById('previewJarAmount');
+  const previewTarget = document.getElementById('previewJarTarget');
+  const previewBar = document.getElementById('previewJarBar');
+  const previewStatus = document.getElementById('previewJarStatus');
+
+  if (previewCard) previewCard.style.borderTopColor = color;
+  if (previewCat) previewCat.textContent = category;
+  if (previewIcon) previewIcon.textContent = getJarEmoji(icon);
+  if (previewIconBox) {
+    previewIconBox.style.color = color;
+    previewIconBox.style.background = color + '20';
+    previewIconBox.style.borderColor = color + '50';
+  }
+  if (previewTitle) previewTitle.textContent = name || 'Tên hũ mục tiêu của bạn';
+  if (previewAmount) {
+    previewAmount.textContent = fmt(currAmt) + '₫';
+    previewAmount.style.color = color;
+  }
+  if (previewTarget) previewTarget.textContent = `/ ${fmt(tgtAmt || 10000000)}₫`;
+
+  const percent = tgtAmt > 0 ? Math.min(100, Math.round((currAmt / tgtAmt) * 100)) : 0;
+  if (previewBar) {
+    previewBar.style.width = percent + '%';
+    previewBar.style.background = `linear-gradient(90deg, ${color}, ${color}dd)`;
+  }
+  if (previewStatus) {
+    if (percent >= 100) {
+      previewStatus.textContent = '✓ Hoàn thành 100%';
+      previewStatus.style.background = 'rgba(16,185,129,0.2)';
+      previewStatus.style.color = '#10B981';
+    } else if (percent > 0) {
+      previewStatus.textContent = `Tiến độ ${percent}%`;
+      previewStatus.style.background = color + '25';
+      previewStatus.style.color = color;
+    } else {
+      previewStatus.textContent = 'Xem trước trực quan';
+      previewStatus.style.background = 'rgba(255,255,255,0.06)';
+      previewStatus.style.color = '#E2E8F0';
+    }
+  }
+
+  if (previewDeadline) {
+    if (deadline) {
+      const d = new Date(deadline);
+      previewDeadline.textContent = `Hạn chót: ${d.toLocaleDateString('vi-VN')}`;
+    } else {
+      previewDeadline.textContent = 'Chưa đặt hạn chót';
+    }
+  }
+}
 
 async function loadGoalJars() {
   if (!authToken) return;
@@ -6430,6 +7001,7 @@ async function loadGoalJars() {
       const percent = target > 0 ? Math.min(100, Math.round((current / target) * 100)) : 0;
       const isCompleted = percent >= 100;
       const color = j.color || '#10B981';
+      const iconEmoji = getJarEmoji(j.icon);
 
       // Deadline countdown
       let deadlineText = 'Không thời hạn';
@@ -6455,8 +7027,8 @@ async function loadGoalJars() {
             </div>
 
             <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-              <div class="jar-icon-wrap" style="background:${color}15;color:${color};border-color:${color}30">
-                ${isCompleted ? '🏆' : (j.icon === 'plane' ? '✈️' : (j.icon === 'laptop' ? '💻' : '🛡️'))}
+              <div class="jar-icon-wrap" style="background:${color}18;color:${color};border-color:${color}40">
+                ${isCompleted ? '🏆' : iconEmoji}
               </div>
               <div style="flex:1">
                 <h4 style="font-size:15px;font-weight:700;margin:0;color:#F8FAFC">${escapeHtml(j.name)}</h4>
@@ -6496,7 +7068,16 @@ async function loadGoalJars() {
 
 function openNewJarModal() {
   const m = document.getElementById('newJarModal');
-  if (m) m.classList.add('open');
+  if (m) {
+    m.classList.add('open');
+    // Set default color
+    const firstSwatch = document.querySelector('.jar-color-swatch[data-color="#10B981"]');
+    if (firstSwatch) selectJarColor('#10B981', 'Emerald Green', firstSwatch);
+    // Set default icon
+    const firstIcon = document.querySelector('#newJarModal .jar-icon-chip[data-icon="shield"]');
+    if (firstIcon) selectJarIcon('shield', '🛡️', firstIcon);
+    updateJarPreview();
+  }
 }
 
 async function handleCreateJar(e) {
@@ -6508,13 +7089,8 @@ async function handleCreateJar(e) {
   const current_amount = parseFloat(document.getElementById('jarInitialAmount').value) || 0;
   const category = document.getElementById('jarCategory').value;
   const deadline = document.getElementById('jarDeadline').value || null;
-  const colorChecked = document.querySelector('input[name="jarColor"]:checked');
-  const color = colorChecked ? colorChecked.value : '#10B981';
-
-  let icon = 'shield';
-  if (category === 'Mua sắm') icon = 'laptop';
-  else if (category === 'Trải nghiệm') icon = 'plane';
-  else if (category === 'Đầu tư') icon = 'trending-up';
+  const color = document.getElementById('jarSelectedColor')?.value || '#10B981';
+  const icon = document.getElementById('jarSelectedIcon')?.value || 'shield';
 
   try {
     const res = await fetch(`${API_BASE}/api/jars`, {

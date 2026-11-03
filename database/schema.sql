@@ -77,8 +77,14 @@ CREATE TABLE IF NOT EXISTS gamification_profiles (
     streak_days INT DEFAULT 1,
     last_checkin_at DATE,
     achievements JSONB DEFAULT '[]'::jsonb,
+    tree_name VARCHAR(100) DEFAULT 'Vườn Thịnh Vượng',
+    plant_skin VARCHAR(50) DEFAULT '🌿',
+    streak_freeze_count INT DEFAULT 1,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
+ALTER TABLE gamification_profiles ADD COLUMN IF NOT EXISTS tree_name VARCHAR(100) DEFAULT 'Vườn Thịnh Vượng';
+ALTER TABLE gamification_profiles ADD COLUMN IF NOT EXISTS plant_skin VARCHAR(50) DEFAULT '🌿';
+ALTER TABLE gamification_profiles ADD COLUMN IF NOT EXISTS streak_freeze_count INT DEFAULT 1;
 
 -- 7. BẢNG TOKEN KHÔI PHỤC MẬT KHẨU (PASSWORD RESET TOKENS)
 CREATE TABLE IF NOT EXISTS password_resets (

@@ -1655,9 +1655,12 @@ async function getGamificationProfile(userId) {
     row = {
       user_id: userId,
       tree_level: 2,
-      current_exp: 340,
+      current_exp: 380,
       streak_days: 5,
       last_checkin_at: new Date().toISOString().split('T')[0],
+      tree_name: "Vườn Thịnh Vượng Đặng Quang Dũng",
+      plant_skin: "🌿",
+      streak_freeze_count: 1,
       achievements: [
         { id: "first_budget_plan", name: "Nhà hoạch định Tài ba", icon: "✦", unlocked_at: new Date("2026-10-01").toISOString() },
         { id: "streak_3_days", name: "Chuỗi 3 ngày Kỷ luật", icon: "🔥", unlocked_at: new Date("2026-10-15").toISOString() }
@@ -1674,7 +1677,61 @@ async function getGamificationProfile(userId) {
 
   let lastCheckin = formatDateLocal(row.last_checkin_at);
   const todayStr = getTodayStrLocal();
-  const checkedInToday = lastCheckin === todayStr;
+  const checkedInToday = (lastCheckin === todayStr);
+
+  // Real-time online streak calculation
+  let streakDays = Number(row.streak_days || 1);
+  let streakStatus = 'active_today';
+  let isStreakBroken = false;
+  let diffDays = 0;
+
+  if (lastCheckin) {
+    const d1 = new Date(lastCheckin + 'T00:00:00');
+    const d2 = new Date(todayStr + 'T00:00:00');
+    diffDays = Math.round((d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+  } else {
+    diffDays = 999;
+  }
+
+  if (checkedInToday) {
+    streakStatus = 'active_today';
+  } else if (diffDays === 1) {
+    streakStatus = 'at_risk';
+  } else if (diffDays > 1) {
+    streakStatus = 'broken';
+    isStreakBroken = true;
+    streakDays = 0;
+  }
+
+  // Calculate live countdown until midnight
+  const now = new Date();
+  const tomorrowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+  const secondsUntilMidnight = Math.max(0, Math.floor((tomorrowMidnight - now) / 1000));
+  const hoursLeft = Math.floor(secondsUntilMidnight / 3600);
+  const minsLeft = Math.floor((secondsUntilMidnight % 3600) / 60);
+  const countdownFormatted = `${String(hoursLeft).padStart(2, '0')}h ${String(minsLeft).padStart(2, '0')}m`;
+
+  // 7-day streak history tracker
+  const dayLabels = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+  const streakHistory7d = [];
+  for (let i = 6; i >= 0; i--) {
+    const dayDate = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
+    const dayDateStr = formatDateLocal(dayDate);
+    const dayLabel = dayLabels[dayDate.getDay()];
+    const isToday = (i === 0);
+    let checked = false;
+    if (isToday) {
+      checked = checkedInToday;
+    } else {
+      checked = (!isStreakBroken && (i <= (streakDays || 0)));
+    }
+    streakHistory7d.push({
+      date: dayDateStr,
+      dayLabel,
+      isToday,
+      checked
+    });
+  }
 
   const totalExp = Number(row.current_exp || 0);
   const levelInfo = getLevelInfo(totalExp);
@@ -1683,13 +1740,22 @@ async function getGamificationProfile(userId) {
     user_id: userId,
     tree_level: levelInfo.level,
     tree_title: levelInfo.title,
-    tree_icon: levelInfo.icon,
+    tree_icon: row.plant_skin || levelInfo.icon,
     tree_description: levelInfo.description,
+    tree_name: row.tree_name || "Vườn Thịnh Vượng Đặng Quang Dũng",
+    plant_skin: row.plant_skin || "🌿",
+    streak_freeze_count: Number(row.streak_freeze_count || 1),
     current_exp: totalExp,
     exp_to_next: levelInfo.expToNext,
     next_level_target: levelInfo.nextLevelTarget,
     progress_percent: levelInfo.progressPercent,
-    streak_days: Number(row.streak_days || 1),
+    streak_days: streakDays,
+    streak_status: streakStatus,
+    is_streak_broken: isStreakBroken,
+    diff_days: diffDays,
+    countdown_seconds: secondsUntilMidnight,
+    countdown_text: countdownFormatted,
+    streak_history_7d: streakHistory7d,
     last_checkin_at: lastCheckin,
     checked_in_today: checkedInToday,
     achievements
@@ -1714,14 +1780,14 @@ async function addGamificationExp(userId, expToAdd, reason = '') {
 
   if (pgPool) {
     await pgPool.query(
-      `INSERT INTO gamification_profiles (user_id, tree_level, current_exp, streak_days, last_checkin_at, achievements, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      `INSERT INTO gamification_profiles (user_id, tree_level, current_exp, streak_days, last_checkin_at, achievements, tree_name, plant_skin, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
        ON CONFLICT (user_id) DO UPDATE SET
          tree_level = $2,
          current_exp = $3,
          achievements = $6,
          updated_at = NOW()`,
-      [userId, newLevelInfo.level, newExp, profile.streak_days, profile.last_checkin_at, JSON.stringify(achievements)]
+      [userId, newLevelInfo.level, newExp, profile.streak_days, profile.last_checkin_at, JSON.stringify(achievements), profile.tree_name, profile.plant_skin]
     );
   } else {
     const db = readLocalDb();
@@ -1733,7 +1799,9 @@ async function addGamificationExp(userId, expToAdd, reason = '') {
       current_exp: newExp,
       streak_days: profile.streak_days,
       last_checkin_at: profile.last_checkin_at,
-      achievements
+      achievements,
+      tree_name: profile.tree_name,
+      plant_skin: profile.plant_skin
     };
     if (idx >= 0) db.gamificationProfiles[idx] = updated;
     else db.gamificationProfiles.push(updated);
@@ -1750,15 +1818,43 @@ async function addGamificationExp(userId, expToAdd, reason = '') {
   };
 }
 
-async function checkinGamification(userId) {
+async function checkinGamification(userId, { extraCare = false } = {}) {
   const profile = await getGamificationProfile(userId);
   const todayStr = getTodayStrLocal();
 
   if (profile.checked_in_today) {
+    if (extraCare) {
+      const expGain = 10;
+      const newExp = profile.current_exp + expGain;
+      const newLevelInfo = getLevelInfo(newExp);
+      if (pgPool) {
+        await pgPool.query(
+          `UPDATE gamification_profiles SET current_exp = $1, tree_level = $2, updated_at = NOW() WHERE user_id = $3`,
+          [newExp, newLevelInfo.level, userId]
+        );
+      } else {
+        const db = readLocalDb();
+        const idx = db.gamificationProfiles.findIndex(g => g.user_id === userId);
+        if (idx >= 0) {
+          db.gamificationProfiles[idx].current_exp = newExp;
+          db.gamificationProfiles[idx].tree_level = newLevelInfo.level;
+          writeLocalDb(db);
+        }
+      }
+      const updatedProfile = await getGamificationProfile(userId);
+      return {
+        success: true,
+        isExtraCare: true,
+        message: `Bạn đã tưới thêm nước dinh dưỡng cho cây! +${expGain} EXP 🧪🌱`,
+        expGained: expGain,
+        profile: updatedProfile
+      };
+    }
     return {
       success: false,
       alreadyCheckedIn: true,
-      message: "Hôm nay bạn đã tưới nước điểm danh rồi! Hãy quay lại vào ngày mai nhé.",
+      canExtraCare: true,
+      message: "Hôm nay bạn đã tưới nước điểm danh rồi! Bạn có thể tưới thêm nước dinh dưỡng.",
       profile
     };
   }
@@ -1770,7 +1866,7 @@ async function checkinGamification(userId) {
     const diffMs = today.getTime() - lastDate.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     if (diffDays <= 1) {
-      newStreak = profile.streak_days + 1;
+      newStreak = (profile.streak_days || 0) + 1;
     } else {
       newStreak = 1; // broken streak
     }
@@ -1790,8 +1886,8 @@ async function checkinGamification(userId) {
 
   if (pgPool) {
     await pgPool.query(
-      `INSERT INTO gamification_profiles (user_id, tree_level, current_exp, streak_days, last_checkin_at, achievements, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, NOW())
+      `INSERT INTO gamification_profiles (user_id, tree_level, current_exp, streak_days, last_checkin_at, achievements, tree_name, plant_skin, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
        ON CONFLICT (user_id) DO UPDATE SET
          tree_level = $2,
          current_exp = $3,
@@ -1799,7 +1895,7 @@ async function checkinGamification(userId) {
          last_checkin_at = $5,
          achievements = $6,
          updated_at = NOW()`,
-      [userId, newLevelInfo.level, newExp, newStreak, todayStr, JSON.stringify(achievements)]
+      [userId, newLevelInfo.level, newExp, newStreak, todayStr, JSON.stringify(achievements), profile.tree_name || 'Vườn Thịnh Vượng', profile.plant_skin || '🌿']
     );
   } else {
     const db = readLocalDb();
@@ -1811,7 +1907,9 @@ async function checkinGamification(userId) {
       current_exp: newExp,
       streak_days: newStreak,
       last_checkin_at: todayStr,
-      achievements
+      achievements,
+      tree_name: profile.tree_name || 'Vườn Thịnh Vượng',
+      plant_skin: profile.plant_skin || '🌿'
     };
     if (idx >= 0) db.gamificationProfiles[idx] = updated;
     else db.gamificationProfiles.push(updated);
@@ -1822,11 +1920,78 @@ async function checkinGamification(userId) {
 
   return {
     success: true,
-    message: `Tưới nước thành công! +${expGain} EXP 🌱 (Chuỗi ${newStreak} ngày)`,
+    message: `Tưới nước thành công! +${expGain} EXP 🌱 (Chuỗi ${newStreak} ngày kỷ luật)`,
     expGained: expGain,
     newStreak,
     profile: updatedProfile
   };
+}
+
+async function customizeGamification(userId, { tree_name, plant_skin }) {
+  const profile = await getGamificationProfile(userId);
+  const newName = (tree_name || profile.tree_name || 'Vườn Thịnh Vượng').trim();
+  const newSkin = plant_skin || profile.plant_skin || '🌿';
+
+  if (pgPool) {
+    await pgPool.query(
+      `UPDATE gamification_profiles SET tree_name = $1, plant_skin = $2, updated_at = NOW() WHERE user_id = $3`,
+      [newName, newSkin, userId]
+    );
+  } else {
+    const db = readLocalDb();
+    if (db.gamificationProfiles) {
+      const idx = db.gamificationProfiles.findIndex(g => g.user_id === userId);
+      if (idx >= 0) {
+        db.gamificationProfiles[idx].tree_name = newName;
+        db.gamificationProfiles[idx].plant_skin = newSkin;
+        writeLocalDb(db);
+      }
+    }
+  }
+  return await getGamificationProfile(userId);
+}
+
+async function simulateGamificationStreak(userId, action) {
+  const profile = await getGamificationProfile(userId);
+  const now = new Date();
+  let updatedLastCheckin = profile.last_checkin_at;
+  let updatedStreak = profile.streak_days;
+  let message = '';
+
+  if (action === 'reset_today') {
+    const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    updatedLastCheckin = formatDateLocal(yesterday);
+    message = 'Đã khôi phục trạng thái chưa tưới nước hôm nay! Nút tưới sẵn sàng.';
+  } else if (action === 'simulate_miss_day') {
+    const twoDaysAgo = new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000);
+    updatedLastCheckin = formatDateLocal(twoDaysAgo);
+    updatedStreak = 0;
+    message = 'Đã mô phỏng không vào ứng dụng trong 1 ngày! Chuỗi kỷ luật đã bị đứt về 0 ngày.';
+  } else if (action === 'advance_streak') {
+    updatedStreak = (profile.streak_days || 0) + 1;
+    updatedLastCheckin = getTodayStrLocal();
+    message = `Đã cộng dồn +1 ngày chuỗi kỷ luật! Chuỗi hiện tại: ${updatedStreak} ngày.`;
+  }
+
+  if (pgPool) {
+    await pgPool.query(
+      `UPDATE gamification_profiles SET last_checkin_at = $1, streak_days = $2, updated_at = NOW() WHERE user_id = $3`,
+      [updatedLastCheckin, updatedStreak, userId]
+    );
+  } else {
+    const db = readLocalDb();
+    if (db.gamificationProfiles) {
+      const idx = db.gamificationProfiles.findIndex(g => g.user_id === userId);
+      if (idx >= 0) {
+        db.gamificationProfiles[idx].last_checkin_at = updatedLastCheckin;
+        db.gamificationProfiles[idx].streak_days = updatedStreak;
+        writeLocalDb(db);
+      }
+    }
+  }
+
+  const updatedProfile = await getGamificationProfile(userId);
+  return { success: true, message, profile: updatedProfile };
 }
 
 module.exports = {
@@ -1859,6 +2024,8 @@ module.exports = {
   getGamificationProfile,
   addGamificationExp,
   checkinGamification,
+  customizeGamification,
+  simulateGamificationStreak,
   saveAutoSweepConfig,
   getAutoSweepConfig,
   savePasswordResetToken,
