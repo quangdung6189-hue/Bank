@@ -1460,6 +1460,79 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   font-weight: 700;
   box-shadow: 0 0 12px -2px rgba(232, 197, 124, 0.3);
 }
+.sim-custom-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 3px 4px 3px 12px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.sim-custom-wrap:focus-within,
+.sim-custom-wrap:hover {
+  border-color: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+}
+.sim-custom-wrap.active {
+  background: var(--gold-dim);
+  border-color: rgba(232, 197, 124, 0.45);
+  box-shadow: 0 0 14px -2px rgba(232, 197, 124, 0.3);
+}
+.sim-custom-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.sim-custom-wrap.active .sim-custom-icon {
+  color: var(--gold);
+}
+.sim-custom-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: var(--font-num);
+  font-size: 12px;
+  font-weight: 700;
+  width: 145px;
+  padding: 3px 0;
+}
+.sim-custom-wrap.active .sim-custom-input {
+  color: var(--gold);
+}
+.sim-custom-input::placeholder {
+  color: var(--muted);
+  font-weight: 500;
+  font-family: inherit;
+  font-size: 11.5px;
+}
+.sim-custom-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  border: 1px solid transparent;
+  border-radius: 99px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+.sim-custom-btn:hover {
+  background: var(--gold);
+  color: #080B12;
+}
+.sim-custom-wrap.active .sim-custom-btn {
+  background: var(--gold);
+  color: #080B12;
+  box-shadow: 0 2px 8px rgba(232, 197, 124, 0.35);
+}
 
 /* Smart Financial Guardrails Health Banner */
 .alloc-health-banner {
@@ -3409,8 +3482,8 @@ body.modal-open {
             </div>
             
             <div style="text-align:right">
-              <small style="color:var(--muted);font-size:11px;display:block;text-transform:uppercase;letter-spacing:0.05em">THU NHẬP CƠ SỞ TÍNH TOÁN</small>
-              <b id="budgetIncomeValue" style="font-family:var(--font-num);font-size:24px;color:var(--mint);font-variant-numeric:tabular-nums">106.300.000₫</b>
+              <small style="color:var(--muted);font-size:11px;display:block;text-transform:uppercase;letter-spacing:0.05em">SỐ TIỀN CƠ SỞ TÍNH TOÁN</small>
+              <b id="budgetIncomeValue" style="font-family:var(--font-num);font-size:24px;color:var(--mint);font-variant-numeric:tabular-nums">0₫</b>
               <div id="allocIncomeTierBadge" style="margin-top:4px">
                 <span class="badge-pill" style="background:rgba(245,212,133,0.15);color:var(--gold);font-size:10px;font-weight:700">✦ Priority Banking Tier</span>
               </div>
@@ -3449,14 +3522,23 @@ body.modal-open {
           <div class="income-sim-bar">
             <span style="font-size:12px;color:var(--muted);font-weight:700;display:inline-flex;align-items:center;gap:6px">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-              Mô phỏng thu nhập tháng:
+              Mô phỏng thực tế thu nhập:
             </span>
-            <button type="button" class="sim-chip active" id="simChipReal" onclick="simulateIncome(0)">Thực tế tài khoản: 106.300.000đ</button>
+            <button type="button" class="sim-chip active" id="simChipReal" onclick="simulateIncome(0)">Số dư tài khoản: 0₫</button>
             <button type="button" class="sim-chip" onclick="simulateIncome(15000000)">15 Triệu</button>
             <button type="button" class="sim-chip" onclick="simulateIncome(25000000)">25 Triệu</button>
             <button type="button" class="sim-chip" onclick="simulateIncome(35000000)">35 Triệu</button>
             <button type="button" class="sim-chip" onclick="simulateIncome(50000000)">50 Triệu</button>
             <button type="button" class="sim-chip" onclick="simulateIncome(100000000)">100 Triệu</button>
+
+            <!-- Custom Amount Simulation Input -->
+            <div class="sim-custom-wrap" id="simCustomWrap">
+              <span class="sim-custom-icon" title="Điền số tiền tự chọn để mô phỏng">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              </span>
+              <input type="text" id="simCustomInput" class="sim-custom-input" placeholder="Điền số tiền tự chọn..." inputmode="numeric" oninput="handleSimCustomInput(this)" onkeydown="if(event.key==='Enter')applySimCustomIncome()" />
+              <button type="button" class="sim-custom-btn" id="btnSimCustomApply" onclick="applySimCustomIncome()" title="Mô phỏng số tiền này">Mô phỏng</button>
+            </div>
           </div>
 
           <!-- Visual Multi-segment Pool Bar (Lucian #171 Inspired) -->
@@ -3723,7 +3805,7 @@ body.modal-open {
 
     <!-- Preview 3 Funds Split -->
     <div style="font-size:11px;font-weight:700;text-transform:uppercase;color:var(--gold);letter-spacing:0.05em;margin-bottom:8px">
-      DỰ KIẾN PHÂN BỔ ĐỊNH KỲ MỖI KỲ LƯƠNG (<span id="sweepIncomeLabel">106.300.000₫</span>)
+      DỰ KIẾN PHÂN BỔ ĐỊNH KỲ MỖI KỲ LƯƠNG (<span id="sweepIncomeLabel">0₫</span>)
     </div>
     <div class="sweep-grid">
       <div class="sweep-card" style="border-color:rgba(16,185,129,0.3);background:radial-gradient(ellipse at top, rgba(16,185,129,0.08), transparent 70%)">
@@ -4510,6 +4592,22 @@ function updateUserInterface() {
     document.getElementById('displayBalance').textContent = fmt(currentUser.balance);
     document.getElementById('cardCurrentBalance').textContent = fmt(currentUser.balance) + "₫";
   }
+
+  // Cập nhật số dư thực tế vào mục Mô phỏng thu nhập / Dòng tiền ngân sách
+  const userBal = Number(currentUser.balance) || 0;
+  const realChip = document.getElementById('simChipReal');
+  if (realChip) {
+    realChip.textContent = `Số dư tài khoản: ${fmt(userBal)}₫`;
+  }
+
+  if (currentSimIncome === null || currentSimIncome === 0) {
+    currentEffectiveIncome = userBal;
+    const incValEl = document.getElementById('budgetIncomeValue');
+    if (incValEl) incValEl.textContent = fmt(userBal) + "₫";
+    if (typeof applyAllocationCalculations === 'function') {
+      applyAllocationCalculations();
+    }
+  }
 }
 
 // ==================== KHỞI TẠO TẢI DỮ LIỆU HỆ THỐNG ====================
@@ -4781,7 +4879,14 @@ async function loadSummaryData(params = {}) {
     if (ruleInc) ruleInc.textContent = fmt(s.totalIncome) + "₫";
     const bgInc = document.getElementById('budgetIncomeValue');
     if (bgInc && (!currentSimIncome || currentSimIncome === 0)) {
-      bgInc.textContent = fmt(s.totalIncome > 0 ? s.totalIncome : 0) + "₫";
+      const bal = (s.currentBalance !== undefined) ? s.currentBalance : (currentUser ? currentUser.balance : 0);
+      bgInc.textContent = fmt(bal) + "₫";
+      currentEffectiveIncome = Number(bal) || 0;
+      const realChip = document.getElementById('simChipReal');
+      if (realChip) realChip.textContent = `Số dư tài khoản: ${fmt(bal)}₫`;
+      if (typeof applyAllocationCalculations === 'function') {
+        applyAllocationCalculations();
+      }
     }
   } catch (err) {
     console.error("loadSummaryData error:", err);
@@ -5544,15 +5649,25 @@ const STRATEGY_PRESETS = {
   }
 };
 
-let currentAllocationStrategy = 'wealth_acceleration'; // Mặc định Priority Wealth 30/25/45 cho 106.3M
+let currentAllocationStrategy = 'wealth_acceleration';
 let currentSimIncome = null;
 let cachedAllocationData = null;
-let currentEffectiveIncome = 106300000;
+let currentEffectiveIncome = 0;
 let lockedFunds = { needs: false, wants: false, savings: false };
 let fundPercentages = { needs: 30, wants: 25, savings: 45 };
 let emergencyBufferState = 'overflow'; // 'overflow' (default for high income) vs 'accumulating'
 let autoSweepSchedule = 'day_05';
 let allocRafId = null;
+
+function getActualAccountBalance() {
+  if (currentUser && currentUser.balance !== undefined) {
+    return Number(currentUser.balance) || 0;
+  }
+  if (cachedAllocationData && cachedAllocationData.accountBalance !== undefined) {
+    return Number(cachedAllocationData.accountBalance) || 0;
+  }
+  return 0;
+}
 
 function getRecommendedStrategyId(income) {
   if (income < 25000000) return 'starter_safety';
@@ -5608,14 +5723,24 @@ function setAllocationStrategy(strategyId) {
   applyAllocationCalculations();
 }
 
-function simulateIncome(amount) {
+function simulateIncome(amount, isCustom = false) {
+  const actualBal = getActualAccountBalance();
   currentSimIncome = amount === 0 ? null : amount;
 
   // Highlight active simulation chip
   document.querySelectorAll('.sim-chip').forEach(chip => chip.classList.remove('active'));
+  const customWrap = document.getElementById('simCustomWrap');
+  if (customWrap) customWrap.classList.remove('active');
+
   if (amount === 0) {
     const realChip = document.getElementById('simChipReal');
     if (realChip) realChip.classList.add('active');
+    const customInp = document.getElementById('simCustomInput');
+    if (customInp && !isCustom) customInp.value = '';
+    currentEffectiveIncome = actualBal;
+  } else if (isCustom) {
+    if (customWrap) customWrap.classList.add('active');
+    currentEffectiveIncome = amount;
   } else {
     document.querySelectorAll('.sim-chip').forEach(chip => {
       const txt = chip.textContent;
@@ -5625,11 +5750,10 @@ function simulateIncome(amount) {
       if (amount === 50000000 && txt.includes('50')) chip.classList.add('active');
       if (amount === 100000000 && txt.includes('100')) chip.classList.add('active');
     });
+    const customInp = document.getElementById('simCustomInput');
+    if (customInp) customInp.value = '';
+    currentEffectiveIncome = amount;
   }
-
-  // Thu nhập thực tế hoặc mô phỏng
-  const baseInc = (cachedAllocationData && cachedAllocationData.totalIncome > 0) ? cachedAllocationData.totalIncome : 106300000;
-  currentEffectiveIncome = (amount > 0) ? amount : baseInc;
 
   // Cập nhật nhãn thu nhập cơ sở
   const incValEl = document.getElementById('budgetIncomeValue');
@@ -5658,6 +5782,34 @@ function simulateIncome(amount) {
   } else {
     applyAllocationCalculations();
   }
+}
+
+function handleSimCustomInput(el) {
+  let raw = (el.value || '').replace(/[^\d]/g, '');
+  if (!raw) {
+    el.value = '';
+    return;
+  }
+  const num = parseInt(raw, 10);
+  if (isNaN(num)) {
+    el.value = '';
+    return;
+  }
+  el.value = fmt(num);
+}
+
+function applySimCustomIncome() {
+  const customInp = document.getElementById('simCustomInput');
+  if (!customInp) return;
+  const raw = (customInp.value || '').replace(/[^\d]/g, '');
+  const num = parseInt(raw, 10);
+  if (isNaN(num) || num <= 0) {
+    showToast("Vui lòng điền số tiền mô phỏng hợp lệ lớn hơn 0₫!");
+    customInp.focus();
+    return;
+  }
+  simulateIncome(num, true);
+  showToast(`Đang mô phỏng dòng tiền phân bổ theo mức: ${fmt(num)}₫`);
 }
 
 // BỘ ĐIỀU CHỈNH THANH TRƯỢT THÔNG MINH (INTERACTIVE SLIDERS + DUAL AUTO-SWEEP BALANCE)
@@ -6367,12 +6519,18 @@ async function loadWealthAllocation(strategy = currentAllocationStrategy, simInc
     const alloc = data.allocation || data.rule;
     cachedAllocationData = alloc;
 
-    // Cập nhật mức thu nhập thực tế nếu có
-    if (alloc.totalIncome > 0 && !simIncome) {
-      currentEffectiveIncome = alloc.totalIncome;
-      // Cập nhật tên nút simChipReal
-      const realChip = document.getElementById('simChipReal');
-      if (realChip) realChip.textContent = `Thực tế tài khoản: ${fmt(alloc.totalIncome)}₫`;
+    // Cập nhật mức số dư thực tế nếu có
+    const userBal = (currentUser && currentUser.balance !== undefined)
+      ? Number(currentUser.balance)
+      : (alloc.accountBalance !== undefined ? Number(alloc.accountBalance) : (alloc.totalIncome || 0));
+
+    const realChip = document.getElementById('simChipReal');
+    if (realChip) realChip.textContent = `Số dư tài khoản: ${fmt(userBal)}₫`;
+
+    if (!simIncome) {
+      currentEffectiveIncome = userBal;
+      const incValEl = document.getElementById('budgetIncomeValue');
+      if (incValEl) incValEl.textContent = fmt(userBal) + "₫";
     }
 
     // Đồng bộ phần trăm từ server nếu không phải custom mode do client chỉnh

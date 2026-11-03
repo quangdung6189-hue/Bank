@@ -991,10 +991,11 @@ async function getWealthAllocation(userId, {
   customSavings = null,
   emergencyBufferState = 'overflow'
 } = {}) {
-  const summary = await getSummary(userId);
+  const user = await findUserById(userId);
+  const accountBalance = user ? Math.max(0, Number(user.balance)) : 0;
   const income = (customIncome !== null && customIncome !== undefined)
     ? Number(customIncome)
-    : (summary.totalIncome > 0 ? summary.totalIncome : 106300000);
+    : accountBalance;
 
   // Danh mục 4 Chiến lược Chuẩn thị trường & Private Banking (Định luật Engel)
   const strategies = {
@@ -1157,6 +1158,7 @@ async function getWealthAllocation(userId, {
   ];
 
   return {
+    accountBalance,
     totalIncome: income,
     strategy: stratConfig,
     recommendedStrategyId,
