@@ -2032,6 +2032,59 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
 }
 
 /* ============ FORM THÊM GIAO DỊCH ============ */
+/* Bills & Transaction Filter Segmented Pills */
+.tx-filter-pills {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+.tx-filter-pills .pill {
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+.tx-filter-pills .pill:hover {
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.06);
+}
+.tx-filter-pills .pill.active {
+  background: rgba(16, 185, 129, 0.18) !important;
+  color: #10B981 !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+[data-theme="light"] .tx-filter-pills {
+  background: #F1F5F9;
+  border-color: rgba(15, 23, 42, 0.08);
+}
+[data-theme="light"] .tx-filter-pills .pill {
+  color: #64748B;
+}
+[data-theme="light"] .tx-filter-pills .pill:hover {
+  color: #0F172A;
+  background: rgba(15, 23, 42, 0.04);
+}
+[data-theme="light"] .tx-filter-pills .pill.active {
+  background: #FFFFFF !important;
+  color: #00A870 !important;
+  border-color: rgba(0, 168, 112, 0.3) !important;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.06);
+}
+
 .form-group { margin-bottom: 18px; }
 .form-label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 7px; }
 .form-input-wrap {
@@ -2898,13 +2951,13 @@ body.modal-open {
 
     <div class="sb-footer">
       <div class="user-card-mini">
-        <div class="user-avatar" id="sidebarAvatar">D</div>
+        <div class="user-avatar" id="sidebarAvatar">Đ</div>
         <div class="user-info">
           <div style="display:flex;align-items:center;gap:4px">
-            <b id="sidebarUserName">Đặng Quang Dũng</b>
+            <b id="sidebarUserName">Khách hàng Đồng Bank</b>
             <svg viewBox="0 0 24 24" width="13" height="13" fill="var(--mint)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
           </div>
-          <small id="sidebarUserEmail">quangdung6189@gmail.com</small>
+          <small id="sidebarUserEmail">khachhang@dongbank.vn</small>
         </div>
       </div>
       <div style="display:flex;gap:8px">
@@ -2957,7 +3010,7 @@ body.modal-open {
       <section id="view-dashboard" class="view-section active">
         <div class="sec-title">
           <div>
-            <h1>Tổng quan dòng tiền, <span id="helloUserName">Đặng Quang Dũng</span></h1>
+            <h1>Tổng quan dòng tiền, <span id="helloUserName">Khách hàng Đồng Bank</span></h1>
             <p>Dữ liệu tài chính được bảo mật và mã hóa thời gian thực.</p>
           </div>
           <button class="btn btn-mint btn-sm" onclick="openNewTxModal()">
@@ -3047,7 +3100,7 @@ body.modal-open {
               </span>
               <!-- Lucian UX/UI Prompt #008 · Interactive Copy Button with Checkmark Morph -->
               <div class="badge-pill stk-chip" style="display:inline-flex;align-items:center;gap:8px;padding:3px 6px 3px 12px">
-                <span>STK: <strong id="dashAccountNumber" style="font-family:var(--font-num);letter-spacing:0.04em">8888 6868 9999</strong></span>
+                <span>STK: <strong id="dashAccountNumber" style="font-family:var(--font-num);letter-spacing:0.04em">•••• •••• ••••</strong></span>
                 <button type="button" class="u008-copy-btn" id="btnCopyStk" onclick="copyStk(this)" aria-label="Sao chép số tài khoản" title="Sao chép số tài khoản (Lucian #008)">
                   <svg class="u008-cp-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                   <svg class="u008-ok-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -3085,8 +3138,8 @@ body.modal-open {
                   <span class="u052-brand">Đồng Signature</span>
                   <span class="u052-tier">BLACK METAL</span>
                   <span class="u052-chip"></span>
-                  <span class="u052-num" id="metalCardNumber">8888 •••• •••• 9999</span>
-                  <span class="u052-name" id="metalCardHolderName">ĐẶNG QUANG DŨNG</span>
+                  <span class="u052-num" id="metalCardNumber">•••• •••• •••• ••••</span>
+                  <span class="u052-name" id="metalCardHolderName">KHÁCH HÀNG</span>
                   <span class="u052-exp">10/30</span>
                   <span class="u052-lock"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
                 </span>
@@ -3137,17 +3190,17 @@ body.modal-open {
           <div class="wealth-tree-header">
             <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
               <span class="badge-pill" style="background:rgba(16,185,129,0.15);color:#10B981;font-weight:700">✦ VƯỜN THỊNH VƯỢNG</span>
-              <span id="treeCustomNameHeader" style="font-size:14px;font-weight:700;color:#F8FAFC">Vườn Thịnh Vượng Đặng Quang Dũng</span>
+              <span id="treeCustomNameHeader" style="font-size:14px;font-weight:700;color:#F8FAFC">Vườn Thịnh Vượng</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <span class="badge-pill" id="treeOnlineStatusBadge" style="background:rgba(16,185,129,0.15);color:#10B981;font-weight:700">
                 🟢 Trực tuyến
               </span>
               <span class="badge-pill" id="treeStreakBadge" style="background:rgba(245,158,11,0.15);color:#F59E0B;border:1px solid rgba(245,158,11,0.3);font-weight:700">
-                🔥 Chuỗi <span id="treeStreakDays" style="font-family:var(--font-num);margin:0 2px">5</span> ngày
+                🔥 Chuỗi <span id="treeStreakDays" style="font-family:var(--font-num);margin:0 2px">0</span> ngày
               </span>
               <span class="badge-pill" id="treeCountdownBadge" style="background:rgba(255,255,255,0.06);color:var(--muted);font-size:11px" title="Thời gian còn lại trong ngày để duy trì chuỗi">
-                ⏳ <span id="treeCountdownText">15:04:22</span>
+                ⏳ <span id="treeCountdownText">--:--:--</span>
               </span>
               <button type="button" class="btn btn-outline btn-xs" onclick="openTreeCustomModal()" style="font-size:11px;padding:4px 10px;border-color:rgba(16,185,129,0.35);color:#10B981;display:flex;align-items:center;gap:4px">
                 ⚙️ <span>Chỉnh sửa &amp; Sandbox</span>
@@ -3164,9 +3217,9 @@ body.modal-open {
               <div>
                 <div style="display:flex;align-items:center;gap:8px">
                   <h4 id="treeTitle" style="font-size:16px;font-weight:800;color:#10B981;margin:0">Mầm xanh Thịnh vượng</h4>
-                  <span id="treeLevelBadge" class="badge-pill" style="font-size:10px;padding:2px 8px;background:rgba(16,185,129,0.2);color:#10B981">Cấp 2</span>
+                  <span id="treeLevelBadge" class="badge-pill" style="font-size:10px;padding:2px 8px;background:rgba(16,185,129,0.2);color:#10B981">Cấp 1</span>
                 </div>
-                <p id="treeDesc" style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.4">Đã hình thành thói quen ghi chép và phân bổ</p>
+                <p id="treeDesc" style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.4">Bắt đầu hành trình kỷ luật tài chính cá nhân</p>
                 <div style="display:flex;gap:6px;margin-top:6px">
                   <span class="badge-pill" style="font-size:10px;padding:2px 8px;background:rgba(16,185,129,0.12);color:#34D399;font-weight:600">✨ Chăm sóc đều đặn</span>
                 </div>
@@ -3177,13 +3230,13 @@ body.modal-open {
             <div>
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px">
                 <span style="color:var(--muted)">Kinh nghiệm tài chính:</span>
-                <span style="font-weight:700"><span id="treeCurrentExp" style="font-family:var(--font-num);color:#34D399">340</span> / <span id="treeTargetExp" style="font-family:var(--font-num);color:var(--muted)">500</span> EXP (<span id="treePercent" style="color:#F59E0B">68%</span>)</span>
+                <span style="font-weight:700"><span id="treeCurrentExp" style="font-family:var(--font-num);color:#34D399">0</span> / <span id="treeTargetExp" style="font-family:var(--font-num);color:var(--muted)">500</span> EXP (<span id="treePercent" style="color:#F59E0B">0%</span>)</span>
               </div>
               <div class="tree-exp-track" style="margin:7px 0 5px">
-                <div class="tree-exp-bar" id="treeExpBar" style="width: 68%;"></div>
+                <div class="tree-exp-bar" id="treeExpBar" style="width: 0%;"></div>
               </div>
               <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--muted);margin-bottom:10px">
-                <span>Cần thêm <strong id="treeExpToNext" style="color:#F59E0B">160 EXP</strong> để thăng hạng</span>
+                <span>Cần thêm <strong id="treeExpToNext" style="color:#F59E0B">500 EXP</strong> để thăng hạng</span>
                 <span style="color:rgba(255,255,255,0.4)">Tưới cây + Tích hũ + Đóng phí = Tăng EXP</span>
               </div>
 
@@ -3565,15 +3618,15 @@ body.modal-open {
             <div class="alloc-legend-row" id="allocLegendRow">
               <div class="alloc-legend-item">
                 <span class="alloc-dot" style="background:#10B981"></span>
-                <span>Vận hành Đời sống: <b id="legNeedsVal" style="color:#10B981">31.890.000₫</b> (<span id="legNeedsPct">30%</span>)</span>
+                <span>Vận hành Đời sống: <b id="legNeedsVal" style="color:#10B981">0₫</b> (<span id="legNeedsPct">30%</span>)</span>
               </div>
               <div class="alloc-legend-item">
                 <span class="alloc-dot" style="background:#6366F1"></span>
-                <span>Nâng cấp &amp; Phong cách: <b id="legWantsVal" style="color:#6366F1">26.575.000₫</b> (<span id="legWantsPct">25%</span>)</span>
+                <span>Nâng cấp &amp; Phong cách: <b id="legWantsVal" style="color:#6366F1">0₫</b> (<span id="legWantsPct">25%</span>)</span>
               </div>
               <div class="alloc-legend-item">
                 <span class="alloc-dot" style="background:#F59E0B"></span>
-                <span>Tích sản &amp; Tự do: <b id="legSavingsVal" style="color:#F59E0B">47.835.000₫</b> (<span id="legSavingsPct">45%</span>)</span>
+                <span>Tích sản &amp; Tự do: <b id="legSavingsVal" style="color:#F59E0B">0₫</b> (<span id="legSavingsPct">45%</span>)</span>
               </div>
             </div>
           </div>
@@ -3810,17 +3863,17 @@ body.modal-open {
     <div class="sweep-grid">
       <div class="sweep-card" style="border-color:rgba(16,185,129,0.3);background:radial-gradient(ellipse at top, rgba(16,185,129,0.08), transparent 70%)">
         <small style="color:#10B981;font-size:10px;font-weight:700;display:block">VẬN HÀNH (<span id="sweepNeedsPct">30%</span>)</small>
-        <b id="sweepNeedsAmount" style="font-family:var(--font-num);font-size:14.5px;color:#10B981;margin:4px 0 2px;display:block">31.890.000₫</b>
+        <b id="sweepNeedsAmount" style="font-family:var(--font-num);font-size:14.5px;color:#10B981;margin:4px 0 2px;display:block">0₫</b>
         <span style="font-size:9.5px;color:var(--muted)">Thẻ chính sinh hoạt</span>
       </div>
       <div class="sweep-card" style="border-color:rgba(99,102,241,0.3);background:radial-gradient(ellipse at top, rgba(99,102,241,0.08), transparent 70%)">
         <small style="color:#818CF8;font-size:10px;font-weight:700;display:block">NÂNG CẤP (<span id="sweepWantsPct">25%</span>)</small>
-        <b id="sweepWantsAmount" style="font-family:var(--font-num);font-size:14.5px;color:#818CF8;margin:4px 0 2px;display:block">26.575.000₫</b>
+        <b id="sweepWantsAmount" style="font-family:var(--font-num);font-size:14.5px;color:#818CF8;margin:4px 0 2px;display:block">0₫</b>
         <span style="font-size:9.5px;color:var(--muted)">TK Phong cách sống</span>
       </div>
       <div class="sweep-card" style="border-color:rgba(245,158,11,0.3);background:radial-gradient(ellipse at top, rgba(245,158,11,0.08), transparent 70%)">
         <small style="color:#F59E0B;font-size:10px;font-weight:700;display:block">TÍCH SẢN (<span id="sweepSavingsPct">45%</span>)</small>
-        <b id="sweepSavingsAmount" style="font-family:var(--font-num);font-size:14.5px;color:#F59E0B;margin:4px 0 2px;display:block">47.835.000₫</b>
+        <b id="sweepSavingsAmount" style="font-family:var(--font-num);font-size:14.5px;color:#F59E0B;margin:4px 0 2px;display:block">0₫</b>
         <span style="font-size:9.5px;color:var(--muted)">Quỹ Đầu tư &amp; ETF</span>
       </div>
     </div>
@@ -4234,7 +4287,7 @@ body.modal-open {
       <div class="form-group">
         <label class="form-label">TÊN VƯỜN / CÂY TÀI CHÍNH</label>
         <div class="form-input-wrap">
-          <input type="text" id="customTreeNameInput" placeholder="Ví dụ: Vườn Thịnh Vượng Đặng Quang Dũng..." value="Vườn Thịnh Vượng Đặng Quang Dũng">
+          <input type="text" id="customTreeNameInput" placeholder="Ví dụ: Vườn Thịnh Vượng Cá Nhân..." value="Vườn Thịnh Vượng">
         </div>
       </div>
 
@@ -4362,13 +4415,33 @@ function triggerAuthShake(message) {
 
 function checkAuthGate() {
   const gate = document.getElementById('authGate');
+  const appLayout = document.querySelector('.app-layout');
   if (!authToken) {
-    gate.style.display = 'flex';
+    if (appLayout) appLayout.style.display = 'none';
+    if (gate) gate.style.display = 'flex';
     initAuthSecurityListeners();
   } else {
-    gate.style.display = 'none';
+    if (appLayout) appLayout.style.display = 'flex';
+    if (gate) gate.style.display = 'none';
+    initDevToolsVisibility();
     fetchCurrentUser();
     loadAllData();
+  }
+}
+
+function initDevToolsVisibility() {
+  const isDev = window.location.hostname === 'localhost' || 
+                window.location.hostname === '127.0.0.1' || 
+                window.location.search.includes('dev=1');
+
+  const btnReset = document.getElementById('btnResetZeroHold');
+  if (btnReset) {
+    btnReset.style.display = isDev ? 'flex' : 'none';
+  }
+
+  const tabSandbox = document.getElementById('tabBtnTreeSandbox');
+  if (tabSandbox) {
+    tabSandbox.style.display = isDev ? 'inline-flex' : 'none';
   }
 }
 
@@ -4555,6 +4628,8 @@ function handleLogout() {
     currentUser = null;
     localStorage.removeItem('DONG_TOKEN');
     sessionStorage.removeItem('DONG_TOKEN');
+    const appLayout = document.querySelector('.app-layout');
+    if (appLayout) appLayout.style.display = 'none';
     document.getElementById('authGate').style.display = 'flex';
     generateNewCaptcha();
     initAuthSecurityListeners();
@@ -4784,8 +4859,29 @@ async function handleCreateTransaction(e) {
   const date = document.getElementById('txDate').value;
   const note = document.getElementById('txNote').value.trim();
 
-  if (!amount || amount <= 0) {
-    showToast("Vui lòng nhập số tiền hợp lệ!", "err");
+  if (!name) {
+    showToast("Vui lòng nhập tên giao dịch!", "err");
+    return;
+  }
+
+  if (!amount || isNaN(amount) || amount <= 0) {
+    showToast("Vui lòng nhập số tiền hợp lệ lớn hơn 0₫!", "err");
+    return;
+  }
+
+  if (amount > 100000000000) {
+    showToast("Số tiền giao dịch không được vượt quá 100 tỷ đồng!", "err");
+    return;
+  }
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  if (date && date > todayStr) {
+    showToast("Ngày giao dịch không thể ở tương lai!", "err");
+    return;
+  }
+
+  if (currentTxType === 'expense' && currentUser && (currentUser.balance !== undefined) && Number(currentUser.balance) < amount) {
+    showToast(`Số dư tài khoản không đủ để chi tiêu (hiện có ${fmt(currentUser.balance)}₫)!`, "err");
     return;
   }
 
@@ -5985,7 +6081,7 @@ function buildAllocationCardsHTML(p = '') {
       <!-- Amount Edit Area -->
       <div style="margin: 6px 0 2px">
         <div class="fund-amount-box" onclick="startAmountEdit('needs')" title="Bấm để chỉnh sửa số tiền định mức (Hard-Cap) trực tiếp">
-          <b id="${p}fundAmountDisplay_needs" style="color:#10B981;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">31.890.000₫</b>
+          <b id="${p}fundAmountDisplay_needs" style="color:#10B981;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">0₫</b>
           <input type="text" class="fund-num-input" id="${p}fundAmountInput_needs" style="display:none" onblur="commitAmountEdit('needs', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('needs', this)">
           <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
         </div>
@@ -6065,7 +6161,7 @@ function buildAllocationCardsHTML(p = '') {
       <!-- Amount Edit Area -->
       <div style="margin: 6px 0 2px">
         <div class="fund-amount-box" onclick="startAmountEdit('wants')" title="Bấm để chỉnh sửa số tiền định mức (Hard-Cap) trực tiếp">
-          <b id="${p}fundAmountDisplay_wants" style="color:#818CF8;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">26.575.000₫</b>
+          <b id="${p}fundAmountDisplay_wants" style="color:#818CF8;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">0₫</b>
           <input type="text" class="fund-num-input" id="${p}fundAmountInput_wants" style="display:none" onblur="commitAmountEdit('wants', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('wants', this)">
           <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
         </div>
@@ -6141,7 +6237,7 @@ function buildAllocationCardsHTML(p = '') {
       <!-- Amount Edit Area -->
       <div style="margin: 6px 0 2px">
         <div class="fund-amount-box" onclick="startAmountEdit('savings')" title="Bấm để chỉnh sửa số tiền định mức (Hard-Cap) trực tiếp">
-          <b id="${p}fundAmountDisplay_savings" style="color:#F59E0B;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">47.835.000₫</b>
+          <b id="${p}fundAmountDisplay_savings" style="color:#F59E0B;font-size:24px;font-family:var(--font-num);font-variant-numeric:tabular-nums">0₫</b>
           <input type="text" class="fund-num-input" id="${p}fundAmountInput_savings" style="display:none" onblur="commitAmountEdit('savings', this)" onkeydown="if(event.key==='Enter')commitAmountEdit('savings', this)">
           <svg class="fund-edit-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
         </div>
@@ -6196,15 +6292,15 @@ function buildAllocationCardsHTML(p = '') {
         <div class="proj-grid-2col">
           <div class="proj-grid-cell">
             <small>Dự kiến sau 1 năm</small>
-            <strong id="${p}projAmount1Y">605.900.000₫</strong>
+            <strong id="${p}projAmount1Y">0₫</strong>
           </div>
           <div class="proj-grid-cell">
             <small>Dự kiến sau 5 năm</small>
-            <strong id="${p}projAmount5Y">3.705.500.000₫</strong>
+            <strong id="${p}projAmount5Y">0₫</strong>
           </div>
         </div>
         <div class="proj-subtext">
-          Tính toán dựa trên cơ chế gửi góp đều đặn <strong id="${p}projMonthlySavings" style="color:var(--text)">47.835.000₫/tháng</strong> và tự động tái đầu tư sinh lời.
+          Tính toán dựa trên cơ chế gửi góp đều đặn <strong id="${p}projMonthlySavings" style="color:var(--text)">0₫/tháng</strong> và tự động tái đầu tư sinh lời.
         </div>
       </div>
     </div>
@@ -6462,6 +6558,24 @@ function renderRealityCheck(needsBudget, wantsBudget, needsPct, wantsPct) {
   if (!compBox) return;
 
   const actualExpense = totalExpenseStored || 0;
+
+  if (needsBudget === 0 && wantsBudget === 0 && actualExpense === 0) {
+    compBox.innerHTML = `
+      <div style="text-align:center;padding:36px 20px;background:rgba(255,255,255,0.02);border:1px dashed var(--line);border-radius:14px;color:var(--muted)">
+        <div style="font-size:36px;margin-bottom:8px">⚖️</div>
+        <h4 style="font-size:15px;color:var(--text);margin-bottom:4px">Chưa có dữ liệu đối chiếu dòng tiền</h4>
+        <p style="font-size:12px;max-width:380px;margin:0 auto 14px;line-height:1.5">
+          Tài khoản chưa phát sinh thu nhập hoặc chi tiêu thực tế. Hãy ghi nhận giao dịch chi tiêu hoặc chọn mức mô phỏng thu nhập ở trên để kích hoạt đối soát tự động.
+        </p>
+        <button class="btn btn-mint btn-sm" onclick="openNewTxModal()">
+          <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+          + Ghi chép khoản chi đầu tiên
+        </button>
+      </div>
+    `;
+    return;
+  }
+
   const needsPctUsed = needsBudget > 0 ? Math.min(100, Math.round((actualExpense * 0.7 / needsBudget) * 100)) : 0;
   const wantsPctUsed = wantsBudget > 0 ? Math.min(100, Math.round((actualExpense * 0.3 / wantsBudget) * 100)) : 0;
 
@@ -6714,6 +6828,11 @@ function triggerFilterChange() {
   const endDate = document.getElementById('filterEndDate').value;
   const type = document.getElementById('filterType').value;
   const category = document.getElementById('filterCategory').value;
+
+  if (startDate && endDate && startDate > endDate) {
+    showToast("Ngày bắt đầu không được lớn hơn ngày kết thúc!", "err");
+    return;
+  }
 
   const params = {};
   if (search) params.search = search;
@@ -7042,7 +7161,7 @@ function openTreeCustomModal() {
 
   const nameInput = document.getElementById('customTreeNameInput');
   if (nameInput && currentGamificationProfile) {
-    nameInput.value = currentGamificationProfile.tree_name || 'Vườn Thịnh Vượng Đặng Quang Dũng';
+    nameInput.value = currentGamificationProfile.tree_name || 'Vườn Thịnh Vượng';
   }
   if (currentGamificationProfile && currentGamificationProfile.plant_skin) {
     selectTreeSkin(currentGamificationProfile.plant_skin);
@@ -7450,6 +7569,11 @@ async function handleJarDepositSubmit(e) {
     return;
   }
 
+  if (currentUser && currentUser.balance !== undefined && Number(currentUser.balance) < amount) {
+    showToast(`Số dư khả dụng không đủ để nạp vào hũ (hiện có ${fmt(currentUser.balance)}₫)!`, "err");
+    return;
+  }
+
   try {
     const res = await fetch(`${API_BASE}/api/jars/${jarId}/deposit`, {
       method: 'POST',
@@ -7510,6 +7634,12 @@ async function handleJarWithdrawSubmit(e) {
 
   if (!amount || amount <= 0) {
     showToast("Vui lòng nhập số tiền muốn rút", "err");
+    return;
+  }
+
+  const jar = allGoalJars.find(j => j.id === jarId);
+  if (jar && Number(jar.current_amount || 0) < amount) {
+    showToast(`Số dư trong hũ không đủ (hiện có ${fmt(jar.current_amount)}₫)!`, "err");
     return;
   }
 
@@ -7665,12 +7795,32 @@ function renderBillsList() {
   }
 
   if (filtered.length === 0) {
-    container.innerHTML = `
-      <div style="text-align:center;padding:36px 20px;color:var(--muted)">
-        <div style="font-size:32px;margin-bottom:8px">📝</div>
-        <p>Không có khoản phí nào phù hợp với bộ lọc này.</p>
-      </div>
-    `;
+    if (allRecurringBills.length === 0) {
+      container.innerHTML = `
+        <div style="text-align:center;padding:48px 20px;color:var(--muted)">
+          <div style="font-size:44px;margin-bottom:12px">🗓️</div>
+          <h4 style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px">Chưa có khoản phí cố định nào</h4>
+          <p style="font-size:12.5px;margin:0 auto 18px;max-width:420px;line-height:1.5">
+            Thiết lập lịch nhắc các khoản tiền nhà, internet, điện nước để hệ thống tự động nhắc nhở và quản lý kỳ thanh toán đúng hạn!
+          </p>
+          <button class="btn btn-mint btn-sm" onclick="openNewBillModal()">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            + Thêm khoản phí mới
+          </button>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div style="text-align:center;padding:36px 20px;color:var(--muted)">
+          <div style="font-size:32px;margin-bottom:8px">🔍</div>
+          <h4 style="font-size:15px;color:var(--text);margin-bottom:4px">Không tìm thấy khoản phí phù hợp</h4>
+          <p style="font-size:12px;margin-bottom:14px">Không có khoản phí nào phù hợp với bộ lọc này.</p>
+          <button class="btn btn-outline btn-xs" onclick="filterBills('all', document.querySelector('#billsFilterPills .pill'))">
+            Xem tất cả khoản phí
+          </button>
+        </div>
+      `;
+    }
     return;
   }
 
@@ -7790,6 +7940,10 @@ async function handleCreateBill(e) {
 }
 
 async function payBillPrompt(billId, billTitle, amount) {
+  if (currentUser && currentUser.balance !== undefined && Number(currentUser.balance) < amount) {
+    showToast(`Số dư khả dụng không đủ để thanh toán (cần ${fmt(amount)}₫, hiện có ${fmt(currentUser.balance)}₫)!`, "err");
+    return;
+  }
   if (!confirm(`Xác nhận thanh toán "${billTitle}" với số tiền ${fmt(amount)}₫?\nGiao dịch sẽ được tự động ghi vào sổ chi tiêu và bạn nhận được +50 EXP vào Vườn Thịnh Vượng!`)) return;
   if (!authToken) return;
 
@@ -7875,7 +8029,13 @@ function toggleBalanceSwitch() {
 // Lucian UX/UI Prompt #008 · Interactive Copy STK
 function copyStk(btn) {
   const stkEl = document.getElementById('dashAccountNumber');
-  const stk = stkEl ? stkEl.textContent.trim() : '8888 6868 9999';
+  const stk = (stkEl && stkEl.textContent.trim() !== '•••• •••• ••••') 
+    ? stkEl.textContent.trim() 
+    : (currentUser && currentUser.account_number ? currentUser.account_number : '');
+  if (!stk) {
+    showToast("Chưa có số tài khoản khả dụng", "err");
+    return;
+  }
   navigator.clipboard.writeText(stk).catch(() => {});
   
   const targetBtn = btn || document.getElementById('btnCopyStk');

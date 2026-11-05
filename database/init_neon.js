@@ -30,23 +30,23 @@ async function main() {
     // Reset transactions & goals
     await client.query('DELETE FROM transactions');
     await client.query('DELETE FROM goal_jars');
-    await client.query("DELETE FROM users WHERE email = 'demo@dongbank.vn' OR id = 'u_dangquangdung_01'");
+    await client.query("DELETE FROM users WHERE email = 'demo@dongbank.vn' OR id = 'u_demo_user_01'");
 
     const pwHash = bcrypt.hashSync('password123', 10);
     await client.query(`
       INSERT INTO users (id, email, password_hash, full_name, account_number, balance, phone, role)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     `, [
-      'u_dangquangdung_01',
+      'u_demo_user_01',
       'demo@dongbank.vn',
       pwHash,
-      'Đặng Quang Dũng',
+      'Khách hàng Đồng Bank',
       '8888 6868 9999',
       0,
       '0908889999',
       'user'
     ]);
-    console.log('User Đặng Quang Dũng initialized with 0 balance.');
+    console.log('User demo initialized with 0 balance.');
 
     const uRes = await client.query('SELECT id, email, full_name, balance, account_number FROM users');
     console.log('Neon users:', uRes.rows);

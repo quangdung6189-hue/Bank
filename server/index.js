@@ -10,9 +10,21 @@ const app = express();
 const PORT = process.env.PORT || 8888;
 const JWT_SECRET = process.env.JWT_SECRET || 'dong_bank_jwt_secret_super_secure_key_2026';
 
+const allowedOrigins = process.env.CORS_ORIGIN 
+  ? process.env.CORS_ORIGIN.split(',').map(s => s.trim())
+  : null;
+
 // Middlewares - Cấp quyền kết nối API & Database cho các trang web phù hợp
 app.use(cors({
-  origin: (origin, callback) => callback(null, true),
+  origin: (origin, callback) => {
+    if (!origin || !allowedOrigins || allowedOrigins.includes('*')) {
+      return callback(null, true);
+    }
+    if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+    callback(new Error('Chính sách bảo mật CORS từ chối nguồn truy cập này'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
@@ -70,6 +82,34 @@ function authMiddleware(req, res, next) {
   } catch (err) {
     return res.status(401).json({ success: false, message: 'Phiên đăng nhập đã hết hạn hoặc không hợp lệ' });
   }
+}
+
+// Data Validation & XSS Prevention Helpers
+function sanitizeInput(str) {
+  if (typeof str !== 'string') return '';
+  return str.trim()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#x27;');
+}
+
+function validateAmount(amount) {
+  const num = Number(amount);
+  if (isNaN(num) || !isFinite(num) || num <= 0 || num > 100000000000) {
+    return null;
+  }
+  return num;
+}
+
+function validateDate(dateStr) {
+  if (!dateStr || typeof dateStr !== 'string') return null;
+  const match = dateStr.match(/^\d{4}-\d{2}-\d{2}$/);
+  if (!match) return null;
+  const todayStr = new Date().toISOString().slice(0, 10);
+  if (dateStr > todayStr) return null; // Reject future dates
+  return dateStr;
 }
 
 // ==================== AUTHENTICATION ROUTES ====================
@@ -195,13 +235,18 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
 app.get('/api/transactions', authMiddleware, async (req, res) => {
   try {
     const { startDate, endDate, type, category, search, limit } = req.query;
+
+    if (startDate && endDate && startDate > endDate) {
+      return res.status(400).json({ success: false, message: 'Ngày bắt đầu không được lớn hơn ngày kết thúc' });
+    }
+
     const transactions = await db.getTransactions(req.user.id, {
       startDate,
       endDate,
       type,
       category,
-      search,
-      limit: limit ? parseInt(limit, 10) : 100
+      search: sanitizeInput(search),
+      limit: limit ? Math.min(1000, Math.max(1, parseInt(limit, 10))) : 100
     });
     res.json({ success: true, count: transactions.length, transactions });
   } catch (err) {
@@ -214,20 +259,65 @@ app.get('/api/transactions', authMiddleware, async (req, res) => {
 app.post('/api/transactions', authMiddleware, async (req, res) => {
   try {
     const { name, amount, type, category, date, note } = req.body;
-    if (!name || !amount || !category) {
+
+    // Validate name
+    const cleanName = sanitizeInput(name);
+    if (!cleanName || cleanName.length > 150) {
       return res.status(400).json({
         success: false,
-        message: 'Vui lòng nhập tên giao dịch, số tiền và danh mục'
+        message: 'Vui lòng nhập tên giao dịch hợp lệ (không để trống, tối đa 150 ký tự)'
       });
     }
 
+    // Validate amount
+    const validAmount = validateAmount(amount);
+    if (!validAmount) {
+      return res.status(400).json({
+        success: false,
+        message: 'Số tiền không hợp lệ (phải là số dương lớn hơn 0 và không vượt quá 100 tỷ đồng)'
+      });
+    }
+
+    // Validate category
+    const cleanCategory = sanitizeInput(category);
+    if (!cleanCategory) {
+      return res.status(400).json({ success: false, message: 'Vui lòng chọn danh mục chi tiêu/thu nhập' });
+    }
+
+    // Validate type
+    const normalizedType = (type === 'income' || type === 'in') ? 'income' : 'expense';
+
+    // Validate date: reject future transactions
+    const todayStr = new Date().toISOString().slice(0, 10);
+    const validDate = date || todayStr;
+    if (validDate > todayStr) {
+      return res.status(400).json({
+        success: false,
+        message: 'Ngày giao dịch không thể là ngày trong tương lai'
+      });
+    }
+
+    // If expense, check current balance
+    if (normalizedType === 'expense') {
+      const user = await db.findUserById(req.user.id);
+      const currentBal = user ? Number(user.balance) : 0;
+      if (currentBal < validAmount) {
+        return res.status(400).json({
+          success: false,
+          message: `Số dư tài khoản không đủ để chi tiêu (cần ${validAmount.toLocaleString('vi-VN')}₫, hiện có ${currentBal.toLocaleString('vi-VN')}₫)`
+        });
+      }
+    }
+
+    const cleanNote = sanitizeInput(note).slice(0, 500);
+
     const tx = await db.addTransaction(req.user.id, {
-      name,
-      amount: parseFloat(amount),
-      type: type || 'expense',
-      category,
-      date,
-      note
+      name: cleanName,
+      amount: validAmount,
+      type: normalizedType,
+      category: cleanCategory,
+      date: validDate,
+      note: cleanNote
     });
 
     const user = await db.findUserById(req.user.id);
@@ -240,7 +330,7 @@ app.post('/api/transactions', authMiddleware, async (req, res) => {
     });
   } catch (err) {
     console.error('Create transaction error:', err);
-    res.status(500).json({ success: false, message: 'Lỗi ghi nhận giao dịch' });
+    res.status(500).json({ success: false, message: 'Lỗi ghi nhận giao dịch: ' + err.message });
   }
 });
 
@@ -265,6 +355,9 @@ app.delete('/api/transactions/:id', authMiddleware, async (req, res) => {
 app.get('/api/analytics/summary', authMiddleware, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
+    if (startDate && endDate && startDate > endDate) {
+      return res.status(400).json({ success: false, message: 'Ngày bắt đầu không được lớn hơn ngày kết thúc' });
+    }
     const summary = await db.getSummary(req.user.id, { startDate, endDate });
     res.json({ success: true, summary });
   } catch (err) {
@@ -277,6 +370,9 @@ app.get('/api/analytics/summary', authMiddleware, async (req, res) => {
 app.get('/api/analytics/categories', authMiddleware, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
+    if (startDate && endDate && startDate > endDate) {
+      return res.status(400).json({ success: false, message: 'Ngày bắt đầu không được lớn hơn ngày kết thúc' });
+    }
     const breakdown = await db.getCategoryBreakdown(req.user.id, { startDate, endDate });
     res.json({ success: true, ...breakdown });
   } catch (err) {
@@ -359,10 +455,24 @@ app.get('/api/jars', authMiddleware, async (req, res) => {
 app.post('/api/jars', authMiddleware, async (req, res) => {
   try {
     const { name, target_amount, current_amount, deadline, category, color, icon } = req.body;
-    if (!name || !target_amount) {
-      return res.status(400).json({ success: false, message: 'Vui lòng nhập tên hũ và số tiền mục tiêu' });
+    const cleanName = sanitizeInput(name);
+    if (!cleanName || cleanName.length > 100) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập tên hũ mục tiêu hợp lệ (tối đa 100 ký tự)' });
     }
-    const jar = await db.createGoalJar(req.user.id, { name, target_amount, current_amount, deadline, category, color, icon });
+    const validTarget = validateAmount(target_amount);
+    if (!validTarget) {
+      return res.status(400).json({ success: false, message: 'Số tiền mục tiêu không hợp lệ (phải lớn hơn 0)' });
+    }
+    const validInitial = current_amount ? (validateAmount(current_amount) || 0) : 0;
+    const jar = await db.createGoalJar(req.user.id, {
+      name: cleanName,
+      target_amount: validTarget,
+      current_amount: validInitial,
+      deadline: deadline || null,
+      category: sanitizeInput(category) || 'general',
+      color: color || '#10B981',
+      icon: icon || 'shield'
+    });
     res.status(201).json({ success: true, message: 'Đã tạo hũ tiết kiệm mới thành công!', jar });
   } catch (err) {
     console.error('Create jar error:', err);
@@ -374,14 +484,15 @@ app.post('/api/jars', authMiddleware, async (req, res) => {
 app.post('/api/jars/:id/deposit', authMiddleware, async (req, res) => {
   try {
     const { amount, note } = req.body;
-    if (!amount || Number(amount) <= 0) {
-      return res.status(400).json({ success: false, message: 'Số tiền tích lũy phải lớn hơn 0' });
+    const validAmount = validateAmount(amount);
+    if (!validAmount) {
+      return res.status(400).json({ success: false, message: 'Số tiền tích lũy phải lớn hơn 0 và không vượt quá 100 tỷ đồng' });
     }
-    const result = await db.depositGoalJar(req.user.id, req.params.id, amount, note);
+    const result = await db.depositGoalJar(req.user.id, req.params.id, validAmount, sanitizeInput(note));
     const user = await db.findUserById(req.user.id);
     res.json({
       success: true,
-      message: `Đã tích lũy ${Number(amount).toLocaleString('vi-VN')}₫ vào "${result.jar.name}" thành công!`,
+      message: `Đã tích lũy ${Number(validAmount).toLocaleString('vi-VN')}₫ vào "${result.jar.name}" thành công!`,
       jar: result.jar,
       newBalance: user ? user.balance : undefined,
       expGain: result.expGain,
@@ -397,14 +508,15 @@ app.post('/api/jars/:id/deposit', authMiddleware, async (req, res) => {
 app.post('/api/jars/:id/withdraw', authMiddleware, async (req, res) => {
   try {
     const { amount, note } = req.body;
-    if (!amount || Number(amount) <= 0) {
-      return res.status(400).json({ success: false, message: 'Số tiền rút phải lớn hơn 0' });
+    const validAmount = validateAmount(amount);
+    if (!validAmount) {
+      return res.status(400).json({ success: false, message: 'Số tiền rút phải lớn hơn 0 và không vượt quá 100 tỷ đồng' });
     }
-    const result = await db.withdrawGoalJar(req.user.id, req.params.id, amount, note);
+    const result = await db.withdrawGoalJar(req.user.id, req.params.id, validAmount, sanitizeInput(note));
     const user = await db.findUserById(req.user.id);
     res.json({
       success: true,
-      message: `Đã rút ${Number(amount).toLocaleString('vi-VN')}₫ từ "${result.jar.name}" về tài khoản chính!`,
+      message: `Đã rút ${Number(validAmount).toLocaleString('vi-VN')}₫ từ "${result.jar.name}" về tài khoản chính!`,
       jar: result.jar,
       newBalance: user ? user.balance : undefined
     });
@@ -449,10 +561,26 @@ app.get('/api/bills', authMiddleware, async (req, res) => {
 app.post('/api/bills', authMiddleware, async (req, res) => {
   try {
     const { title, category, amount, billing_day, frequency, auto_create_tx } = req.body;
-    if (!title || !amount || !billing_day) {
-      return res.status(400).json({ success: false, message: 'Vui lòng nhập tên phí, số tiền và ngày đến hạn hàng tháng' });
+    const cleanTitle = sanitizeInput(title);
+    if (!cleanTitle || cleanTitle.length > 150) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập tên khoản phí hợp lệ (tối đa 150 ký tự)' });
     }
-    const bill = await db.addRecurringBill(req.user.id, { title, category, amount, billing_day, frequency, auto_create_tx });
+    const validAmount = validateAmount(amount);
+    if (!validAmount) {
+      return res.status(400).json({ success: false, message: 'Số tiền hóa đơn không hợp lệ (phải lớn hơn 0)' });
+    }
+    const day = parseInt(billing_day, 10);
+    if (isNaN(day) || day < 1 || day > 31) {
+      return res.status(400).json({ success: false, message: 'Ngày thanh toán hàng tháng phải từ 1 đến 31' });
+    }
+    const bill = await db.addRecurringBill(req.user.id, {
+      title: cleanTitle,
+      category: sanitizeInput(category) || 'Hóa đơn',
+      amount: validAmount,
+      billing_day: day,
+      frequency: frequency || 'monthly',
+      auto_create_tx: auto_create_tx !== undefined ? Boolean(auto_create_tx) : true
+    });
     res.status(201).json({ success: true, message: 'Đã thiết lập lịch nhắc phí cố định thành công!', bill });
   } catch (err) {
     console.error('Create bill error:', err);
@@ -529,6 +657,9 @@ app.post('/api/gamification/customize', authMiddleware, async (req, res) => {
 
 // POST /api/gamification/simulate-streak (Mô phỏng thử nghiệm chuỗi kỷ luật & mất chuỗi)
 app.post('/api/gamification/simulate-streak', authMiddleware, async (req, res) => {
+  if (process.env.NODE_ENV === 'production' && !process.env.ENABLE_SANDBOX) {
+    return res.status(403).json({ success: false, message: 'Tính năng Sandbox thử nghiệm đã bị vô hiệu hóa trên môi trường Production' });
+  }
   try {
     const { action } = req.body || {};
     const result = await db.simulateGamificationStreak(req.user.id, action);
@@ -571,6 +702,9 @@ app.post('/api/system/seed-demo', authMiddleware, async (req, res) => {
 
 // POST /api/system/db-reset (Reset về mặc định không dữ liệu, bắt đầu từ con số 0)
 app.post('/api/system/db-reset', async (req, res) => {
+  if (process.env.NODE_ENV === 'production' && !process.env.ENABLE_SANDBOX) {
+    return res.status(403).json({ success: false, message: 'Tính năng Reset Database bị khóa trên môi trường Production' });
+  }
   try {
     let userId = null;
     const authHeader = req.headers.authorization;

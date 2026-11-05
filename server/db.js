@@ -32,10 +32,10 @@ const defaultHashedPassword = bcrypt.hashSync("password123", 10);
 const defaultDbState = {
   users: [
     {
-      id: "u_dangquangdung_01",
+      id: "u_demo_user_01",
       email: "demo@dongbank.vn",
       password_hash: defaultHashedPassword,
-      full_name: "Đặng Quang Dũng",
+      full_name: "Khách hàng Đồng Bank",
       account_number: "8888 6868 9999",
       balance: 0,
       phone: "0908889999",
@@ -47,7 +47,7 @@ const defaultDbState = {
   goalJars: [
     {
       id: "jar_emergency_01",
-      user_id: "u_dangquangdung_01",
+      user_id: "u_demo_user_01",
       name: "Quỹ Dự phòng Khẩn cấp 6 Tháng",
       target_amount: 150000000,
       current_amount: 47835000,
@@ -60,7 +60,7 @@ const defaultDbState = {
     },
     {
       id: "jar_macbook_02",
-      user_id: "u_dangquangdung_01",
+      user_id: "u_demo_user_01",
       name: "Nâng cấp MacBook Pro M4 Max",
       target_amount: 55000000,
       current_amount: 32500000,
@@ -73,7 +73,7 @@ const defaultDbState = {
     },
     {
       id: "jar_travel_03",
-      user_id: "u_dangquangdung_01",
+      user_id: "u_demo_user_01",
       name: "Du lịch Trải nghiệm Tokyo & Kyoto",
       target_amount: 40000000,
       current_amount: 18000000,
@@ -88,7 +88,7 @@ const defaultDbState = {
   recurringBills: [
     {
       id: "bill_rent_01",
-      user_id: "u_dangquangdung_01",
+      user_id: "u_demo_user_01",
       title: "Tiền thuê căn hộ cao cấp Vinhomes",
       category: "Nhà ở",
       amount: 15000000,
@@ -101,7 +101,7 @@ const defaultDbState = {
     },
     {
       id: "bill_internet_02",
-      user_id: "u_dangquangdung_01",
+      user_id: "u_demo_user_01",
       title: "Gói cước Internet Cáp quang FPT & K+",
       category: "Hóa đơn",
       amount: 450000,
@@ -114,7 +114,7 @@ const defaultDbState = {
     },
     {
       id: "bill_gym_03",
-      user_id: "u_dangquangdung_01",
+      user_id: "u_demo_user_01",
       title: "Hội viên California Fitness & Yoga",
       category: "Sức khỏe",
       amount: 1200000,
@@ -127,7 +127,7 @@ const defaultDbState = {
     },
     {
       id: "bill_insurance_04",
-      user_id: "u_dangquangdung_01",
+      user_id: "u_demo_user_01",
       title: "Bảo hiểm Chăm sóc Sức khỏe Toàn diện",
       category: "Y tế & Bảo hiểm",
       amount: 2500000,
@@ -141,7 +141,7 @@ const defaultDbState = {
   ],
   gamificationProfiles: [
     {
-      user_id: "u_dangquangdung_01",
+      user_id: "u_demo_user_01",
       tree_level: 2,
       current_exp: 340,
       streak_days: 5,
@@ -377,19 +377,14 @@ async function seedPostgresIfEmpty(client) {
   const countRes = await client.query('SELECT count(*) as count FROM users');
   const userCount = parseInt(countRes.rows[0].count, 10);
   if (userCount === 0) {
-    console.log("🌱 Khởi tạo tài khoản Đặng Quang Dũng bắt đầu từ con số 0...");
+    console.log("🌱 Khởi tạo tài khoản demo bắt đầu từ con số 0...");
     const u = defaultDbState.users[0];
     await client.query(
       `INSERT INTO users (id, email, password_hash, full_name, account_number, balance, phone, role)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (id) DO UPDATE SET full_name = $4, balance = 0`,
       [u.id, u.email, u.password_hash, u.full_name, u.account_number, 0, u.phone, u.role]
     );
-    console.log("✅ Đã khởi tạo người dùng Đặng Quang Dũng thành công (Số dư: 0₫, 0 giao dịch)!");
-  } else {
-    // Sync existing users to Đặng Quang Dũng
-    await client.query(
-      `UPDATE users SET full_name = 'Đặng Quang Dũng' WHERE email = 'demo@dongbank.vn' OR id = 'u_minhanh_01' OR id = 'u_dangquangdung_01'`
-    );
+    console.log("✅ Đã khởi tạo người dùng demo thành công (Số dư: 0₫, 0 giao dịch)!");
   }
 
   // Seed goal jars if empty
@@ -674,12 +669,14 @@ async function seedSampleData(userId) {
         [tx.id, tx.user_id, tx.name, tx.amount, tx.type, tx.category, tx.date, tx.note, tx.reference_code]
       );
     }
+    await syncUserBalanceWithTransactions(userId);
     return { count: seedTxs.length };
   }
 
   const db = readLocalDb();
   seedTxs.forEach(t => db.transactions.unshift(t));
   writeLocalDb(db);
+  await syncUserBalanceWithTransactions(userId);
   return { count: seedTxs.length };
 }
 
@@ -906,7 +903,34 @@ async function deleteTransaction(userId, txId) {
 }
 
 // --- ANALYTICS & SUMMARY ---
+async function syncUserBalanceWithTransactions(userId) {
+  const allTxs = await getTransactions(userId, { limit: 100000 });
+  let calcBalance = 0;
+  for (const t of allTxs) {
+    const amt = Number(t.amount);
+    if (t.type === 'income' || t.type === 'in') calcBalance += amt;
+    else calcBalance -= amt;
+  }
+  calcBalance = Math.max(0, calcBalance);
+
+  if (pgPool) {
+    await pgPool.query('UPDATE users SET balance = $1 WHERE id = $2', [calcBalance, userId]);
+  } else {
+    const db = readLocalDb();
+    const u = db.users ? db.users.find(user => user.id === userId) : null;
+    if (u) {
+      u.balance = calcBalance;
+      writeLocalDb(db);
+    }
+  }
+  return calcBalance;
+}
+
 async function getSummary(userId, { startDate, endDate } = {}) {
+  // Self-healing: if no custom date filter, keep user balance in exact parity with transactions
+  if (!startDate && !endDate) {
+    await syncUserBalanceWithTransactions(userId);
+  }
   const txs = await getTransactions(userId, { startDate, endDate, limit: 10000 });
   const user = await findUserById(userId);
 
@@ -1215,6 +1239,16 @@ async function getWealthAllocation(userId, {
 
 // Auto-Sweep Configuration Persistence
 async function saveAutoSweepConfig(userId, config) {
+  if (config && config.percentages) {
+    const { needs, wants, savings } = config.percentages;
+    const n = Number(needs) || 0;
+    const w = Number(wants) || 0;
+    const s = Number(savings) || 0;
+    if (Math.round(n + w + s) !== 100 || n < 0 || w < 0 || s < 0) {
+      throw new Error("Tổng tỷ trọng 3 quỹ phân bổ phải chính xác bằng 100%");
+    }
+  }
+
   const db = readLocalDb();
   if (!db.autoSweeps) db.autoSweeps = {};
   db.autoSweeps[userId] = {
@@ -1324,6 +1358,12 @@ async function depositGoalJar(userId, jarId, amount, note = '') {
   const depositAmt = Math.abs(Number(amount));
   if (!depositAmt || depositAmt <= 0) throw new Error("Số tiền nạp vào hũ phải lớn hơn 0");
 
+  const user = await findUserById(userId);
+  const currentBal = user ? Number(user.balance) : 0;
+  if (currentBal < depositAmt) {
+    throw new Error(`Số dư khả dụng không đủ để nạp vào hũ (hiện có ${currentBal.toLocaleString('vi-VN')}₫)`);
+  }
+
   let jar = null;
   if (pgPool) {
     const res = await pgPool.query('SELECT * FROM goal_jars WHERE id = $1 AND user_id = $2', [jarId, userId]);
@@ -1349,10 +1389,7 @@ async function depositGoalJar(userId, jarId, amount, note = '') {
     jar = db.goalJars[idx];
   }
 
-  // Deduct from user's account balance
-  await updateUserBalance(userId, -depositAmt);
-
-  // Add transaction
+  // Add transaction (addTransaction will deduct from user balance automatically without double deduction)
   await addTransaction(userId, {
     name: `Nạp hũ: ${jar.name}`,
     amount: depositAmt,
@@ -1403,10 +1440,7 @@ async function withdrawGoalJar(userId, jarId, amount, note = '') {
     jar = db.goalJars[idx];
   }
 
-  // Refund back to user's main balance
-  await updateUserBalance(userId, withdrawAmt);
-
-  // Add transaction
+  // Add transaction (addTransaction will credit user balance automatically without double credit)
   await addTransaction(userId, {
     name: `Rút tiền hũ: ${jar.name}`,
     amount: withdrawAmt,
@@ -1427,7 +1461,14 @@ async function deleteGoalJar(userId, jarId) {
     jar = res.rows[0];
     const curr = Number(jar.current_amount || 0);
     if (curr > 0) {
-      await updateUserBalance(userId, curr);
+      await addTransaction(userId, {
+        name: `Hoàn tiền xóa hũ: ${jar.name}`,
+        amount: curr,
+        type: 'income',
+        category: 'Thu hồi quỹ',
+        date: new Date().toISOString().slice(0, 10),
+        note: `Hoàn tiền tất toán hũ "${jar.name}" về tài khoản chính do xóa hũ`
+      });
     }
     await pgPool.query('DELETE FROM goal_jars WHERE id = $1 AND user_id = $2', [jarId, userId]);
   } else {
@@ -1438,7 +1479,14 @@ async function deleteGoalJar(userId, jarId) {
     jar = db.goalJars[idx];
     const curr = Number(jar.current_amount || 0);
     if (curr > 0) {
-      await updateUserBalance(userId, curr);
+      await addTransaction(userId, {
+        name: `Hoàn tiền xóa hũ: ${jar.name}`,
+        amount: curr,
+        type: 'income',
+        category: 'Thu hồi quỹ',
+        date: new Date().toISOString().slice(0, 10),
+        note: `Hoàn tiền tất toán hũ "${jar.name}" về tài khoản chính do xóa hũ`
+      });
     }
     db.goalJars.splice(idx, 1);
     writeLocalDb(db);
@@ -1579,6 +1627,12 @@ async function payRecurringBill(userId, billId) {
   }
 
   const amt = Number(bill.amount);
+  const user = await findUserById(userId);
+  const currentBal = user ? Number(user.balance) : 0;
+  if (currentBal < amt) {
+    throw new Error(`Số dư tài khoản không đủ để thanh toán (cần ${amt.toLocaleString('vi-VN')}₫, hiện có ${currentBal.toLocaleString('vi-VN')}₫)`);
+  }
+
   // Create expense transaction
   const tx = await addTransaction(userId, {
     name: `Thanh toán: ${bill.title}`,
@@ -1624,10 +1678,7 @@ function getLevelInfo(totalExp) {
     }
   }
   const nextTarget = matched.maxExp;
-  const prevLevelExp = matched.minExp;
-  const expInLevel = totalExp - prevLevelExp;
-  const levelSpan = nextTarget - prevLevelExp;
-  const progressPercent = Math.min(100, Math.max(0, Math.round((expInLevel / levelSpan) * 100)));
+  const progressPercent = Math.min(100, Math.max(0, Math.round((totalExp / nextTarget) * 100)));
 
   return {
     level: matched.level,
@@ -1660,7 +1711,7 @@ async function getGamificationProfile(userId) {
       current_exp: 380,
       streak_days: 5,
       last_checkin_at: new Date().toISOString().split('T')[0],
-      tree_name: "Vườn Thịnh Vượng Đặng Quang Dũng",
+      tree_name: "Vườn Thịnh Vượng",
       plant_skin: "🌿",
       streak_freeze_count: 1,
       achievements: [
@@ -1746,7 +1797,7 @@ async function getGamificationProfile(userId) {
     tree_title: levelInfo.title,
     tree_icon: row.plant_skin || levelInfo.icon,
     tree_description: levelInfo.description,
-    tree_name: row.tree_name || "Vườn Thịnh Vượng Đặng Quang Dũng",
+    tree_name: row.tree_name || "Vườn Thịnh Vượng",
     plant_skin: row.plant_skin || "🌿",
     streak_freeze_count: Number(row.streak_freeze_count || 1),
     current_exp: totalExp,
@@ -2033,5 +2084,6 @@ module.exports = {
   saveAutoSweepConfig,
   getAutoSweepConfig,
   savePasswordResetToken,
-  resetDatabase
+  resetDatabase,
+  getLevelInfo
 };

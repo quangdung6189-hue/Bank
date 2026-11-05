@@ -1,22 +1,55 @@
 {
   "users": [
     {
-      "id": "u_dangquangdung_01",
+      "id": "u_demo_user_01",
       "email": "demo@dongbank.vn",
       "password_hash": "$2b$10$P7xjEJBGO8S4yRrnoYUGruQPa26bXC2pH3iI8sUA6fhqPpUHf7.xy",
-      "full_name": "Đặng Quang Dũng",
+      "full_name": "Khách hàng Đồng Bank",
       "account_number": "8888 6868 9999",
       "balance": 0,
       "phone": "0908889999",
       "role": "user",
       "created_at": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "u_1793847955947",
+      "email": "test_1793847955863@dongbank.vn",
+      "password_hash": "$2b$10$LJGkN7p1MOzJJncLO4pOpenYb9syvSCCRr.X8QVHvOIe94tZ6h.Um",
+      "full_name": "Test Sprint 4 User",
+      "account_number": "8888 1638 6702",
+      "balance": 0,
+      "phone": "0901234567",
+      "role": "user",
+      "created_at": "2026-11-05T03:05:55.948Z"
+    },
+    {
+      "id": "u_1793847986800",
+      "email": "test_1793847986642@dongbank.vn",
+      "password_hash": "$2b$10$V0K.awjeEVYTEVCGlvgRpuwDmrcyPDDWSt2KgGaYUQDnxw9tZuAEi",
+      "full_name": "Test Sprint 4 User",
+      "account_number": "8888 6434 9305",
+      "balance": 0,
+      "phone": "0901234567",
+      "role": "user",
+      "created_at": "2026-11-05T03:06:26.801Z"
+    },
+    {
+      "id": "u_1793848237704",
+      "email": "test_1793848237608@dongbank.vn",
+      "password_hash": "$2b$10$6F5Hm0eB4mXPt6U/aayCZ.PAxBIFGZCy0rr0kZoQLyKZ5wAR9436e",
+      "full_name": "Test Sprint 4 User",
+      "account_number": "8888 8047 8179",
+      "balance": 0,
+      "phone": "0901234567",
+      "role": "user",
+      "created_at": "2026-11-05T03:10:37.705Z"
     }
   ],
   "transactions": [],
   "goalJars": [
     {
       "id": "jar_emergency_01",
-      "user_id": "u_dangquangdung_01",
+      "user_id": "u_demo_user_01",
       "name": "Quỹ Dự phòng Khẩn cấp 6 Tháng",
       "target_amount": 150000000,
       "current_amount": 47835000,
@@ -29,7 +62,7 @@
     },
     {
       "id": "jar_macbook_02",
-      "user_id": "u_dangquangdung_01",
+      "user_id": "u_demo_user_01",
       "name": "Nâng cấp MacBook Pro M4 Max",
       "target_amount": 55000000,
       "current_amount": 32500000,
@@ -42,7 +75,7 @@
     },
     {
       "id": "jar_travel_03",
-      "user_id": "u_dangquangdung_01",
+      "user_id": "u_demo_user_01",
       "name": "Du lịch Trải nghiệm Tokyo & Kyoto",
       "target_amount": 40000000,
       "current_amount": 18000000,
@@ -57,7 +90,7 @@
   "recurringBills": [
     {
       "id": "bill_rent_01",
-      "user_id": "u_dangquangdung_01",
+      "user_id": "u_demo_user_01",
       "title": "Tiền thuê căn hộ cao cấp Vinhomes",
       "category": "Nhà ở",
       "amount": 15000000,
@@ -70,7 +103,7 @@
     },
     {
       "id": "bill_internet_02",
-      "user_id": "u_dangquangdung_01",
+      "user_id": "u_demo_user_01",
       "title": "Gói cước Internet Cáp quang FPT & K+",
       "category": "Hóa đơn",
       "amount": 450000,
@@ -83,7 +116,7 @@
     },
     {
       "id": "bill_gym_03",
-      "user_id": "u_dangquangdung_01",
+      "user_id": "u_demo_user_01",
       "title": "Hội viên California Fitness & Yoga",
       "category": "Sức khỏe",
       "amount": 1200000,
@@ -96,7 +129,7 @@
     },
     {
       "id": "bill_insurance_04",
-      "user_id": "u_dangquangdung_01",
+      "user_id": "u_demo_user_01",
       "title": "Bảo hiểm Chăm sóc Sức khỏe Toàn diện",
       "category": "Y tế & Bảo hiểm",
       "amount": 2500000,
@@ -110,7 +143,7 @@
   ],
   "gamificationProfiles": [
     {
-      "user_id": "u_dangquangdung_01",
+      "user_id": "u_demo_user_01",
       "tree_level": 2,
       "current_exp": 340,
       "streak_days": 5,
@@ -129,6 +162,87 @@
           "unlocked_at": "2026-10-15T00:00:00.000Z"
         }
       ]
+    },
+    {
+      "user_id": "u_1793847955947",
+      "tree_level": 2,
+      "current_exp": 470,
+      "streak_days": 5,
+      "last_checkin_at": "2026-11-05",
+      "achievements": [
+        {
+          "id": "first_budget_plan",
+          "name": "Nhà hoạch định Tài ba",
+          "icon": "✦",
+          "unlocked_at": "2026-10-01T00:00:00.000Z"
+        },
+        {
+          "id": "streak_3_days",
+          "name": "Chuỗi 3 ngày Kỷ luật",
+          "icon": "🔥",
+          "unlocked_at": "2026-10-15T00:00:00.000Z"
+        }
+      ],
+      "tree_name": "Vườn Thịnh Vượng",
+      "plant_skin": "🌿"
+    },
+    {
+      "user_id": "u_1793847986800",
+      "tree_level": 2,
+      "current_exp": 470,
+      "streak_days": 5,
+      "last_checkin_at": "2026-11-05",
+      "achievements": [
+        {
+          "id": "first_budget_plan",
+          "name": "Nhà hoạch định Tài ba",
+          "icon": "✦",
+          "unlocked_at": "2026-10-01T00:00:00.000Z"
+        },
+        {
+          "id": "streak_3_days",
+          "name": "Chuỗi 3 ngày Kỷ luật",
+          "icon": "🔥",
+          "unlocked_at": "2026-10-15T00:00:00.000Z"
+        }
+      ],
+      "tree_name": "Vườn Thịnh Vượng",
+      "plant_skin": "🌿"
+    },
+    {
+      "user_id": "u_1793848237704",
+      "tree_level": 2,
+      "current_exp": 470,
+      "streak_days": 5,
+      "last_checkin_at": "2026-11-05",
+      "achievements": [
+        {
+          "id": "first_budget_plan",
+          "name": "Nhà hoạch định Tài ba",
+          "icon": "✦",
+          "unlocked_at": "2026-10-01T00:00:00.000Z"
+        },
+        {
+          "id": "streak_3_days",
+          "name": "Chuỗi 3 ngày Kỷ luật",
+          "icon": "🔥",
+          "unlocked_at": "2026-10-15T00:00:00.000Z"
+        }
+      ],
+      "tree_name": "Vườn Thịnh Vượng",
+      "plant_skin": "🌿"
     }
-  ]
+  ],
+  "autoSweeps": {
+    "test_u1": {
+      "percentages": {
+        "needs": 50,
+        "wants": 25,
+        "savings": 25
+      },
+      "userId": "test_u1",
+      "active": true,
+      "updatedAt": "2026-11-05T03:10:37.607Z"
+    }
+  }
 }
