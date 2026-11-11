@@ -11,6 +11,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 <!-- Lucian UX/UI Prompt Theme Tokens & Components -->
 <link rel="stylesheet" href="lucian-uxui.css">
+<!-- TailwindCSS v3 Play CDN (Preflight disabled để bảo toàn styling của Landing Page) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    corePlugins: { preflight: false },
+    theme: {
+      extend: {
+        colors: {
+          brand: {
+            mint: '#00F29D',
+            gold: '#F5D485',
+            surface: '#0D1424',
+            card: '#121C30'
+          }
+        }
+      }
+    }
+  };
+</script>
 <script>
   (function(){
     // TRANG CHỦ LUÔN MÀU ĐEN — không đọc/chia sẻ theme từ app.html
@@ -623,6 +642,20 @@ footer{border-top:1px solid var(--line);padding:60px 0 34px;position:relative;z-
   :root{--pw:272px}
   .bdg-1{left:-2%;top:6%}.bdg-2{right:-2%}.bdg-3{bottom:0;left:0}
   .badge{font-size:11px;padding:8px 12px}
+}
+@media (max-width: 640px){
+  .hero{padding:90px 16px 40px}
+  .hero h1{font-size:32px;line-height:1.2;letter-spacing:-0.5px}
+  .f-grid{grid-template-columns:1fr;gap:28px}
+  .calc-box{padding:20px 16px}
+  .p-card{min-height:280px;padding:24px 20px}
+  .footer{padding:40px 16px 24px}
+}
+@media (max-width: 480px){
+  :root{--pw:250px}
+  .badge{display:none}
+  .hero-cta{flex-direction:column;width:100%;gap:10px}
+  .hero-cta .btn{width:100%;justify-content:center}
 }
 @media (prefers-reduced-motion:reduce){
   .mq-track{animation-play-state:paused}

@@ -30,10 +30,15 @@ CREATE TABLE IF NOT EXISTS transactions (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- 3. CHỈ MỤC (INDEXES) TỐI ƯU HÓA TÌM KIẾM & BỘ LỌC THỜI GIAN
-CREATE INDEX IF NOT EXISTS idx_tx_user_date ON transactions(user_id, date DESC);
+-- 3. CHỈ MỤC (INDEXES) TỐI ƯU HÓA TÌM KIẾM & BỘ LỌC THỜI GIAN (DATABASE INDEXING PERFORMANCE)
+CREATE INDEX IF NOT EXISTS idx_tx_user_date ON transactions(user_id, date DESC, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_tx_date ON transactions(date DESC);
 CREATE INDEX IF NOT EXISTS idx_tx_category ON transactions(category);
 CREATE INDEX IF NOT EXISTS idx_tx_type ON transactions(type);
+CREATE INDEX IF NOT EXISTS idx_tx_user_category ON transactions(user_id, category);
+CREATE INDEX IF NOT EXISTS idx_tx_user_type ON transactions(user_id, type);
+CREATE INDEX IF NOT EXISTS idx_tx_filter_compound ON transactions(user_id, type, category, date DESC);
+CREATE INDEX IF NOT EXISTS idx_tx_user_name ON transactions(user_id, name);
 
 -- 4. BẢNG HŨ TÀI CHÍNH & MỤC TIÊU TIẾT KIỆM (JARS 50/30/20)
 CREATE TABLE IF NOT EXISTS goal_jars (

@@ -231,6 +231,17 @@ app.get('/api/auth/me', authMiddleware, async (req, res) => {
 
 // ==================== TRANSACTIONS ROUTES ====================
 
+// GET /api/transactions/indexes (Kiểm tra & Báo cáo hiệu năng chỉ mục Database Indexing)
+app.get('/api/transactions/indexes', authMiddleware, async (req, res) => {
+  try {
+    const report = await db.getIndexPerformance(req.user.id);
+    res.json({ success: true, ...report });
+  } catch (err) {
+    console.error('Get indexes error:', err);
+    res.status(500).json({ success: false, message: 'Lỗi truy vấn thông tin chỉ mục', error: err.message });
+  }
+});
+
 // GET /api/transactions (Lấy lịch sử giao dịch + Bộ lọc)
 app.get('/api/transactions', authMiddleware, async (req, res) => {
   try {
