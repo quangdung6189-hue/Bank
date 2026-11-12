@@ -2027,6 +2027,17 @@ button:active, .btn:active, .qa-card:active, .mbc-qa-btn:active, .stk-chip:activ
   border-radius: 12px;
   padding: 12px;
   text-align: center;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+.sweep-card b {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
 }
 .sweep-schedule-list {
   display: flex;
@@ -2189,6 +2200,8 @@ body.modal-open {
   position: relative;
   box-shadow: 0 30px 80px -20px rgba(0,0,0,0.95);
   margin: auto;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .modal-box.modal-lg { max-width: 600px; }
 
@@ -3461,6 +3474,27 @@ body.modal-open {
           </button>
         </div>
 
+        <!-- Empty State Component cho Analytics khi tài khoản mới chưa có dữ liệu -->
+        <div id="analyticsEmptyStateBanner" class="panel-card" style="display:none;margin-bottom:20px;padding:28px 24px;border:1px dashed rgba(0,209,143,0.3);background:radial-gradient(ellipse at top, rgba(0,209,143,0.06), transparent 70%);text-align:center">
+          <div style="width:52px;height:52px;border-radius:50%;background:rgba(0,209,143,0.12);border:1px solid rgba(0,209,143,0.3);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;color:var(--mint);font-size:24px">
+            📊
+          </div>
+          <h3 style="font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px">Chưa có dữ liệu chi tiêu</h3>
+          <p style="font-size:12.5px;color:var(--muted);max-width:460px;margin:0 auto 18px;line-height:1.5">
+            Tài khoản mới đăng ký chưa phát sinh giao dịch nào. Hãy thêm giao dịch đầu tiên hoặc nạp dữ liệu mẫu để hệ thống phân tích và vẽ biểu đồ trực quan!
+          </p>
+          <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+            <button type="button" class="btn btn-mint btn-sm" onclick="openNewTxModal()">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+              Thêm giao dịch ngay
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="seedDemoTransactions()">
+              <svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              Nạp giao dịch mẫu (Demo)
+            </button>
+          </div>
+        </div>
+
         <div class="charts-grid-two">
           <!-- Lucian UX/UI Prompt #097 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#097 -->
           <div class="ux u097" id="lucianDonut097">
@@ -3573,11 +3607,11 @@ body.modal-open {
           </div>
           <div class="filter-field">
             <label>Từ ngày</label>
-            <input type="date" class="filter-input-ctrl" id="filterStartDate" onchange="triggerFilterChange()">
+            <input type="date" class="filter-input-ctrl" id="filterStartDate" onchange="handleStartDateChange()">
           </div>
           <div class="filter-field">
             <label>Đến ngày</label>
-            <input type="date" class="filter-input-ctrl" id="filterEndDate" onchange="triggerFilterChange()">
+            <input type="date" class="filter-input-ctrl" id="filterEndDate" onchange="handleEndDateChange()">
           </div>
           <div class="filter-field">
             <label>Loại giao dịch</label>
@@ -4490,8 +4524,35 @@ let currentUser = null;
 let currentTxType = 'expense';
 let isBalanceHidden = false;
 
-// Format number utility
-const fmt = (n) => Number(n || 0).toLocaleString('vi-VN');
+// Format number & currency utilities
+/**
+ * Định dạng tiền tệ với toFixed(decimals) kết hợp phân cách hàng nghìn vi-VN
+ * Ngăn chặn hoàn toàn tràn số thập phân trên giao diện Modal và Bảng phân bổ
+ * @param {number|string} n - Số tiền cần định dạng (VD: 7775166.66665)
+ * @param {number} decimals - Số chữ số thập phân tối đa (mặc định 2)
+ * @returns {string} Chuỗi định dạng gọn gàng: "7.775.166 VNĐ" hoặc "7.775.166,67 VNĐ"
+ */
+function formatCurrency(n, decimals = 2) {
+  if (n === null || n === undefined || isNaN(Number(n))) return '0 VNĐ';
+  const num = Number(n);
+  // toFixed(decimals) loại bỏ triệt để số lẻ tuần hoàn vô hạn
+  const rounded = Number(num.toFixed(decimals));
+  return rounded.toLocaleString('vi-VN', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals
+  }) + ' VNĐ';
+}
+
+// Cải tiến hàm fmt(): làm tròn toFixed(2) đảm bảo không tràn số thập phân ở mọi vị trí hiển thị
+const fmt = (n, decimals = 2) => {
+  if (n === null || n === undefined || isNaN(Number(n))) return '0';
+  const num = Number(n);
+  const rounded = Number(num.toFixed(decimals));
+  return rounded.toLocaleString('vi-VN', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals
+  });
+};
 
 // Palette for Category Pie Chart
 const CATEGORY_COLORS = {
@@ -5103,6 +5164,13 @@ async function loadSummaryData(params = {}) {
         applyAllocationCalculations();
       }
     }
+
+    // Cập nhật trạng thái rỗng cho toàn khu vực Analytics
+    const emptyBanner = document.getElementById('analyticsEmptyStateBanner');
+    if (emptyBanner) {
+      const isEmpty = Number(s.totalTransactions || 0) === 0 || (Number(s.totalIncome || 0) === 0 && Number(s.totalExpense || 0) === 0);
+      emptyBanner.style.display = isEmpty ? 'block' : 'none';
+    }
   } catch (err) {
     console.error("loadSummaryData error:", err);
   }
@@ -5164,7 +5232,7 @@ function renderDonutChart(totalExpense, categories) {
     if (svgGroup) {
       svgGroup.innerHTML = `<circle class="u097-trk" cx="100" cy="100" r="72" stroke="rgba(255,255,255,0.06)" />`;
     }
-    if (centerCat) centerCat.textContent = "BẮT ĐẦU TỪ CON SỐ 0";
+    if (centerCat) centerCat.textContent = "CHƯA CÓ CHI TIÊU";
     if (centerAmount) centerAmount.textContent = "0₫";
     if (centerPct) {
       centerPct.textContent = "0%";
@@ -5172,9 +5240,18 @@ function renderDonutChart(totalExpense, categories) {
     }
     if (legendBox) {
       legendBox.innerHTML = `
-        <div style="color:var(--ux-ink-2);font-size:12px;grid-column:1/-1;text-align:center;padding:16px;background:rgba(255,255,255,0.02);border-radius:14px;border:1px dashed var(--ux-line)">
-          <b style="color:var(--ux-mint);display:block;margin-bottom:4px">✦ Bắt đầu từ con số 0</b>
-          <span>Chưa có giao dịch chi tiêu trong kỳ. Hãy ghi nhận khoản chi đầu tiên để hệ thống tự động phân tích cơ cấu chi tiêu!</span>
+        <div class="u097-empty-state" style="color:var(--ux-ink-2);font-size:12px;grid-column:1/-1;text-align:center;padding:22px 16px;background:rgba(255,255,255,0.02);border-radius:14px;border:1px dashed var(--ux-line);display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="width:42px;height:42px;border-radius:50%;background:rgba(0,209,143,0.1);display:flex;align-items:center;justify-content:center;color:var(--mint);font-size:20px">
+            📊
+          </div>
+          <div>
+            <b style="color:var(--text);font-size:14px;display:block;margin-bottom:4px">Chưa có dữ liệu chi tiêu</b>
+            <span style="color:var(--muted);font-size:11.5px;line-height:1.4;display:block;max-width:300px;margin:0 auto">Chưa có phát sinh chi tiêu trong kỳ này. Hãy ghi nhận khoản chi đầu tiên để hệ thống tự động bóc tách danh mục!</span>
+          </div>
+          <button type="button" class="btn btn-mint btn-sm" onclick="openNewTxModal()" style="margin-top:4px">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Thêm giao dịch ngay
+          </button>
         </div>
       `;
     }
@@ -5402,15 +5479,16 @@ function renderLucian095Engine(cfg, trend) {
           <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
         </svg>
-        <b class="u095-empty-title">Dòng tiền đang ở trạng thái cân bằng</b>
-        <span class="u095-empty-desc">Chưa có phát sinh giao dịch thu chi trong chu kỳ này. Bạn có thể nạp dữ liệu mẫu để quan sát biểu đồ biến thiên.</span>
+        <b class="u095-empty-title">Chưa có dữ liệu chi tiêu</b>
+        <span class="u095-empty-desc">Chưa có phát sinh giao dịch thu chi trong chu kỳ này. Hãy thêm giao dịch ngay để hệ thống tự động vẽ biểu đồ phân tích.</span>
         <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
-          <button type="button" class="btn btn-mint btn-sm" onclick="seedDemoTransactions()">
-            <svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            Nạp giao dịch mẫu (Demo)
+          <button type="button" class="btn btn-mint btn-sm" onclick="openNewTxModal()">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+            Thêm giao dịch ngay
           </button>
-          <button type="button" class="btn btn-outline btn-sm" onclick="openNewTxModal()">
-            + Ghi nhận giao dịch
+          <button type="button" class="btn btn-outline btn-sm" onclick="seedDemoTransactions()">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            Nạp dữ liệu mẫu (Demo)
           </button>
         </div>
       </div>
@@ -6801,27 +6879,27 @@ async function loadWealthAllocation(strategy = currentAllocationStrategy, simInc
 // AUTO-SWEEP CONTROLLER
 function openAutoSweepModal() {
   const income = currentEffectiveIncome;
-  const needsAmt = Math.round(income * (fundPercentages.needs / 100));
-  const wantsAmt = Math.round(income * (fundPercentages.wants / 100));
-  const savingsAmt = Math.round(income * (fundPercentages.savings / 100));
+  const needsAmt = Math.round(Number((income * (fundPercentages.needs / 100)).toFixed(2)));
+  const wantsAmt = Math.round(Number((income * (fundPercentages.wants / 100)).toFixed(2)));
+  const savingsAmt = Math.round(Number((income * (fundPercentages.savings / 100)).toFixed(2)));
 
   const incLbl = document.getElementById('sweepIncomeLabel');
-  if (incLbl) incLbl.textContent = fmt(income) + "₫";
+  if (incLbl) incLbl.textContent = formatCurrency(income);
 
   const nPct = document.getElementById('sweepNeedsPct');
   const nAmt = document.getElementById('sweepNeedsAmount');
   if (nPct) nPct.textContent = fundPercentages.needs + "%";
-  if (nAmt) nAmt.textContent = fmt(needsAmt) + "₫";
+  if (nAmt) nAmt.textContent = formatCurrency(needsAmt);
 
   const wPct = document.getElementById('sweepWantsPct');
   const wAmt = document.getElementById('sweepWantsAmount');
   if (wPct) wPct.textContent = fundPercentages.wants + "%";
-  if (wAmt) wAmt.textContent = fmt(wantsAmt) + "₫";
+  if (wAmt) wAmt.textContent = formatCurrency(wantsAmt);
 
   const sPct = document.getElementById('sweepSavingsPct');
   const sAmt = document.getElementById('sweepSavingsAmount');
   if (sPct) sPct.textContent = fundPercentages.savings + "%";
-  if (sAmt) sAmt.textContent = fmt(savingsAmt) + "₫";
+  if (sAmt) sAmt.textContent = formatCurrency(savingsAmt);
 
   const modal = document.getElementById('autoSweepModal');
   if (modal) modal.classList.add('open');
@@ -6916,6 +6994,34 @@ async function loadAutoSweepStatus() {
 }
 
 // BỘ LỌC TÌM KIẾM NÂNG CAO
+function handleStartDateChange() {
+  const startInput = document.getElementById('filterStartDate');
+  const endInput = document.getElementById('filterEndDate');
+  if (startInput.value) {
+    endInput.min = startInput.value;
+    if (endInput.value && endInput.value < startInput.value) {
+      endInput.value = startInput.value;
+    }
+  } else {
+    endInput.removeAttribute('min');
+  }
+  triggerFilterChange();
+}
+
+function handleEndDateChange() {
+  const startInput = document.getElementById('filterStartDate');
+  const endInput = document.getElementById('filterEndDate');
+  if (endInput.value) {
+    startInput.max = endInput.value;
+    if (startInput.value && startInput.value > endInput.value) {
+      startInput.value = endInput.value;
+    }
+  } else {
+    startInput.removeAttribute('max');
+  }
+  triggerFilterChange();
+}
+
 function setQuickDateFilter(range) {
   const startInput = document.getElementById('filterStartDate');
   const endInput = document.getElementById('filterEndDate');
@@ -6925,33 +7031,48 @@ function setQuickDateFilter(range) {
   if (range === 'all') {
     startInput.value = '';
     endInput.value = '';
+    startInput.removeAttribute('max');
+    endInput.removeAttribute('min');
   } else if (range === 'today') {
     startInput.value = todayStr;
     endInput.value = todayStr;
+    startInput.max = todayStr;
+    endInput.min = todayStr;
   } else if (range === '7days') {
     const d7 = new Date();
     d7.setDate(today.getDate() - 6);
-    startInput.value = d7.toISOString().slice(0, 10);
+    const d7Str = d7.toISOString().slice(0, 10);
+    startInput.value = d7Str;
     endInput.value = todayStr;
+    startInput.max = todayStr;
+    endInput.min = d7Str;
   } else if (range === 'thisMonth') {
     const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10);
     startInput.value = startOfMonth;
     endInput.value = todayStr;
+    startInput.max = todayStr;
+    endInput.min = startOfMonth;
   }
   triggerFilterChange();
 }
 
 function triggerFilterChange() {
   const search = document.getElementById('filterSearch').value.trim();
-  const startDate = document.getElementById('filterStartDate').value;
-  const endDate = document.getElementById('filterEndDate').value;
+  const startInput = document.getElementById('filterStartDate');
+  const endInput = document.getElementById('filterEndDate');
+  const startDate = startInput ? startInput.value : '';
+  const endDate = endInput ? endInput.value : '';
   const type = document.getElementById('filterType').value;
   const category = document.getElementById('filterCategory').value;
 
   if (startDate && endDate && startDate > endDate) {
     showToast("Ngày bắt đầu không được lớn hơn ngày kết thúc!", "err");
+    if (endInput) endInput.value = startDate;
     return;
   }
+
+  if (startDate && endInput) endInput.min = startDate;
+  if (endDate && startInput) startInput.max = endDate;
 
   const params = {};
   if (search) params.search = search;
@@ -6974,9 +7095,17 @@ function triggerFilterChange() {
 }
 
 function resetFilters() {
+  const startInput = document.getElementById('filterStartDate');
+  const endInput = document.getElementById('filterEndDate');
   document.getElementById('filterSearch').value = '';
-  document.getElementById('filterStartDate').value = '';
-  document.getElementById('filterEndDate').value = '';
+  if (startInput) {
+    startInput.value = '';
+    startInput.removeAttribute('max');
+  }
+  if (endInput) {
+    endInput.value = '';
+    endInput.removeAttribute('min');
+  }
   document.getElementById('filterType').value = 'all';
   document.getElementById('filterCategory').value = 'all';
   const syncBox = document.getElementById('syncFilterToCharts');
@@ -7665,7 +7794,7 @@ function openJarDepositModal(jarId) {
   if (!jar) return;
   document.getElementById('depositJarId').value = jar.id;
   const sub = document.getElementById('depositJarSubtitle');
-  if (sub) sub.innerHTML = `Tích lũy vào: <strong>${escapeHtml(jar.name)}</strong> (Hiện có: ${fmt(jar.current_amount)}₫)`;
+  if (sub) sub.innerHTML = `Tích lũy vào: <strong>${escapeHtml(jar.name)}</strong> (Hiện có: ${formatCurrency(jar.current_amount)})`;
   document.getElementById('depositAmount').value = '';
   document.getElementById('depositNote').value = '';
   const m = document.getElementById('jarDepositModal');
@@ -7729,7 +7858,7 @@ function openJarWithdrawModal(jarId) {
   if (!jar) return;
   document.getElementById('withdrawJarId').value = jar.id;
   const maxEl = document.getElementById('withdrawJarMaxBalance');
-  if (maxEl) maxEl.textContent = fmt(jar.current_amount) + "₫";
+  if (maxEl) maxEl.textContent = formatCurrency(jar.current_amount);
   document.getElementById('withdrawAmount').value = '';
   document.getElementById('withdrawNote').value = '';
   const m = document.getElementById('jarWithdrawModal');
